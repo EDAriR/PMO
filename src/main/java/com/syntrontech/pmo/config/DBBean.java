@@ -24,9 +24,15 @@ public class DBBean {
 		return DataSourceBuilder.create().build();
 	}
 	
-	@Bean(name = "secondDatasource")
-	@ConfigurationProperties(prefix = "spring.cipdb")
+	@Bean(name = "authdbDatasource")
+	@ConfigurationProperties(prefix = "spring.authdb")
 	public DataSource secondDataSource() {
+		return DataSourceBuilder.create().build();
+	}
+	
+	@Bean(name = "measurementdbDatasource")
+	@ConfigurationProperties(prefix = "spring.measurementdb")
+	public DataSource measurementdbDataSource() {
 		return DataSourceBuilder.create().build();
 	}
 }

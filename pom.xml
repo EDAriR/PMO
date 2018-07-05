@@ -78,13 +78,13 @@
 		</dependency>
 		<!-- syntrontech redis-orm end -->
 		
-		<!-- syntrontech auto-development-tool start
+		<!-- syntrontech auto-development-tool start -->
 		<dependency>
 			<groupId>com.syntrontech</groupId>
 			<artifactId>auto-development-tool</artifactId>
 			<version>1.1.0-RC</version>
 		</dependency>
-		syntrontech auto-development-tool end -->
+		<!-- syntrontech auto-development-tool end -->
 		
 		<!-- postgres start -->
 		<dependency>

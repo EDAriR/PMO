@@ -6,11 +6,11 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.stereotype.Component;
 
-//import com.syntrontech.autoTool.util.SpringContextHelper;
+import com.syntrontech.autoTool.util.SpringContextHelper;
 
 @Component
 public class SpringContextHelperImp implements ApplicationContextAware
-//, SpringContextHelper 
+, SpringContextHelper 
 {
 	private static ApplicationContext _context;
 	private static SpringContextHelperImp helper;
@@ -27,15 +27,15 @@ public class SpringContextHelperImp implements ApplicationContextAware
 		return helper;
 	}
 	
-//	@SuppressWarnings("unchecked")
-//	@Override
-//	public <T> T getBean(String id){
-//		return (T) _context.getBean(id);
-//	}
-//	
-//	@Override
-//	public <T> T getBean(Class<T> clazz){
-//		return _context.getBean(clazz);
-//	}
+	@SuppressWarnings("unchecked")
+	@Override
+	public <T> T getBean(String id){
+		return (T) _context.getBean(id);
+	}
+	
+	@Override
+	public <T> T getBean(Class<T> clazz){
+		return _context.getBean(clazz);
+	}
 	
 }
