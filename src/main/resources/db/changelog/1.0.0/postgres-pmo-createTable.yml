@@ -1,0 +1,41 @@
+#databaseChangeLog:
+#  - changeSet:
+#      id: create-pmo-table
+#      author: ed
+#      preConditions:
+#        onFail: MARK_RAN
+#        not:
+#          tableExists:
+#            tableName: device
+#      changes:
+#        - createTable:
+#            tableName: device
+#            columns:
+#              - column:
+#                  name: sequence
+#                  type: bigint
+#                  autoIncrement: true
+#                  constraints:
+#                    primaryKey: true
+#                    nullable: false
+#              - column:
+#                  name: id
+#                  type: varchar(255)
+#                  constraints:
+#                    nullable: false
+#                              
+#              - column:
+#                  name: createtime
+#                  type: timestamp
+#                  constraints:
+#                    nullable: false
+#              - column:
+#                  name: createby
+#                  type: varchar(255)
+#                  constraints:
+#                    nullable: false
+#              - column:
+#                  name: updatetime
+#                  type: timestamp
+#                  constraints:
+#                    nullable: false
