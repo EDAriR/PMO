@@ -75,7 +75,9 @@ redis:
     min-idle: 10
     max-idle: 30
     test-on-borrow: true
-
+#Customize solr
+solr:
+  url: http://localhost:8983/solr/syntron
 #session timeout
 session:
   timeout-sec: 2592000
