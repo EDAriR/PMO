@@ -8,6 +8,7 @@ import org.glassfish.jersey.server.ResourceConfig;
 import org.glassfish.jersey.server.spi.internal.ResourceMethodInvocationHandlerProvider;
 import org.springframework.stereotype.Component;
 
+import com.syntrontech.autoTool.util.SpringContextHelper;
 import com.syntrontech.pmo.provider.JsonObjectHandlerProvider;
 import com.syntrontech.pmo.util.SpringContextHelperImp;
 
@@ -19,7 +20,7 @@ import com.syntrontech.pmo.util.SpringContextHelperImp;
 @ApplicationPath("")
 public class JerseyConfig extends ResourceConfig{
 	
-//	private SpringContextHelper helper = SpringContextHelperImp.getInstance();
+	private SpringContextHelper helper = SpringContextHelperImp.getInstance();
 	
 	public JerseyConfig(){
 		registerResourcesDependOnAutoTool();
