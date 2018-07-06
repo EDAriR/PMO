@@ -1,11 +1,7 @@
 package com.syntrontech.pmo.transfor;
 
-import com.syntrontech.pmo.mv.auth.model.User;
 import com.syntrontech.pmo.mv.syncare1.model.common.Sex;
 import com.syntrontech.pmo.mv.syncare1.model.common.YN;
-import com.syntrontech.pmo.mv.syncare1.model.entity.Area;
-import com.syntrontech.pmo.mv.syncare1.model.entity.SystemUser;
-import com.syntrontech.pmo.mv.syncare_service.model.Subject;
 
 import javax.persistence.*;
 import java.sql.Timestamp;
@@ -13,7 +9,6 @@ import java.util.Date;
 
 public class SystemUserToUsersAndSubject {
 
-    SystemUser suser = new SystemUser();
 
 
 //    User;
