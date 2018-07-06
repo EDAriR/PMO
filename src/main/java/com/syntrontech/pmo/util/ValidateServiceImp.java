@@ -12,7 +12,7 @@ import com.syntrontech.autoTool.exception.client.ForbiddenException;
 import com.syntrontech.autoTool.exception.client.UnauthorizedException;
 import com.syntrontech.autoTool.model.UserModel;
 import com.syntrontech.autoTool.service.SessionValidationService;
-import com.syntrontech.pmo.cip.model.common.UserStatus;
+import com.syntrontech.pmo.model.common.UserStatus;
 
 @Service
 public class ValidateServiceImp implements SessionValidationService {
