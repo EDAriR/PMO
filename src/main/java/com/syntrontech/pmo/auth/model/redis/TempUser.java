@@ -15,8 +15,8 @@ import java.util.stream.Collectors;
 import javax.xml.bind.DatatypeConverter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.syntrontech.auth.model.common.ModelUserStatus;
-import com.syntrontech.auth.model.common.Source;
+import com.syntrontech.pmo.model.common.ModelUserStatus;
+import com.syntrontech.pmo.model.common.Source;
 import com.syntrontech.redis.RedisHashModel;
 import com.syntrontech.redis.annotation.RedisId;
 

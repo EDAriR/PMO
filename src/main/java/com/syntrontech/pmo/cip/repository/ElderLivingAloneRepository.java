@@ -2,10 +2,10 @@ package com.syntrontech.pmo.cip.repository;
 
 import java.util.List;
 
+import com.syntrontech.pmo.cip.model.ElderLivingAloneModel;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.repository.PagingAndSortingRepository;
 
-import com.syntrontech.cip.model.ElderLivingAloneModel;
 
 public interface ElderLivingAloneRepository extends PagingAndSortingRepository<ElderLivingAloneModel, Long> ,JpaSpecificationExecutor<ElderLivingAloneModel>{
 

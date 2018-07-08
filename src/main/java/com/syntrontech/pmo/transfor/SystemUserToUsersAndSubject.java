@@ -1,12 +1,5 @@
 package com.syntrontech.pmo.transfor;
 
-import com.syntrontech.pmo.mv.syncare1.model.common.Sex;
-import com.syntrontech.pmo.mv.syncare1.model.common.YN;
-
-import javax.persistence.*;
-import java.sql.Timestamp;
-import java.util.Date;
-
 public class SystemUserToUsersAndSubject {
 
 

@@ -1,7 +1,8 @@
 package com.syntrontech.pmo.model.common;
 
-import com.syntrontech.cip.solr.model.BiochemistryComplete;
-import com.syntrontech.cip.solr.model.SolrBiochemistry;
+
+import com.syntrontech.pmo.cip.model.solr.BiochemistryComplete;
+import com.syntrontech.pmo.cip.model.solr.SolrBiochemistry;
 
 public enum BiochemistryMappingsProject {
 	HbA1C("HbA1C"){

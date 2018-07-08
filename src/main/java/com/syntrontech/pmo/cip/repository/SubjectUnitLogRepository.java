@@ -3,9 +3,9 @@ package com.syntrontech.pmo.cip.repository;
 import java.util.Date;
 import java.util.Optional;
 
+import com.syntrontech.pmo.cip.model.SubjectUnitLog;
 import org.springframework.data.repository.CrudRepository;
 
-import com.syntrontech.cip.model.SubjectUnitLog;
 
 public interface SubjectUnitLogRepository extends CrudRepository<SubjectUnitLog, Long>{
 	

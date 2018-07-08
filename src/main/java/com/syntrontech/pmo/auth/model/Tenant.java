@@ -11,10 +11,10 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+import com.syntrontech.pmo.model.TO.TO;
+import com.syntrontech.pmo.model.common.ModelStatus;
 import org.hibernate.annotations.Type;
 
-import com.syntrontech.auth.model.common.ModelStatus;
-import com.syntrontech.auth.restful.to.TO;
 
 //store in Postgres
 @Entity

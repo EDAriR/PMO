@@ -1,5 +1,7 @@
 package com.syntrontech.pmo.auth.model;
 
+import com.syntrontech.pmo.model.common.MapToUserField;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -7,7 +9,6 @@ import javax.persistence.Enumerated;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
-import com.syntrontech.auth.model.common.MapToUserField;
 
 //store in Postgres
 @Entity

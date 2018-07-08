@@ -1,5 +1,8 @@
 package com.syntrontech.pmo.auth.model;
 
+import com.syntrontech.pmo.model.TO.TO;
+import com.syntrontech.pmo.model.common.ModelStatus;
+
 import java.util.Date;
 
 import javax.persistence.Column;
@@ -10,9 +13,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
-
-import com.syntrontech.auth.model.common.ModelStatus;
-import com.syntrontech.auth.restful.to.TO;
 
 //store in Postgres
 @Entity

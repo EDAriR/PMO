@@ -1,6 +1,6 @@
 package com.syntrontech.pmo.auth.model.solr;
 
-import com.syntrontech.pmo.cip.solr.SolrDoc;
+import com.syntrontech.pmo.solr.SolrDoc;
 import com.syntrontech.pmo.solr.InternalServiceException;
 
 import java.util.Map;

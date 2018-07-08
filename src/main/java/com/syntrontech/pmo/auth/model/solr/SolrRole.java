@@ -4,7 +4,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 
-import com.syntrontech.pmo.cip.solr.SolrDoc;
+import com.syntrontech.pmo.solr.SolrDoc;
 import com.syntrontech.pmo.model.TO.TO;
 
 public class SolrRole implements SolrDoc {

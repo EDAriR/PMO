@@ -9,7 +9,7 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.syntrontech.auth.model.common.ModelStatus;
+import com.syntrontech.pmo.model.common.ModelStatus;
 import com.syntrontech.redis.RedisHashModel;
 import com.syntrontech.redis.annotation.RedisId;
 

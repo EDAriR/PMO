@@ -3,7 +3,7 @@ package com.syntrontech.pmo.auth.model.solr;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
-import com.syntrontech.pmo.cip.solr.SolrDoc;
+import com.syntrontech.pmo.solr.SolrDoc;
 
 public class SolrTenant implements SolrDoc {
 	

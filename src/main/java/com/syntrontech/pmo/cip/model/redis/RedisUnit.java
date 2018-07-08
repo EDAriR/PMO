@@ -7,7 +7,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-import com.syntrontech.cip.model.common.ModelMgmtStatus;
+import com.syntrontech.pmo.model.common.ModelMgmtStatus;
 import com.syntrontech.redis.RedisHashModel;
 import com.syntrontech.redis.annotation.RedisId;
 

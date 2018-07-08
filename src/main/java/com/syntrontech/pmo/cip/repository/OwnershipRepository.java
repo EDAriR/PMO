@@ -3,10 +3,10 @@ package com.syntrontech.pmo.cip.repository;
 import java.util.List;
 import java.util.Optional;
 
+import com.syntrontech.pmo.cip.model.Ownership;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.repository.PagingAndSortingRepository;
 
-import com.syntrontech.cip.model.Ownership;
 
 public interface OwnershipRepository extends PagingAndSortingRepository<Ownership, Long> ,JpaSpecificationExecutor<Ownership>{
 	

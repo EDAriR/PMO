@@ -14,8 +14,8 @@ import java.util.stream.Collectors;
 import javax.xml.bind.DatatypeConverter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.syntrontech.cip.model.common.GenderType;
-import com.syntrontech.cip.model.common.ModelStatus;
+import com.syntrontech.pmo.model.common.GenderType;
+import com.syntrontech.pmo.model.common.ModelStatus;
 import com.syntrontech.redis.RedisHashModel;
 import com.syntrontech.redis.annotation.RedisId;
 

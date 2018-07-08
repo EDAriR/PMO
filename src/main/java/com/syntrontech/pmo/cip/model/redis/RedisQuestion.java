@@ -2,9 +2,9 @@ package com.syntrontech.pmo.cip.model.redis;
 
 import java.util.List;
 
+import com.syntrontech.pmo.model.common.QuestionType;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.syntrontech.cip.model.common.QuestionType;
 
 public class RedisQuestion{
 	

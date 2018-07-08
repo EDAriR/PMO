@@ -7,7 +7,6 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import com.syntrontech.autoTool.exception.client.ParamFormatErrorException;
-import com.syntrontech.cip.solr.model.SolrDoc;
 
 public class SolrFilterNameConverter {
 
