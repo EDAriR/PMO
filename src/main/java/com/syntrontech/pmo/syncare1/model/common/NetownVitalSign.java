@@ -8,9 +8,9 @@ import java.util.List;
 import java.util.Optional;
 
 import com.syntrontech.pmo.syncare1.model.ObjectConverter;
-import com.syntrontech.pmo.syncare1.model.entity.Mapping;
-import com.syntrontech.pmo.syncare1.model.entity.UserValueRecord;
-import com.syntrontech.pmo.syncare1.model.entity.UserValueRecordMapping;
+import com.syntrontech.pmo.syncare1.model.Mapping;
+import com.syntrontech.pmo.syncare1.model.UserValueRecord;
+import com.syntrontech.pmo.syncare1.model.UserValueRecordMapping;
 import org.apache.commons.lang.StringUtils;
 
 import com.fasterxml.jackson.annotation.JsonCreator;

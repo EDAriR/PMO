@@ -38,7 +38,7 @@ public class Syncare1DataSourceConfig {
                 EntityManagerFactoryBuilder builder, DataSource dataSource) {
             return builder
                     .dataSource(dataSource)
-                    .packages("com.syntrontech.pmo.syncare1")
+                    .packages("com.syntrontech.pmo.syncare1.model")
                     .persistenceUnit("syncare1")
                     .build();
         }

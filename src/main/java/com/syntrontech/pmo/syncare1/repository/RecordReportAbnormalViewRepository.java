@@ -1,7 +1,7 @@
 package com.syntrontech.pmo.syncare1.repository;
 
-import com.syntrontech.pmo.syncare1.model.entity.RecordReportAbnormalView;
-import com.syntrontech.pmo.syncare1.model.entity.SimpleAbnormalView;
+import com.syntrontech.pmo.syncare1.model.RecordReportAbnormalView;
+import com.syntrontech.pmo.syncare1.model.SimpleAbnormalView;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Date;

@@ -22,10 +22,14 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @EnableAutoConfiguration
 @PropertySource(value="${spring.config.location:classpath:application.yml}")
 @EnableJpaRepositories(basePackages = {
-		"com.syntrontech.pmo.repository"
+		"com.syntrontech.pmo.auth.repository.*",
+		"com.syntrontech.pmo.cip.repository.*",
+		"com.syntrontech.pmo.syncare1.repository.*"
 })
 @EntityScan(basePackages = {
-		"com.syntrontech.pmo.model"
+		"com.syntrontech.pmo.auth.model.*",
+		"com.syntrontech.pmo.cip.model.*",
+		"com.syntrontech.pmo.syncare1.model.*"
 })
 @EnableTransactionManagement
 public class Application {

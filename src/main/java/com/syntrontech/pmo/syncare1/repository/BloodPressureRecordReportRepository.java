@@ -1,9 +1,8 @@
 package com.syntrontech.pmo.syncare1.repository;
 
-import com.syntrontech.pmo.syncare1.model.entity.BloodPressureRecordReport;
+import com.syntrontech.pmo.syncare1.model.BloodPressureRecordReport;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 

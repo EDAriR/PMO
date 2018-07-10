@@ -1,6 +1,6 @@
 package com.syntrontech.pmo.syncare1.repository;
 
-import com.syntrontech.pmo.syncare1.model.entity.SynCareQuestionnaire;
+import com.syntrontech.pmo.syncare1.model.SynCareQuestionnaire;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;

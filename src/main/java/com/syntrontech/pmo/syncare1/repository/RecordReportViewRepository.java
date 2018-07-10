@@ -1,6 +1,6 @@
 package com.syntrontech.pmo.syncare1.repository;
 
-import com.syntrontech.pmo.syncare1.model.entity.RecordReportView;
+import com.syntrontech.pmo.syncare1.model.RecordReportView;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Date;

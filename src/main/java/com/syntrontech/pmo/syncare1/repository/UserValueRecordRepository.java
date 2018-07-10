@@ -1,8 +1,8 @@
 package com.syntrontech.pmo.syncare1.repository;
 
 import com.syntrontech.pmo.syncare1.model.common.Service;
-import com.syntrontech.pmo.syncare1.model.entity.SystemUser;
-import com.syntrontech.pmo.syncare1.model.entity.UserValueRecord;
+import com.syntrontech.pmo.syncare1.model.SystemUser;
+import com.syntrontech.pmo.syncare1.model.UserValueRecord;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Date;

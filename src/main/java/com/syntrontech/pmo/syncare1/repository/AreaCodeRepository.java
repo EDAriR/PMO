@@ -1,6 +1,6 @@
 package com.syntrontech.pmo.syncare1.repository;
 
-import com.syntrontech.pmo.syncare1.model.entity.AreaCode;
+import com.syntrontech.pmo.syncare1.model.AreaCode;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
