@@ -1,12 +1,12 @@
 package com.syntrontech.pmo.syncare1.model.entity;
 
-import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import java.util.List;
 
 
 @Entity

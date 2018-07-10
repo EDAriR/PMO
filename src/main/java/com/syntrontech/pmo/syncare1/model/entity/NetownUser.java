@@ -24,7 +24,7 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "netown_user")
 @NamedQuery(name = "NetownUser.findAll", query = "SELECT s FROM NetownUser s")
-public class NetownUser implements Serializable, ObjectConverter<SystemUser> {
+public class NetownUser {
 	private static final String AREA_CODE = "10018";
 
 	private static final long serialVersionUID = 1L;
@@ -129,32 +129,4 @@ public class NetownUser implements Serializable, ObjectConverter<SystemUser> {
 				+ userDisplayName + ", userPhone=" + userPhone + ", userGender=" + userGender + "]";
 	}
 
-	@Override
-	public SystemUser convert(boolean relation) {
-		SystemUser user = new SystemUser();
-		user.setUserAccount(getUserAccount());
-		user.setUserDisplayName(getUserDisplayName());
-		if ("男".equals(getUserGender())) {
-			user.setSex(Sex.male);
-		} else {
-			user.setSex(Sex.female);
-		}
-		user.setUserAddress(getUserAddress());
-		if (null != getUserBirthday()) {
-			user.setUserBirthday(new Timestamp(getUserBirthday().getTime()));
-		} else {
-			user.setUserBirthday(new Timestamp(new Date().getTime()));
-		}
-		user.setUserPhone(getUserPhone());
-		user.setUserEmail("");
-		user.setUserMobile(getUserPhone());
-		user.setAlert(YN.Y);
-		user.setCreateTime(new Timestamp(new Date().getTime()));
-		user.setWithHighBloodPressure(YN.N);
-
-		Area area = new Area();
-		area.setCode(AREA_CODE);
-		user.setArea(area);
-		return user;
-	}
 }
