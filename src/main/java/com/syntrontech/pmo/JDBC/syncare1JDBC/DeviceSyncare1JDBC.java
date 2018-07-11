@@ -1,10 +1,8 @@
 package com.syntrontech.pmo.JDBC.syncare1JDBC;
 
+import com.syntrontech.pmo.JDBC.Syncare1_MySql_Setting;
 import com.syntrontech.pmo.syncare1.model.Device;
-import com.syntrontech.pmo.syncare1.model.Location;
-import com.syntrontech.pmo.syncare1.model.UserValueRecord;
 
-import javax.persistence.*;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.Date;
@@ -40,7 +38,7 @@ public class DeviceSyncare1JDBC {
         PreparedStatement pstmt = null;
         ResultSet rs;
 
-        A_DB_conn_str_setting conn_setting = new A_DB_conn_str_setting();
+        Syncare1_MySql_Setting conn_setting = new Syncare1_MySql_Setting();
         String conn_str = conn_setting.getConn_str();
         try {
             Class.forName(conn_setting.getDriver());
@@ -93,7 +91,7 @@ public class DeviceSyncare1JDBC {
         PreparedStatement pstmt = null;
         ResultSet rs;
 
-        A_DB_conn_str_setting conn_setting = new A_DB_conn_str_setting();
+        Syncare1_MySql_Setting conn_setting = new Syncare1_MySql_Setting();
         String conn_str = conn_setting.getConn_str();
         try {
             Class.forName(conn_setting.getDriver());

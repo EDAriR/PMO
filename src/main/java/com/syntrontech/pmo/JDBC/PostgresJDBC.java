@@ -4,10 +4,7 @@ import java.sql.*;
 
 public class PostgresJDBC {
 
-    public static void main( String[] args ) throws SQLException
-    {
-        System.out.println("-------- PostgreSQL "
-                + "JDBC Connection Testing ------------");
+    public static void main( String[] args ) throws SQLException{
 
         try {
 

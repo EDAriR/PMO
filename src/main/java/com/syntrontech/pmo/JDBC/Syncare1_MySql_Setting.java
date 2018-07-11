@@ -1,6 +1,6 @@
-package com.syntrontech.pmo.JDBC.syncare1JDBC;
+package com.syntrontech.pmo.JDBC;
 
-public class A_DB_conn_str_setting {
+public class Syncare1_MySql_Setting {
 
     public String getConn_str(){
         String conn_str = "jdbc:mysql://localhost:3307/SynCare"
