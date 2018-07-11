@@ -11,14 +11,13 @@ public class MysqlAlertTableAddCloumSyncStatus {
         Connection conn = null;
         String sql;
 
-        String conn_str = "jdbc:mysql://localhost:3307/SynCare"
-                + "?user=root&password=1qaz2wsx" +
-                "&useUnicode=true&characterEncoding=UTF8";
+        A_DB_conn_str_setting conn_setting = new A_DB_conn_str_setting();
+        String conn_str = conn_setting.getConn_str();
         try {
-            Class.forName("com.mysql.cj.jdbc.Driver");// 动态加载mysql驱动
-            System.out.println("Connection MySQL ");
+            Class.forName(conn_setting.getDriver());
 
-            // 一个Connection代表一个数据库连接
+System.out.println("Connection MySQL ");
+
             conn = DriverManager.getConnection(conn_str);
             Statement stmt = conn.createStatement();
             sql = "show tables;";
@@ -51,7 +50,7 @@ public class MysqlAlertTableAddCloumSyncStatus {
             }
 
         } catch (SQLException e) {
-            System.out.println("MySQL操作错误");
+System.out.println("MySQL操作错误");
             e.printStackTrace();
         } catch (Exception e) {
             e.printStackTrace();

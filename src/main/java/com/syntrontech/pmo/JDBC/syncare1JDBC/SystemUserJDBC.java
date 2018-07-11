@@ -11,9 +11,6 @@ import java.util.List;
 public class SystemUserJDBC {
 
     private static final String GET_ALL_STMT = "SELECT * FROM system_user WHERE sync_status = 'N' ORDER BY USER_ID;";
-    private static final String conn_str = "jdbc:mysql://localhost:3307/SynCare?"
-            + "user=root&password=1qaz2wsx"
-            + "&useUnicode=true&characterEncoding=UTF8";
 
     public static void main( String[] args ) throws SQLException
     {
@@ -34,9 +31,11 @@ public class SystemUserJDBC {
         PreparedStatement pstmt = null;
         ResultSet rs;
 
+        A_DB_conn_str_setting conn_setting = new A_DB_conn_str_setting();
+        String conn_str = conn_setting.getConn_str();
         try {
-            Class.forName("com.mysql.cj.jdbc.Driver");
-            System.out.println("Connection MySQL ");
+            Class.forName(conn_setting.getDriver());
+System.out.println("Connection MySQL ");
 
             conn = DriverManager.getConnection(conn_str);
 
