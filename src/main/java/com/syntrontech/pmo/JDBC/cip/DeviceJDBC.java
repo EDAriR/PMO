@@ -14,17 +14,19 @@ public class DeviceJDBC {
             "(id, name, mac_address, serial_number, unit_id, unit_name, tenant_id, status, " +
             "createtime, createby, updatetime, updateby) "
 
-            + "VALUES (?,"
-            + " ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+            + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
 
 
 
     public static void main(String[] args) {
 
+        Connection conn = new CIP_GET_CONNECTION().getConn();
         DeviceJDBC s = new DeviceJDBC();
+
+
         Date star_time = new Date();
-        List<HashMap<String, String>> ss = s.getAllDevice();
+        List<HashMap<String, String>> ss = s.getAllDevice(conn);
         Date end_time = new Date();
 
         System.out.println("star_time:" + star_time.toInstant());
@@ -46,7 +48,7 @@ public class DeviceJDBC {
         device.put("updatetime" , new Date().toInstant().toString());
         device.put("updateby" , "systemAdmin");
         device.put("status" , "ENABLED");
-        s.insertDevice(device);
+        s.insertDevice(conn, device);
 
     }
 
@@ -81,11 +83,10 @@ public class DeviceJDBC {
 
     }
 
-    List<HashMap<String, String>> getAllDevice(){
+    List<HashMap<String, String>> getAllDevice(Connection conn){
 
         List<HashMap<String, String>> devices = new ArrayList<>();
 
-        Connection conn = getConn();
         PreparedStatement pstmt = null;
         ResultSet rs;
 
@@ -125,9 +126,8 @@ public class DeviceJDBC {
     }
 
 
-    public void insertDevice(HashMap<String, String> device){
+    public void insertDevice(Connection conn, HashMap<String, String> device){
 
-        Connection conn = getConn();
         PreparedStatement pstmt = null;
         ResultSet rs;
 
@@ -153,6 +153,31 @@ public class DeviceJDBC {
             pstmt.setString(10, device.get("updatetime"));
             pstmt.setString(11, device.get("updateby"));
             pstmt.setString(12, device.get("status"));
+
+            pstmt.executeUpdate();
+            System.out.println("create successful ==> " + device);
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void insertDevice(Connection conn, Device device){
+
+        PreparedStatement pstmt = null;
+        ResultSet rs;
+
+        try {
+            pstmt = conn.prepareStatement(INSERT_STMT);
+
+            Statement stgfid = conn.prepareStatement("SELECT last_value FROM forums_id_seq");
+            ResultSet rsgfid = stgfid.executeQuery("");
+            rsgfid.next();
+            int forumId = rsgfid.getInt(1);
+            rsgfid.close();
+            stgfid.close();
+
+            pstmt.setLong(1, forumId);
 
             pstmt.executeUpdate();
             System.out.println("create successful ==> " + device);

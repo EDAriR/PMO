@@ -1,6 +1,6 @@
 package com.syntrontech.pmo.JDBC.syncare1JDBC;
 
-import com.syntrontech.pmo.JDBC.Syncare1_MySql_Setting;
+import com.syntrontech.pmo.JDBC.Syncare1_GET_CONNECTION;
 import com.syntrontech.pmo.syncare1.model.Device;
 
 import java.sql.*;
@@ -17,34 +17,28 @@ public class DeviceSyncare1JDBC {
     public static void main(String[] args) throws SQLException {
 
         DeviceSyncare1JDBC s = new DeviceSyncare1JDBC();
+        Connection conn = new Syncare1_GET_CONNECTION().getConn();
 
         Date star_time = new Date();
-        List<Device> ss = s.getAllDevice();
+        List<Device> ss = s.getAllDevice(conn);
         Date end_time = new Date();
 
         System.out.println("star_time:" + star_time.toInstant());
         System.out.println("end_time:" + end_time.toInstant());
         System.out.println("ss size:" + ss.size());
 
-        ss.forEach(sss -> s.updateDevice(sss));
+        ss.forEach(sss -> s.updateDevice(conn, sss));
 
     }
 
-    public List<Device> getAllDevice() {
+    public List<Device> getAllDevice(Connection conn) {
 
         List<Device> devices = new ArrayList<>();
-        Connection conn = null;
 
         PreparedStatement pstmt = null;
         ResultSet rs;
 
-        Syncare1_MySql_Setting conn_setting = new Syncare1_MySql_Setting();
-        String conn_str = conn_setting.getConn_str();
         try {
-            Class.forName(conn_setting.getDriver());
-            System.out.println("Connection MySQL ");
-
-            conn = DriverManager.getConnection(conn_str);
 
             pstmt = conn.prepareStatement(GET_ALL_STMT);
             rs = pstmt.executeQuery();
@@ -58,6 +52,7 @@ public class DeviceSyncare1JDBC {
                     device.setName(rs.getString("name"));
                     String location_id = rs.getString("location_id");
                     System.out.println("location_id :" + location_id);
+                    device.setLocation(location_id);
                     device.setSyntronLocationId(rs.getString("syntron_location_id"));
 
                     System.out.println(device);
@@ -84,20 +79,12 @@ public class DeviceSyncare1JDBC {
         return devices;
     }
 
-    public void updateDevice(Device device) {
-
-        Connection conn = null;
+    public void updateDevice(Connection conn, Device device) {
 
         PreparedStatement pstmt = null;
         ResultSet rs;
 
-        Syncare1_MySql_Setting conn_setting = new Syncare1_MySql_Setting();
-        String conn_str = conn_setting.getConn_str();
         try {
-            Class.forName(conn_setting.getDriver());
-            System.out.println("Connection MySQL ");
-
-            conn = DriverManager.getConnection(conn_str);
 
             pstmt = conn.prepareStatement(UPDATE);
 

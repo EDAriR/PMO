@@ -31,7 +31,8 @@ public class Device{
 	// bi-directional many-to-one association to Location
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "location_id")
-	private Location location;
+//	private Location location;
+	private String location;
 
 	@Column(name = "syntron_location_id")
 	private String syntronLocationId;
@@ -59,11 +60,11 @@ public class Device{
 		this.name = name;
 	}
 
-	public Location getLocation() {
+	public String getLocation() {
 		return this.location;
 	}
 
-	public void setLocation(Location location) {
+	public void setLocation(String location) {
 		this.location = location;
 	}
 

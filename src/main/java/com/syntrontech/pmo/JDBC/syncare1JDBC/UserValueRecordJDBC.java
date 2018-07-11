@@ -1,6 +1,6 @@
 package com.syntrontech.pmo.JDBC.syncare1JDBC;
 
-import com.syntrontech.pmo.JDBC.Syncare1_MySql_Setting;
+import com.syntrontech.pmo.JDBC.Syncare1_GET_CONNECTION;
 import com.syntrontech.pmo.syncare1.model.UserValueRecord;
 
 import java.sql.*;
@@ -34,7 +34,7 @@ public class UserValueRecordJDBC {
         PreparedStatement pstmt = null;
         ResultSet rs;
 
-        Syncare1_MySql_Setting conn_setting = new Syncare1_MySql_Setting();
+        Syncare1_GET_CONNECTION conn_setting = new Syncare1_GET_CONNECTION();
         String conn_str = conn_setting.getConn_str();
         try {
             Class.forName(conn_setting.getDriver());
