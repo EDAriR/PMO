@@ -2,7 +2,6 @@ package com.syntrontech.pmo.JDBC.syncare1JDBC;
 
 import com.syntrontech.pmo.syncare1.model.UserValueRecord;
 
-import javax.persistence.*;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.Date;
