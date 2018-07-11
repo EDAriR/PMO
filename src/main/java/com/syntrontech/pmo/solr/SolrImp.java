@@ -26,7 +26,7 @@ import com.fasterxml.jackson.databind.type.TypeFactory;
 import com.syntrontech.autoTool.exception.client.ParamFormatErrorException;
 import org.springframework.stereotype.Service;
 
-@Service
+
 public class SolrImp implements Solr {
 
 	private static final Logger logger = LoggerFactory.getLogger(SolrImp.class);

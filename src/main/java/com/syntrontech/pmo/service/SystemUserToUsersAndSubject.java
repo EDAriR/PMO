@@ -76,7 +76,7 @@ public class SystemUserToUsersAndSubject {
 //
 //    @Column(name="pmo_status")
 //    @Enumerated(EnumType.STRING)
-//    private SystemUser.SystemUserPmoStatus pmoStatus = SystemUser.SystemUserPmoStatus.Internal;
+//    private SystemUserJDBC.SystemUserPmoStatus pmoStatus = SystemUserJDBC.SystemUserPmoStatus.Internal;
 //
 //    @Column(name="pmo_PASSWORD")
 //    private String pmoPassword;

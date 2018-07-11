@@ -24,7 +24,9 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @EnableJpaRepositories(basePackages = {
 		"com.syntrontech.pmo.auth.repository.*",
 		"com.syntrontech.pmo.cip.repository.*",
-		"com.syntrontech.pmo.syncare1.repository.*"
+		"com.syntrontech.pmo.syncare1.repository.*",
+		"com.syntrontech.pmo.solr.*"
+
 })
 @EntityScan(basePackages = {
 		"com.syntrontech.pmo.auth.model.*",

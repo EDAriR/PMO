@@ -30,7 +30,7 @@ import javax.persistence.Table;
  */
 @Entity
 @Table(name = "system_user")
-@NamedQuery(name = "SystemUser.findAll", query = "SELECT s FROM SystemUser s")
+@NamedQuery(name = "SystemUserJDBC.findAll", query = "SELECT s FROM SystemUserJDBC s")
 public class SystemUser{
 	public enum SystemUserPmoStatus {
 		NotSync, Sync, Error, Internal
@@ -586,8 +586,6 @@ public class SystemUser{
 	public void setIHealthService(YN iHealthService) {
 		this.iHealthService = iHealthService;
 	}
-
-
 	
 	public List<UserValueRecord> getUserValueRecords() {
 		return this.userValueRecords;
@@ -658,7 +656,7 @@ public class SystemUser{
 
 	@Override
 	public String toString() {
-		return "SystemUser ["
+		return "SystemUserJDBC ["
 				+ "userId=" + userId 
 				+ ", createTime=" + createTime 
 				+ ", userAccount=" + userAccount

@@ -65,7 +65,7 @@ public class UserValueRecord {
 	@Column(name = "user_account_serial")
 	private long userAccountSerial;
 
-	// bi-directional many-to-one association to SystemUser
+	// bi-directional many-to-one association to SystemUserJDBC
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "USER_ID")
 	private SystemUser systemUser;
