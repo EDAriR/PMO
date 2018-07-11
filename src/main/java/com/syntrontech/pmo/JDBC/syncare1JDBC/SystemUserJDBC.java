@@ -10,7 +10,7 @@ import java.util.List;
 
 public class SystemUserJDBC {
 
-    private static final String GET_ALL_STMT = "SELECT * FROM system_user ORDER BY USER_ID;";
+    private static final String GET_ALL_STMT = "SELECT * FROM system_user WHERE sync_status = 'N' ORDER BY USER_ID;";
     private static final String conn_str = "jdbc:mysql://localhost:3307/SynCare?"
             + "user=root&password=1qaz2wsx"
             + "&useUnicode=true&characterEncoding=UTF8";
