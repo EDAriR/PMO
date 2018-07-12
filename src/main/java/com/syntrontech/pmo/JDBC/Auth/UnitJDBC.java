@@ -29,17 +29,17 @@ public class UnitJDBC {
         UnitJDBC s = new UnitJDBC();
 
         Date star_time = new Date(new java.util.Date().getTime());
-        List<Unit> ss = s.getAllUnits();
+//        List<Unit> ss = s.getAllUnits();
         Date end_time = new Date(new java.util.Date().getTime());
 
-        System.out.println("star_time:" + star_time.toInstant());
-        System.out.println("end_time:" + end_time.toInstant());
-        System.out.println("ss size:" + ss.size());
+//        System.out.println("star_time:" + star_time.toInstant());
+//        System.out.println("end_time:" + end_time.toInstant());
+//        System.out.println("ss size:" + ss.size());
 
 //        s.insertUnit(s.getTestUnit());
 
-        Unit unit = s.getUnitById("1001401");
-        System.out.println(unit);
+        Unit unit = s.getUnitById("xxx");
+        System.out.println(unit.getId() == null);
     }
 
     public Unit getUnitById(String id) {

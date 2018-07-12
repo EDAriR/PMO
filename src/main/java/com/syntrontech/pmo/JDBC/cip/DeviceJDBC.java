@@ -16,9 +16,6 @@ public class DeviceJDBC {
 
             + "VALUES (nextval('device_sequence_seq'), ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);";
 
-
-
-
     public static void main(String[] args) {
 
         Connection conn = new CIP_GET_CONNECTION().getConn();
