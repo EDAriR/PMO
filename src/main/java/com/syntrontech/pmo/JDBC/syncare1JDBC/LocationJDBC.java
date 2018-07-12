@@ -58,7 +58,7 @@ public class LocationJDBC {
                     location.setContact(rs.getString("contact"));
                     location.setPhone(rs.getString("phone"));
 
-                    System.out.println("LocationJDBC ==>" + location);
+//                    System.out.println("LocationJDBC ==>" + location);
                     locations.add(location);
                 }
             }

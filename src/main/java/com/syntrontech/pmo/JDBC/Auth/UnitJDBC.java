@@ -81,10 +81,17 @@ public class UnitJDBC {
         return unit;
     }
 
-    public void insertUnit(Unit unit){
+    public Unit insertUnit(Unit unit){
 
         Connection conn = new Auth_GET_CONNECTION().getConn();
         PreparedStatement pstmt =null;
+
+        Unit old = getUnitById(unit.getId());
+        if (old != null){
+            if (old.getId() != null && !old.getId().equals(""))
+                return old;
+        }
+
 
         try {
             pstmt = conn.prepareStatement(INSERT_STMT);
@@ -108,7 +115,9 @@ public class UnitJDBC {
             System.out.println(pstmt);
 
             pstmt.executeUpdate();
-            System.out.println("create successful ==> " + unit);
+            System.out.println("create unit successful ==> " + unit);
+
+
 
         } catch (SQLException e) {
             e.printStackTrace();
@@ -124,6 +133,8 @@ public class UnitJDBC {
             }
 
         }
+
+        return unit;
     }
 
     public Unit getTestUnit() {

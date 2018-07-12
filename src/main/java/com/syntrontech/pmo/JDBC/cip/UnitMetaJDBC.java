@@ -15,7 +15,7 @@ import static java.util.stream.Collectors.toSet;
 public class UnitMetaJDBC {
 
     private static final String GET_ALL_STMT = "select * from unit_meta WHERE tenant_id='DEFAULT_TENANT' AND unit_status='ENABLED' order by sequence;";
-    private static final String INSERT_STMT = "INSERT INTO unit " +
+    private static final String INSERT_STMT = "INSERT INTO unit_meta " +
             "(sequence, unit_id, unit_name, unit_parent_id, " +
             "unit_parent_name, unit_status, tenant_id, category, " +
             "contact, address, home_phone, mobile_phone," +
@@ -30,8 +30,7 @@ public class UnitMetaJDBC {
 //        comment, createtime, createby, updatetime
 //        updateby
 
-    private static final String GET_ONE = "SELECT * FROM unit_meta WHERE unit_id=? and tenant_id='DEFAULT_TENANT' AND unit_status='ENABLED'" +
-            " AND status='ENABLED';";
+    private static final String GET_ONE = "SELECT * FROM unit_meta WHERE unit_id=? and tenant_id='DEFAULT_TENANT' AND unit_status='ENABLED';";
 
     public static void main(String[] args) {
 
@@ -106,7 +105,14 @@ public class UnitMetaJDBC {
         return unit;
     }
 
-    public void insertUnitMeta(UnitMeta unitMeta){
+    public UnitMeta insertUnitMeta(UnitMeta unitMeta){
+
+        UnitMeta old = getUnitMetaById(unitMeta.getUnitId());
+        if (old != null){
+            System.out.println(old);
+            if (old.getUnitId() != null && !old.getUnitId().equals(""))
+                return old;
+        }
 
         Connection conn = new CIP_GET_CONNECTION().getConn();
         PreparedStatement pstmt =null;
@@ -139,7 +145,7 @@ public class UnitMetaJDBC {
             System.out.println(pstmt);
 
             pstmt.executeUpdate();
-            System.out.println("create successful ==> " + unitMeta);
+            System.out.println("create unitMeta successful ==> " + unitMeta);
 
         } catch (SQLException e) {
             e.printStackTrace();
@@ -155,6 +161,7 @@ public class UnitMetaJDBC {
             }
 
         }
+        return unitMeta;
     }
 
     public UnitMeta getTestUnitMeta() {
