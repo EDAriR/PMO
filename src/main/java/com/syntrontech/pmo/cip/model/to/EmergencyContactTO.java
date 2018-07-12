@@ -3,8 +3,9 @@ package com.syntrontech.pmo.cip.model.to;
 
 import com.syntrontech.pmo.cip.model.EmergencyContact;
 import com.syntrontech.pmo.cip.model.solr.SolrEmergencyContacts;
+import com.syntrontech.pmo.model.TO.TO;
 
-public class EmergencyContactTO implements TO<EmergencyContact>{
+public class EmergencyContactTO implements TO<EmergencyContact> {
 	
 	private String emergencyContactName;
 	private String emergencyContactMobilePhone;

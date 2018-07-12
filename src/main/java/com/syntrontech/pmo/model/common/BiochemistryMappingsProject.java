@@ -4,6 +4,8 @@ package com.syntrontech.pmo.model.common;
 import com.syntrontech.pmo.cip.model.solr.BiochemistryComplete;
 import com.syntrontech.pmo.cip.model.solr.SolrBiochemistry;
 
+import java.util.stream.Stream;
+
 public enum BiochemistryMappingsProject {
 	HbA1C("HbA1C"){
 		//糖化血色素
@@ -81,5 +83,13 @@ public enum BiochemistryMappingsProject {
 
 	public BiochemistryComplete setValue(BiochemistryComplete bc, SolrBiochemistry sb) {
 		return bc;
+	}
+
+	public static BiochemistryMappingsProject convertFrom(String str){
+		return Stream.of(BiochemistryMappingsProject.values())
+				.filter(bio -> bio.getProject().equals(str))
+				.findFirst()
+				.orElseThrow(() -> new UnsupportedOperationException("the string "
+						+ "["+ str + "]" + "doesn't match the enum[BiochemistryMappingsProject]."));
 	}
 }

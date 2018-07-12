@@ -1,6 +1,7 @@
 package com.syntrontech.pmo.cip.model.to;
 
 import com.syntrontech.pmo.cip.model.solr.SolrSubject;
+import com.syntrontech.pmo.model.TO.TO;
 import com.syntrontech.pmo.model.common.*;
 import com.syntrontech.pmo.util.ISODateTime;
 
@@ -8,7 +9,7 @@ import java.util.Date;
 import java.util.List;
 
 
-public class SubjectTO implements TO<SolrSubject>{
+public class SubjectTO implements TO<SolrSubject> {
 	
 	private String subjectId;
 	

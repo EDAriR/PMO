@@ -2,8 +2,9 @@ package com.syntrontech.pmo.cip.model.to;
 
 
 import com.syntrontech.pmo.cip.model.solr.SolrDevice;
+import com.syntrontech.pmo.model.TO.TO;
 
-public class DeviceTO implements TO<SolrDevice>{
+public class DeviceTO implements TO<SolrDevice> {
 	
 	private String deviceId;
 	

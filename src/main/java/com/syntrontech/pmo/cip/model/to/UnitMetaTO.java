@@ -2,6 +2,7 @@ package com.syntrontech.pmo.cip.model.to;
 
 
 import com.syntrontech.pmo.cip.model.solr.SolrMetaUnit;
+import com.syntrontech.pmo.model.TO.TO;
 
 public class UnitMetaTO implements TO<SolrMetaUnit> {
 	

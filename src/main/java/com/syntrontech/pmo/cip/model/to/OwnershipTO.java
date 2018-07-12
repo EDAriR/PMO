@@ -1,10 +1,11 @@
 package com.syntrontech.pmo.cip.model.to;
 
 import com.syntrontech.pmo.cip.model.solr.SolrOwnership;
+import com.syntrontech.pmo.model.TO.TO;
 import com.syntrontech.pmo.model.common.OwnershipStatus;
 import com.syntrontech.pmo.model.common.OwnershipType;
 
-public class OwnershipTO implements TO<SolrOwnership>{
+public class OwnershipTO implements TO<SolrOwnership> {
 
 	private String ownershipId;
 	
