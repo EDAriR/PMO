@@ -24,7 +24,10 @@ public class Sync {
     public static void main(String[] args) {
 
         Sync sync = new Sync();
-        sync.syncLocationToUnit();
+
+        // TODO syncare_questionnair_answer
+        // TODO
+//        sync.syncLocationToUnit();
 //        sync.syncDevice();
     }
 
