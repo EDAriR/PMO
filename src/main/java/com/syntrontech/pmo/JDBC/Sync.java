@@ -1,6 +1,6 @@
 package com.syntrontech.pmo.JDBC;
 
-import com.syntrontech.pmo.JDBC.Auth.UnitJDBC;
+import com.syntrontech.pmo.JDBC.auth.UnitJDBC;
 import com.syntrontech.pmo.JDBC.cip.CIP_GET_CONNECTION;
 import com.syntrontech.pmo.JDBC.cip.DeviceJDBC;
 import com.syntrontech.pmo.JDBC.cip.UnitMetaJDBC;

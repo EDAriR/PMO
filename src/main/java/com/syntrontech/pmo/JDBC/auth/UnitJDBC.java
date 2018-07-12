@@ -1,4 +1,4 @@
-package com.syntrontech.pmo.JDBC.Auth;
+package com.syntrontech.pmo.JDBC.auth;
 
 import com.syntrontech.pmo.auth.model.Unit;
 import com.syntrontech.pmo.model.common.ModelStatus;

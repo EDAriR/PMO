@@ -1,4 +1,4 @@
-package com.syntrontech.pmo.JDBC.Auth;
+package com.syntrontech.pmo.JDBC.auth;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
