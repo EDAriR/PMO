@@ -1,4 +1,4 @@
-package com.syntrontech.pmo.cip.model.redis;
+package com.syntrontech.pmo.questionnair.model.redis;
 
 import java.io.IOException;
 import java.lang.reflect.Field;
@@ -79,7 +79,7 @@ public class RedisQuestionnairQuestions implements RedisHashModel<RedisQuestionn
 														.constructCollectionType(List.class, RedisQuestion.class);
 			questionnairQuestions.setQuestions(mapper.readValue(obj.get("questions"), collectionType));
 		} catch (IOException e) {
-			questionnairQuestions.setQuestions(new ArrayList<RedisQuestion>());
+			questionnairQuestions.setQuestions(new ArrayList<>());
 			e.printStackTrace();
 		}
 		

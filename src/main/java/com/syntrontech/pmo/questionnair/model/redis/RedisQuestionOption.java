@@ -1,4 +1,4 @@
-package com.syntrontech.pmo.cip.model.redis;
+package com.syntrontech.pmo.questionnair.model.redis;
 
 import org.springframework.beans.factory.annotation.Autowired;
 

@@ -1,4 +1,4 @@
-package com.syntrontech.pmo.cip.model.redis;
+package com.syntrontech.pmo.questionnair.model.redis;
 
 import java.util.List;
 
@@ -41,7 +41,7 @@ public class RedisQuestion{
 	public void setPositionSequence(Long positionSequence) {
 		this.positionSequence = positionSequence;
 	}
-	
+
 	public QuestionType getType() {
 		return type;
 	}

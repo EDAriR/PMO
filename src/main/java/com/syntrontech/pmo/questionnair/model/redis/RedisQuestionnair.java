@@ -1,4 +1,4 @@
-package com.syntrontech.pmo.cip.model.redis;
+package com.syntrontech.pmo.questionnair.model.redis;
 
 import java.lang.reflect.Field;
 import java.util.Arrays;
