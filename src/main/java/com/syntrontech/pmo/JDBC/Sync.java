@@ -26,7 +26,8 @@ public class Sync {
         Sync sync = new Sync();
 
         // TODO syncare_questionnair_answer
-        // TODO
+        // TODO blood_pressure_record_report
+        // TODO abnormal_blood_pressure_record
 //        sync.syncLocationToUnit();
 //        sync.syncDevice();
     }
