@@ -17,7 +17,7 @@ public class Sync {
 
         Sync sync = new Sync();
 
-        sync.syncDriver();
+//        sync.syncDriver();
     }
 
     public void syncDriver(){
@@ -39,7 +39,6 @@ public class Sync {
 
     private void insertCIPDevice(DeviceJDBC cipDeviceJDBC, Connection cip_conn, Device sd) {
 
-        // TODO
         com.syntrontech.pmo.cip.model.Device device = new com.syntrontech.pmo.cip.model.Device();
 
         String serialNo = sd.getSerialNo();

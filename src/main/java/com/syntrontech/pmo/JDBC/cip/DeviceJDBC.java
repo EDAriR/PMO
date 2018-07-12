@@ -106,6 +106,49 @@ public class DeviceJDBC {
         return devices;
     }
 
+    public void insertDevice(Connection conn, Device device){
+
+        PreparedStatement pstmt =null;
+
+        try {
+            pstmt = conn.prepareStatement(INSERT_STMT);
+
+            pstmt.setString(1, device.getId());
+            pstmt.setString(2, device.getName());
+            String mac_address = device.getMacAddress() != null ? device.getMacAddress() : "";
+            pstmt.setString(3, mac_address);
+            pstmt.setString(4, device.getSerialNumber());
+            pstmt.setString(5, device.getUnitId());
+
+            pstmt.setString(6, device.getUnitName());
+            pstmt.setString(7, device.getTenantId());
+            pstmt.setString(8, device.getStatus().toString());
+            pstmt.setDate(9, new Date(device.getCreateTime().getTime()));
+            pstmt.setString(10, device.getCreateBy());
+
+            pstmt.setDate(11, new Date(device.getUpdateTime().getTime()));
+            pstmt.setString(12, device.getUpdateBy());
+
+            System.out.println(pstmt);
+
+            pstmt.executeUpdate();
+            System.out.println("create successful ==> " + device);
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+
+            try {
+                if(pstmt != null)
+                    pstmt.close();
+                conn.close();
+            } catch (SQLException e) {
+                System.out.println("conn or pstmt close fail" + conn + " || " + pstmt);
+                e.printStackTrace();
+            }
+
+        }
+    }
 
     public void insertDevice(Connection conn, HashMap<String, String> device){
 
@@ -157,49 +200,6 @@ public class DeviceJDBC {
         }
     }
 
-    public void insertDevice(Connection conn, Device device){
-
-        PreparedStatement pstmt =null;
-
-        try {
-            pstmt = conn.prepareStatement(INSERT_STMT);
-
-            pstmt.setString(1, device.getId());
-            pstmt.setString(2, device.getName());
-            String mac_address = device.getMacAddress() != null ? device.getMacAddress() : "";
-            pstmt.setString(3, mac_address);
-            pstmt.setString(4, device.getSerialNumber());
-            pstmt.setString(5, device.getUnitId());
-
-            pstmt.setString(6, device.getUnitName());
-            pstmt.setString(7, device.getTenantId());
-            pstmt.setString(8, device.getStatus().toString());
-            pstmt.setDate(9, new Date(device.getCreateTime().getTime()));
-            pstmt.setString(10, device.getCreateBy());
-
-            pstmt.setDate(11, new Date(device.getUpdateTime().getTime()));
-            pstmt.setString(12, device.getUpdateBy());
-
-            System.out.println(pstmt);
-
-            pstmt.executeUpdate();
-            System.out.println("create successful ==> " + device);
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-        } finally {
-
-            try {
-                if(pstmt != null)
-                    pstmt.close();
-                conn.close();
-            } catch (SQLException e) {
-                System.out.println("conn or pstmt close fail" + conn + " || " + pstmt);
-                e.printStackTrace();
-            }
-
-        }
-    }
 
 
 }
