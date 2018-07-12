@@ -1,10 +1,8 @@
 package com.syntrontech.pmo.JDBC.syncare1JDBC;
 
 import com.syntrontech.pmo.JDBC.Syncare1_GET_CONNECTION;
-import com.syntrontech.pmo.syncare1.model.Device;
 import com.syntrontech.pmo.syncare1.model.Location;
 
-import javax.persistence.Column;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;

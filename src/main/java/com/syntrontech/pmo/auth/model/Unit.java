@@ -157,4 +157,21 @@ public class Unit {
 	public TO<Unit> convertToTO(TO<Unit> to){
 		return to.convertFrom(this);
 	}
+
+	@Override
+	public String toString() {
+
+
+		return  "Unit[ Id:" + id + "," +
+				" name:" + name + "," +
+				" parentId:" + parentId + "," +
+				" parentName:" + parentName + "," +
+				" tenantId:" + tenantId + "," +
+				" createTime:" + createTime + "," +
+				" createBy:" + createBy + "," +
+				" updateTime:" + updateTime + "," +
+				" updateBy:" + updateBy + "," +
+				" status:" + status + " ]";
+
+	}
 }
