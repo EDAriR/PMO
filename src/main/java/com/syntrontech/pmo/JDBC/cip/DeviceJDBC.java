@@ -3,7 +3,7 @@ package com.syntrontech.pmo.JDBC.cip;
 import com.syntrontech.pmo.cip.model.Device;
 import java.sql.*;
 import java.util.ArrayList;
-import java.util.Date;
+import java.sql.Date;
 import java.util.HashMap;
 import java.util.List;
 
@@ -11,10 +11,10 @@ public class DeviceJDBC {
 
     private static final String GET_ALL_STMT = "SELECT * FROM device ORDER BY sequence;";
     private static final String INSERT_STMT = "INSERT INTO device " +
-            "(id, name, mac_address, serial_number, unit_id, unit_name, tenant_id, status, " +
-            "createtime, createby, updatetime, updateby) "
+            "(sequence, id, name, mac_address, serial_number, unit_id, " +
+            "unit_name, tenant_id, status, createtime, createby, updatetime, updateby) "
 
-            + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+            + "VALUES (nextval('device_sequence_seq'), ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);";
 
 
 
@@ -25,12 +25,12 @@ public class DeviceJDBC {
         DeviceJDBC s = new DeviceJDBC();
 
 
-        Date star_time = new Date();
+        Date star_time = new Date(new java.util.Date().getTime());
         List<HashMap<String, String>> ss = s.getAllDevice(conn);
-        Date end_time = new Date();
+        Date end_time = new Date(new java.util.Date().getTime());
 
-        System.out.println("star_time:" + star_time.toInstant());
-        System.out.println("end_time:" + end_time.toInstant());
+//        System.out.println("star_time:" + star_time.toInstant());
+//        System.out.println("end_time:" + end_time.toInstant());
         System.out.println("ss size:" + ss.size());
 
         HashMap<String, String> device = new HashMap<>();
@@ -43,43 +43,13 @@ public class DeviceJDBC {
         device.put("unit_id" , "100140102310");
         device.put("unit_name" , "其他");
         device.put("tenant_id" , "DEFAULT_TENANT");
-        device.put("createtime" , new Date().toInstant().toString());
+        device.put("createtime" ,  String.valueOf(new Date(new java.util.Date().getTime()).getTime()));
         device.put("createby" , "systemAdmin");
-        device.put("updatetime" , new Date().toInstant().toString());
+        device.put("updatetime" , String.valueOf(new Date(new java.util.Date().getTime()).getTime()));
         device.put("updateby" , "systemAdmin");
         device.put("status" , "ENABLED");
+        System.out.println(device);
         s.insertDevice(conn, device);
-
-    }
-
-    private Connection getConn(){
-
-        Connection conn = null;
-
-        try {
-
-            Class.forName("org.postgresql.Driver");
-            System.out.println("Connection MySQL ");
-            conn = DriverManager.getConnection("jdbc:postgresql://127.0.0.1:5432/cipdb",
-                    "postgres",
-                    "1qaz2wsx");
-
-        }catch (ClassNotFoundException e) {
-
-                System.out.println("Where is your PostgreSQL JDBC Driver? "
-                        + "Include in your library path!");
-                e.printStackTrace();
-        } catch (SQLException e) {
-
-            System.out.println("Connection Failed! Check output console");
-            e.printStackTrace();
-
-        }
-
-        if (conn != null)
-            return conn;
-        else
-            throw new NullPointerException();
 
     }
 
@@ -120,6 +90,17 @@ public class DeviceJDBC {
             }
         } catch (SQLException e) {
             e.printStackTrace();
+        } finally {
+
+            try {
+                if(pstmt != null)
+                    pstmt.close();
+                conn.close();
+            } catch (SQLException e) {
+                System.out.println("conn or pstmt close fail" + conn + " || " + pstmt);
+                e.printStackTrace();
+            }
+
         }
 
         return devices;
@@ -129,61 +110,94 @@ public class DeviceJDBC {
     public void insertDevice(Connection conn, HashMap<String, String> device){
 
         PreparedStatement pstmt = null;
-        ResultSet rs;
 
         try {
             pstmt = conn.prepareStatement(INSERT_STMT);
 
-            Statement stgfid = conn.prepareStatement("SELECT last_value FROM forums_id_seq");
-            ResultSet rsgfid = stgfid.executeQuery("");
-            rsgfid.next();
-            int forumId = rsgfid.getInt(1);
-            rsgfid.close();
-            stgfid.close();
-
-            pstmt.setLong(1, forumId);
-            pstmt.setString(2, device.get("id"));
-            pstmt.setString(3, device.get("name"));
+            pstmt.setString(1, device.get("id"));
+            pstmt.setString(2, device.get("name"));
+            String mac_address = device.get("mac_address") != null ? device.get("mac_address") : "";
+            System.out.println("mac_address==>" + mac_address);
+            pstmt.setString(3,  mac_address);
             pstmt.setString(4, device.get("serial_number"));
             pstmt.setString(5, device.get("unit_id"));
+
             pstmt.setString(6, device.get("unit_name"));
             pstmt.setString(7, device.get("tenant_id"));
-            pstmt.setString(8, device.get("createtime"));
-            pstmt.setString(9, device.get("createby"));
-            pstmt.setString(10, device.get("updatetime"));
-            pstmt.setString(11, device.get("updateby"));
-            pstmt.setString(12, device.get("status"));
+            pstmt.setString(8, device.get("status"));
+            java.util.Date date = new java.util.Date();
+            System.out.println("date :" + date);
+            pstmt.setDate(9, new Date(date.getTime()));
+            pstmt.setString(10, device.get("createby"));
 
+            java.util.Date utilDate=new java.util.Date();
+            java.sql.Date sqlDate=new java.sql.Date(utilDate.getTime());
+
+            System.out.println(sqlDate);
+            pstmt.setDate(11, sqlDate);
+            pstmt.setString(12, device.get("updateby"));
+
+            System.out.println(pstmt);
             pstmt.executeUpdate();
             System.out.println("create successful ==> " + device);
 
         } catch (SQLException e) {
             e.printStackTrace();
+        } finally {
+
+            try {
+                if(pstmt != null)
+                    pstmt.close();
+                conn.close();
+            } catch (SQLException e) {
+                System.out.println("conn or pstmt close fail" + conn + " || " + pstmt);
+                e.printStackTrace();
+            }
+
         }
     }
 
     public void insertDevice(Connection conn, Device device){
 
-        PreparedStatement pstmt = null;
-        ResultSet rs;
+        PreparedStatement pstmt =null;
 
         try {
             pstmt = conn.prepareStatement(INSERT_STMT);
 
-            Statement stgfid = conn.prepareStatement("SELECT last_value FROM forums_id_seq");
-            ResultSet rsgfid = stgfid.executeQuery("");
-            rsgfid.next();
-            int forumId = rsgfid.getInt(1);
-            rsgfid.close();
-            stgfid.close();
+            pstmt.setString(1, device.getId());
+            pstmt.setString(2, device.getName());
+            String mac_address = device.getMacAddress() != null ? device.getMacAddress() : "";
+            pstmt.setString(3, mac_address);
+            pstmt.setString(4, device.getSerialNumber());
+            pstmt.setString(5, device.getUnitId());
 
-            pstmt.setLong(1, forumId);
+            pstmt.setString(6, device.getUnitName());
+            pstmt.setString(7, device.getTenantId());
+            pstmt.setString(8, device.getStatus().toString());
+            pstmt.setDate(9, new Date(device.getCreateTime().getTime()));
+            pstmt.setString(10, device.getCreateBy());
+
+            pstmt.setDate(11, new Date(device.getUpdateTime().getTime()));
+            pstmt.setString(12, device.getUpdateBy());
+
+            System.out.println(pstmt);
 
             pstmt.executeUpdate();
             System.out.println("create successful ==> " + device);
 
         } catch (SQLException e) {
             e.printStackTrace();
+        } finally {
+
+            try {
+                if(pstmt != null)
+                    pstmt.close();
+                conn.close();
+            } catch (SQLException e) {
+                System.out.println("conn or pstmt close fail" + conn + " || " + pstmt);
+                e.printStackTrace();
+            }
+
         }
     }
 

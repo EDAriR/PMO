@@ -13,14 +13,11 @@ public class MysqlAlertTableAddCloumSyncStatus {
         Connection conn = null;
         String sql;
 
-        Syncare1_GET_CONNECTION conn_setting = new Syncare1_GET_CONNECTION();
-        String conn_str = conn_setting.getConn_str();
+        conn = new Syncare1_GET_CONNECTION().getConn();
         try {
-            Class.forName(conn_setting.getDriver());
 
 System.out.println("Connection MySQL ");
 
-            conn = DriverManager.getConnection(conn_str);
             Statement stmt = conn.createStatement();
             sql = "show tables;";
             ResultSet result = stmt.executeQuery(sql);

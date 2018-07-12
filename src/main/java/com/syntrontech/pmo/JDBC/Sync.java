@@ -17,23 +17,23 @@ public class Sync {
 
         Sync sync = new Sync();
 
-        Connection syncare_conn = new Syncare1_GET_CONNECTION().getConn();
-        Connection cip_conn = new CIP_GET_CONNECTION().getConn();
-
-        sync.syncDriver(syncare_conn, cip_conn);
+        sync.syncDriver();
     }
 
-    public void syncDriver(Connection syncare_conn, Connection cip_conn){
+    public void syncDriver(){
 
         DeviceSyncare1JDBC syncare1DeviceJDBC = new DeviceSyncare1JDBC();
 
-        List<Device> syncare1Devices = syncare1DeviceJDBC.getAllDevice(syncare_conn);
+        List<Device> syncare1Devices = syncare1DeviceJDBC.getAllDevice(new Syncare1_GET_CONNECTION().getConn());
 
         DeviceJDBC cipDeviceJDBC = new DeviceJDBC();
 
-        syncare1Devices.forEach(sd -> insertCIPDevice(cipDeviceJDBC, cip_conn, sd));
+        syncare1Devices.forEach(sd -> {
+            insertCIPDevice(cipDeviceJDBC, new CIP_GET_CONNECTION().getConn(), sd);
+            syncare1DeviceJDBC.updateDevice(new Syncare1_GET_CONNECTION().getConn(), sd.getSerialNo());
+        });
 
-
+        System.out.println("sync devices total :" + syncare1Devices.size() + " successful");
 
     }
 
@@ -42,7 +42,8 @@ public class Sync {
         // TODO
         com.syntrontech.pmo.cip.model.Device device = new com.syntrontech.pmo.cip.model.Device();
 
-        device.setId(sd.getSerialNo());
+        String serialNo = sd.getSerialNo();
+        device.setId(serialNo);
         device.setName(sd.getName());
         device.setSerialNumber(sd.getSerialNo());
         device.setUnitId(sd.getLocation());
@@ -56,5 +57,6 @@ public class Sync {
         device.setStatus(ModelStatus.ENABLED);
 
         cipDeviceJDBC.insertDevice(cip_conn, device);
+
     }
 }

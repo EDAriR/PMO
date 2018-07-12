@@ -14,10 +14,11 @@ public class UserValueRecordJDBC {
 
     public static void main(String[] args) throws SQLException {
 
+        Connection conn = new Syncare1_GET_CONNECTION().getConn();
         UserValueRecordJDBC s = new UserValueRecordJDBC();
 
         Date star_time = new Date();
-        List<UserValueRecord> ss = s.getAllUserValueRecord();
+        List<UserValueRecord> ss = s.getAllUserValueRecord(conn);
         Date end_time = new Date();
 
         System.out.println("star_time:" + star_time.toInstant());
@@ -26,21 +27,16 @@ public class UserValueRecordJDBC {
 
     }
 
-    public List<UserValueRecord> getAllUserValueRecord() {
+    public List<UserValueRecord> getAllUserValueRecord(Connection conn) {
 
         List<UserValueRecord> userValueRecordlist = new ArrayList<>();
-        Connection conn = null;
 
         PreparedStatement pstmt = null;
         ResultSet rs;
 
-        Syncare1_GET_CONNECTION conn_setting = new Syncare1_GET_CONNECTION();
-        String conn_str = conn_setting.getConn_str();
-        try {
-            Class.forName(conn_setting.getDriver());
-System.out.println("Connection MySQL ");
 
-            conn = DriverManager.getConnection(conn_str);
+        try {
+
 
             pstmt = conn.prepareStatement(GET_ALL_STMT);
             rs = pstmt.executeQuery();

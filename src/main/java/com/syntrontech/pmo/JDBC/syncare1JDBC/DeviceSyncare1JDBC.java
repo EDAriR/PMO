@@ -27,7 +27,7 @@ public class DeviceSyncare1JDBC {
         System.out.println("end_time:" + end_time.toInstant());
         System.out.println("ss size:" + ss.size());
 
-        ss.forEach(sss -> s.updateDevice(conn, sss));
+        ss.forEach(sss -> s.updateDevice(conn, sss.getSerialNo()));
 
     }
 
@@ -48,14 +48,17 @@ public class DeviceSyncare1JDBC {
 
                     Device device = new Device();
 
-                    device.setSerialNo(rs.getString("serial_no"));
+                    String serial_no = rs.getString("serial_no");
+                    System.out.println("serial_no :" + serial_no);
+                    device.setSerialNo(serial_no);
+
                     device.setName(rs.getString("name"));
                     String location_id = rs.getString("location_id");
                     System.out.println("location_id :" + location_id);
                     device.setLocation(location_id);
                     device.setSyntronLocationId(rs.getString("syntron_location_id"));
 
-                    System.out.println(device);
+                    System.out.println("DeviceSyncare1JDBC ==>" + device);
                     devices.add(device);
                 }
             }
@@ -79,19 +82,18 @@ public class DeviceSyncare1JDBC {
         return devices;
     }
 
-    public void updateDevice(Connection conn, Device device) {
+    public void updateDevice(Connection conn, String serialNo) {
 
         PreparedStatement pstmt = null;
-        ResultSet rs;
 
         try {
 
             pstmt = conn.prepareStatement(UPDATE);
 
-            pstmt.setString(1, device.getSerialNo());
+            pstmt.setString(1, serialNo);
             pstmt.executeUpdate();
 
-            System.out.println("update successful ==============");
+            System.out.println("update " + serialNo + " successful ==============");
 
 
         } catch (SQLException e) {

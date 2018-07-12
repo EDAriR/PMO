@@ -16,29 +16,25 @@ public class SystemUserJDBC {
     public static void main( String[] args ) throws SQLException
     {
 
+        Connection conn = new Syncare1_GET_CONNECTION().getConn();
+
         SystemUserJDBC s = new SystemUserJDBC();
 
-        List<SystemUser> ss = s.getAllSystemUser();
+        List<SystemUser> ss = s.getAllSystemUser(conn);
 
         System.out.println("ss size:" + ss.size());
 
     }
 
-    public List<SystemUser> getAllSystemUser(){
+    public List<SystemUser> getAllSystemUser(Connection conn){
 
         List<SystemUser> systemUserslist = new ArrayList<>();
-        Connection conn = null;
 
         PreparedStatement pstmt = null;
         ResultSet rs;
 
-        Syncare1_GET_CONNECTION conn_setting = new Syncare1_GET_CONNECTION();
-        String conn_str = conn_setting.getConn_str();
         try {
-            Class.forName(conn_setting.getDriver());
-System.out.println("Connection MySQL ");
 
-            conn = DriverManager.getConnection(conn_str);
 
             pstmt = conn.prepareStatement(GET_ALL_STMT);
             rs = pstmt.executeQuery();

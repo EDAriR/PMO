@@ -73,7 +73,7 @@ public class Location {
 
 	public Device addDevice(Device device) {
 		getDevices().add(device);
-		device.setLocation(this);
+		device.setLocation("");
 
 		return device;
 	}
