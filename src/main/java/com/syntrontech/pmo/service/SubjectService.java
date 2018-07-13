@@ -9,7 +9,6 @@ import com.syntrontech.pmo.cip.exception.client.ObjectNotExistedException;
 import com.syntrontech.pmo.cip.exception.server.InternalServiceException;
 import com.syntrontech.pmo.cip.model.Subject;
 import com.syntrontech.pmo.cip.model.redis.RedisSubject;
-import com.syntrontech.pmo.cip.model.redis.RedisUser;
 import com.syntrontech.pmo.cip.model.to.MeasuredSubjectTO;
 import com.syntrontech.pmo.cip.model.to.SearchTO;
 import com.syntrontech.pmo.cip.model.to.SubjectTO;
@@ -17,6 +16,7 @@ import com.syntrontech.pmo.cip.model.vo.CreateSubjectVO;
 import com.syntrontech.pmo.cip.model.vo.SearchVO;
 import com.syntrontech.pmo.cip.model.vo.UpdateSubjectVO;
 import com.syntrontech.pmo.solr.SolrException;
+import com.syntrontech.pmo.util.RedisUser;
 
 public interface SubjectService extends ModelService<Subject, CreateSubjectVO, UpdateSubjectVO>{
 	Subject _save(Subject subject)  throws SolrException, ParamFormatErrorException;

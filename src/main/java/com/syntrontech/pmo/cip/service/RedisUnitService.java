@@ -1,6 +1,7 @@
 package com.syntrontech.pmo.cip.service;
 
-import com.syntrontech.pmo.cip.model.redis.RedisUnit;
+
+import com.syntrontech.pmo.auth.model.redis.RedisUnit;
 
 import java.util.List;
 import java.util.Optional;

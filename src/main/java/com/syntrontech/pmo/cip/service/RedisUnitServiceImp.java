@@ -7,7 +7,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import com.syntrontech.pmo.cip.model.redis.RedisUnit;
+import com.syntrontech.pmo.auth.model.redis.RedisUnit;
 import com.syntrontech.pmo.cip.repository.RedisUnitRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;

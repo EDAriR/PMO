@@ -25,11 +25,11 @@ public class QuestionnairReplyJDBC {
 
     private static final String GET_ALL_STMT = "select * from questionnair_reply WHERE status='EXISTED' order by sequence;";
     private static final String INSERT_STMT = "INSERT INTO questionnair_reply " +
-            "(sequence, unit_id, unit_name, unit_parent_id, " +
+            "(sequence, user_id, tenant_id, questionnaire_seq, " +
             "unit_parent_name, unit_status, tenant_id, category, " +
             "contact, address, home_phone, mobile_phone," +
             " comment, createtime, createby, updatetime, updateby) "
-            + "VALUES (nextval('unit_meta_sequence_seq'), ?, ?, ?, " +
+            + "VALUES (nextval('questionnair_reply_sequence_seq'), ?, ?, ?, " +
             "?, ?, ?, ?, " +
             "?, ?, ?, ?, " +
             "?, ?, ?, ?, ?);";

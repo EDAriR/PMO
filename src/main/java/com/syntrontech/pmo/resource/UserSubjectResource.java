@@ -12,13 +12,13 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import com.syntrontech.pmo.cip.exception.server.InternalServiceException;
-import com.syntrontech.pmo.cip.model.redis.RedisUser;
 import com.syntrontech.pmo.cip.model.to.SearchTO;
 import com.syntrontech.pmo.cip.model.to.SubjectTO;
 import com.syntrontech.pmo.cip.model.vo.SearchVO;
 import com.syntrontech.pmo.cip.service.EmergencyContactService;
 import com.syntrontech.pmo.service.SubjectService;
 import com.syntrontech.pmo.solr.SolrException;
+import com.syntrontech.pmo.util.RedisUser;
 import com.syntrontech.pmo.util.RedisUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 
