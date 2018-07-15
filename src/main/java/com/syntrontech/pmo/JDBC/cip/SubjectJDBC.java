@@ -32,11 +32,10 @@ public class SubjectJDBC {
 
     public static void main(String[] args) {
 
-        Connection conn = new CIP_GET_CONNECTION().getConn();
 
         SubjectJDBC s = new SubjectJDBC();
         Date star_time = new Date();
-        List<Subject> ss = s.getAllSubjects(conn);
+        List<Subject> ss = s.getAllSubjects();
         Date end_time = new Date();
 
         System.out.println("star_time:" + star_time.toInstant());
@@ -56,9 +55,10 @@ public class SubjectJDBC {
     }
 
 
-    List<Subject> getAllSubjects(Connection conn){
+    List<Subject> getAllSubjects(){
 
         List<Subject> devices = new ArrayList<>();
+        Connection conn = new CIP_GET_CONNECTION().getConn();
 
         PreparedStatement pstmt = null;
         ResultSet rs;
@@ -140,7 +140,9 @@ public class SubjectJDBC {
     }
 
 
-    public void insertSubject(Connection conn, Subject subject){
+    public void insertSubject(Subject subject){
+
+        Connection conn = new CIP_GET_CONNECTION().getConn();
 
         PreparedStatement pstmt = null;
         ResultSet rs;
