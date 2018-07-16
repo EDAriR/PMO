@@ -39,7 +39,7 @@ public class Role {
 	private String meta;
 	
 	@Column(name = "permission_ids", nullable = false)
-	@Type(type = "com.syntrontech.auth.model.common.StringArrayType")
+//	@Type(type = "com.syntrontech.auth.model.common.StringArrayType")
 	private String[] permissionIds;
 	
 	@Column(name = "createtime", nullable = false)

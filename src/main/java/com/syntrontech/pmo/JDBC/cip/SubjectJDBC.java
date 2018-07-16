@@ -19,15 +19,13 @@ public class SubjectJDBC {
             "(sequence, id, name, gender, birthday, home_phone, address, ethnicity, " +
             "personal_history, family_history, smoke, drink, chewing_areca, user_id, unit_id, unit_name," +
             "tenant_id, createtime, createby, updatetime, updateby, status) "
-            + "VALUES (nextval('subject_sequence_seq'), ?, ?, ?, ?, ?, ?," +
-            "?, ?, ?, ?, ?, ?, ?, ?," +
-            "?, ?, ?, ?, ?, ?);";
+            + "VALUES (nextval('subject_sequence_seq'), ?, ?, ?, ?, ?, ?, ?," +
+            " ?, ?, ?, ?, ?, ?, ?, ?," +
+            " ?, ?, ?, ?, ?, ?);";
 
 //    sequence, id, name, gender, birthday, home_phone, address, ethnicity
 //    personal_history, family_history, smoke, drink, chewing_areca, user_id, unit_id, unit_name
 //    tenant_id, createtime, createby, updatetime, updateby, status
-
-
 
 
     public static void main(String[] args) {
@@ -43,13 +41,14 @@ public class SubjectJDBC {
         System.out.println("ss size:" + ss.size());
 
         Subject subject = s.getSubject();
+        s.insertSubject(subject);
 
         System.out.println("unit_id");
         System.out.println("unit_id");
         System.out.println("unit_id");
         System.out.println("unit_id");
-        System.out.println("unit_id");
 
+//        ss.forEach(sb -> System.out.println(sb.getUnitId()));
 //        s.insertSubject(conn, subject);
 
     }
@@ -73,7 +72,7 @@ public class SubjectJDBC {
                     Subject subject = new Subject();
 
 //                    sequence, id, name, gender
-                    subject.setSequence(rs.getLong(""));
+                    subject.setSequence(rs.getLong("sequence"));
                     subject.setId(rs.getString("id"));
                     subject.setName(rs.getString("name"));
                     GenderType gender = rs.getString("gender") == null ? GenderType.valueOf(rs.getString("gender")) : null;
@@ -150,11 +149,13 @@ public class SubjectJDBC {
         try {
             pstmt = conn.prepareStatement(INSERT_STMT);
 
+            System.out.println(pstmt);
+
             //    sequence, id, name, gender, birthday,
             pstmt.setString(1, subject.getId());
             pstmt.setString(2,subject.getName());
             pstmt.setString(3, subject.getGender().toString());
-            pstmt.setDate(4,new java.sql.Date(subject.getBirthday().getTime()));
+            pstmt.setDate(4, new java.sql.Date(subject.getBirthday().getTime()));
 
             //    home_phone, address, ethnicity
             pstmt.setString(5, subject.getHomePhone());
@@ -178,13 +179,19 @@ public class SubjectJDBC {
 
             //    tenant_id, createtime, createby, updatetime, updateby, status
             pstmt.setString(16, subject.getTenantId());
+
+            System.out.println("subject.getCreateTime() ++" + subject.getCreateTime());
+            System.out.println("new java.sql.Date(subject.getCreateTime().getTime()) ++" + new java.sql.Date(subject.getCreateTime().getTime()));
             pstmt.setDate(17, new java.sql.Date(subject.getCreateTime().getTime()));
             pstmt.setString(18, subject.getCreateBy());
             pstmt.setDate(19, new java.sql.Date(subject.getUpdateTime().getTime()));
             pstmt.setString(20, subject.getUpdateBy());
             pstmt.setString(21, subject.getStatus().toString());
 
+            System.out.println(pstmt);
+
             pstmt.executeUpdate();
+            System.out.println(pstmt);
             System.out.println("create successful ==> " + subject);
 
         } catch (SQLException e) {
@@ -196,16 +203,13 @@ public class SubjectJDBC {
 
         Subject subject = new Subject();
 
-
-
-
 //        sequence, id, name, gender
         subject.setId("SubjectJDBCTest");
         subject.setName("SubjectJDBCTest");
         subject.setGender(GenderType.FEMALE);
 
 //        birthday, home_phone, address, ethnicity
-        subject.setBirthday(new Date(666));
+        subject.setBirthday(new Date(66666666));
         subject.setHomePhone("home_phone");
         subject.setAddress("address");
 

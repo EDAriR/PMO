@@ -675,9 +675,9 @@ public class SystemUser{
 				+ ", withDiabetesMellitus=" + withDiabetesMellitus 
 				+ ", alertNotifierName=" + alertNotifierName 
 				
-				+ ", ethnicity=" + ethnicity 
-				+ ", withHeartAttack=" + withHeartAttack 
-				+ ", withBrainAttack=" + withBrainAttack 
+				+ ", ethnicity=" + ethnicity
+				+ ", withHeartAttack=" + withHeartAttack
+				+ ", withBrainAttack=" + withBrainAttack
 				+ ", familyWithHeartAttack=" + familyWithHeartAttack 
 				+ ", familyWithBrainAttack=" + familyWithBrainAttack 
 				+ ", familyWithHighBloodPressure=" + familyWithHighBloodPressure 

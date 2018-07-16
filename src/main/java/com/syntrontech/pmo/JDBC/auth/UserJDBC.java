@@ -40,10 +40,11 @@ public class UserJDBC {
         System.out.println("end_time:" + end_time.toInstant());
         System.out.println("ss size:" + ss.size());
 
+        System.out.println(ss);
 //        s.insertUser(s.getTestUser());
 
-        User user = s.getUserById("xxx");
-        System.out.println(user.getId() == null);
+//        User user = s.getUserById("xxx");
+//        System.out.println(user.getId() == null);
     }
 
     public User getUserById(String id) {
@@ -98,7 +99,7 @@ public class UserJDBC {
                     user.setUpdateTime(rs.getDate("updatetime"));
                     user.setUpdateBy(rs.getString("updateby"));
 
-                    ModelUserStatus modelUserStatus = rs.getString("status") != null ? ModelUserStatus.valueOf(rs.getString("source")) : null;
+                    ModelUserStatus modelUserStatus = rs.getString("status") != null ? ModelUserStatus.valueOf(rs.getString("status")) : null;
                     user.setStatus(modelUserStatus);
                 }
             }
@@ -251,7 +252,7 @@ public class UserJDBC {
 
                     Source source = rs.getString("source") != null ? Source.valueOf(rs.getString("source")) : null;
                     user.setSource(source);
-                    user.setMeta(rs.getString(""));
+                    user.setMeta(rs.getString("meta"));
 
                     // unit_ids, role_ids, emails, mobilephones, cards, permission_ids
 
@@ -280,7 +281,7 @@ public class UserJDBC {
                     user.setUpdateTime(rs.getDate("updatetime"));
                     user.setUpdateBy(rs.getString("updateby"));
 
-                    ModelUserStatus modelUserStatus = rs.getString("status") != null ? ModelUserStatus.valueOf(rs.getString("source")) : null;
+                    ModelUserStatus modelUserStatus = rs.getString("status") != null ? ModelUserStatus.valueOf(rs.getString("status")) : null;
                     user.setStatus(modelUserStatus);
                     users.add(user);
                 }

@@ -36,7 +36,7 @@ public class UnitJDBC {
 //        System.out.println("end_time:" + end_time.toInstant());
 //        System.out.println("ss size:" + ss.size());
 
-//        s.insertUnit(s.getTestUnit());
+        s.insertUnit(s.getTestUnit());
 
         Unit unit = s.getUnitById("xxx");
         System.out.println(unit.getId() == null);
@@ -141,7 +141,7 @@ public class UnitJDBC {
 
         Unit unit = new Unit();
 
-        unit.setId("JDBCTest");
+        unit.setId("JDBCTest66");
         unit.setName("JDBCTest");
         unit.setParentId("1001401");
         unit.setParentName("台東市");

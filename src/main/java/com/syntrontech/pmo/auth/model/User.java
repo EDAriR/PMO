@@ -222,4 +222,26 @@ public class User {
 	public TO<User> convertToTO(TO<User> to){
 		return to.convertFrom(this);
 	}
+
+	@Override
+	public String toString() {
+
+		return "sequence=" + sequence +
+		", id=" + id +
+		", name=" + name +
+		", tenantId=" + tenantId +
+		", source=" + source +
+		", meta=" + meta +
+		", unitIds=" + unitIds +
+		", roleIds=" + roleIds +
+		", emails=" + emails +
+		", mobilePhones=" + mobilePhones +
+		", cards=" + cards +
+		", permissionIds=" + permissionIds +
+		", createTime=" + createTime +
+		", createBy=" + createBy +
+		", updateTime=" + updateTime +
+		", updateBy=" + updateBy +
+		", status=" + status.toString();
+	}
 }
