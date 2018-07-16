@@ -41,7 +41,7 @@ public class UserJDBC {
         System.out.println("ss size:" + ss.size());
 
         System.out.println(ss);
-//        s.insertUser(s.getTestUser());
+        s.insertUser(s.getTestUser());
 
 //        User user = s.getUserById("xxx");
 //        System.out.println(user.getId() == null);

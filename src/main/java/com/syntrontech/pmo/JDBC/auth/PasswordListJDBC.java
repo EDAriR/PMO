@@ -1,10 +1,8 @@
 package com.syntrontech.pmo.JDBC.auth;
 
+import com.syntrontech.pmo.auth.model.PasswordList;
 import com.syntrontech.pmo.auth.model.Role;
-import com.syntrontech.pmo.auth.model.User;
 import com.syntrontech.pmo.model.common.ModelStatus;
-import com.syntrontech.pmo.model.common.ModelUserStatus;
-import com.syntrontech.pmo.model.common.Source;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -13,7 +11,7 @@ import java.sql.SQLException;
 import java.util.Date;
 import java.util.List;
 
-public class RoleJDBC {
+public class PasswordListJDBC {
 
     private static final String GET_ALL_STMT = "SELECT * FROM users WHERE tenant_id='DEFAULT_TENANT' ORDER BY sequence;";
     private static final String INSERT_STMT = "INSERT INTO users " +
@@ -30,32 +28,31 @@ public class RoleJDBC {
 
     public static void main(String[] args) {
 
-        RoleJDBC s = new RoleJDBC();
+        PasswordListJDBC s = new PasswordListJDBC();
 
         Date star_time = new Date(new java.util.Date().getTime());
-//        List<Role> ss = s.getAllRoles();
+//        List<PasswordList> ss = s.getAllPasswordLists();
         Date end_time = new Date(new java.util.Date().getTime());
 
-//        System.out.println("star_time:" + star_time.toInstant());
-//        System.out.println("end_time:" + end_time.toInstant());
+        System.out.println("star_time:" + star_time.toInstant());
+        System.out.println("end_time:" + end_time.toInstant());
 //        System.out.println("ss size:" + ss.size());
 
-//        System.out.println(ss);
-//        s.insertUser(s.getTestUser());
+//        s.insertPasswordList(s.getTestPasswordList());
 
-        Role role = s.getRoleById("DEFAULT_TENANT_ADMIN");
+        PasswordList passwordList = s.getPasswordListById("DEFAULT_TENANT_ADMIN");
 
-        System.out.println(role);
+        System.out.println(passwordList);
     }
 
-    public Role getRoleById(String id) {
+    public PasswordList getPasswordListById(String id) {
 
 //        DEFAULT_TENANT_ADMIN
 //        DEFAULT_USER
         Connection conn = new Auth_GET_CONNECTION().getConn();
         PreparedStatement pstmt = null;
 
-        Role role = new Role();
+        PasswordList passwordList = new PasswordList();
 
         try {
             pstmt = conn.prepareStatement(GET_ONE);
@@ -68,22 +65,13 @@ public class RoleJDBC {
             if (rs != null) {
                 while (rs.next()) {
                     // sequence, id, name, tenant_id, source, meta
-                    role.setId(rs.getString("id"));
-                    role.setName(rs.getString("name"));
-                    role.setTenantId(rs.getString("tenant_id"));
+                    passwordList.setSequence(rs.getLong("sequence"));
+                    passwordList.setPassword(rs.getString("password"));
+                    passwordList.setUserId(rs.getString("user_id"));
+                    passwordList.setAccount(rs.getString("account"));
 
+                    passwordList.setPasswordUpdateTime(rs.getDate("password_updatetime"));
 
-                    String[] permissionIds = (String[])rs.getArray("permission_ids").getArray();
-                    role.setPermissionIds(permissionIds);
-
-                    // createtime, createby, updatetime, updateby, status
-                    role.setCreateTime(rs.getDate("createtime"));
-                    role.setCreateBy(rs.getString("createby"));
-                    role.setUpdateTime(rs.getDate("updatetime"));
-                    role.setUpdateBy(rs.getString("updateby"));
-
-                    ModelStatus modelStatus = rs.getString("status") != null ? ModelStatus.valueOf(rs.getString("status")) : null;
-                    role.setStatus(modelStatus);
                 }
             }
 
@@ -102,6 +90,6 @@ public class RoleJDBC {
 
         }
 
-        return role;
+        return passwordList;
     }
 }

@@ -1,23 +1,31 @@
 package com.syntrontech.pmo.JDBC;
 
+import com.syntrontech.pmo.JDBC.auth.RoleJDBC;
 import com.syntrontech.pmo.JDBC.auth.UnitJDBC;
+import com.syntrontech.pmo.JDBC.auth.UserJDBC;
 import com.syntrontech.pmo.JDBC.cip.CIP_GET_CONNECTION;
 import com.syntrontech.pmo.JDBC.cip.DeviceJDBC;
+import com.syntrontech.pmo.JDBC.cip.SubjectJDBC;
 import com.syntrontech.pmo.JDBC.cip.UnitMetaJDBC;
 import com.syntrontech.pmo.JDBC.syncare1JDBC.DeviceSyncare1JDBC;
 import com.syntrontech.pmo.JDBC.syncare1JDBC.LocationJDBC;
+import com.syntrontech.pmo.JDBC.syncare1JDBC.SystemUserJDBC;
+import com.syntrontech.pmo.JDBC.syncare1JDBC.UserRoleJDBC;
+import com.syntrontech.pmo.auth.model.Role;
 import com.syntrontech.pmo.auth.model.Unit;
+import com.syntrontech.pmo.auth.model.User;
+import com.syntrontech.pmo.cip.model.Subject;
 import com.syntrontech.pmo.cip.model.UnitMeta;
-import com.syntrontech.pmo.model.common.ModelMgmtStatus;
-import com.syntrontech.pmo.model.common.ModelStatus;
+import com.syntrontech.pmo.model.common.*;
 import com.syntrontech.pmo.syncare1.model.Device;
 import com.syntrontech.pmo.syncare1.model.Location;
+import com.syntrontech.pmo.syncare1.model.SystemUser;
+import com.syntrontech.pmo.syncare1.model.common.Sex;
+import com.syntrontech.pmo.syncare1.model.common.YN;
 
 import java.sql.Connection;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class Sync {
 
@@ -28,8 +36,168 @@ public class Sync {
         // TODO syncare_questionnair_answer
         // TODO blood_pressure_record_report
         // TODO abnormal_blood_pressure_record
+
 //        sync.syncLocationToUnit();
 //        sync.syncDevice();
+    }
+
+    public void syncSystemUserToUserAndSubject(){
+
+        List<String> userIds = new UserRoleJDBC().getAllUserRoles();
+
+        SystemUserJDBC sujdbc = new SystemUserJDBC();
+        SubjectJDBC subjectJDBC = new SubjectJDBC();
+        UserJDBC userJDBC = new UserJDBC();
+
+//        DEFAULT_TENANT_ADMIN
+//        TTABO
+        Role newrole = new RoleJDBC().getRoleById("DEFAULT_TENANT_ADMIN");
+
+        userIds.stream()
+                .map(id -> sujdbc.getSystemUserById(id))
+                .forEach(su -> {
+                    // TODO subjectJDBC 驗證是否存在
+                    userJDBC.insertUser(syncSystemUserToUser(su, newrole));
+                    subjectJDBC.insertSubject(syncSystemUserToSubject(su));
+
+                });
+
+
+    }
+
+    private User syncSystemUserToUser(SystemUser su, Role newrole) {
+
+        User user = new User();
+        // sequence, id, name, tenant_id, source, meta
+
+        // TODO 密碼
+
+        user.setId(su.getUserAccount());
+        user.setName(su.getUserDisplayName());
+        user.setTenantId("TTABO");
+        user.setSource(Source.CREATE);
+
+        // TODO 預設台東其他? null?
+        // unit_ids, role_ids, emails, mobilephones, cards, permission_ids
+        user.setUnitIds(null);
+
+        String[] roleIds = {newrole.getId()};
+        user.setRoleIds(roleIds);
+
+        String[] mails = {su.getUserEmail()};
+        user.setEmails(mails);
+
+        String[] mobilePhones = {su.getUserPhone()};
+        user.setMobilePhones(mobilePhones);
+
+//        感應卡功能取消 不同步  String[] cards = {"123456"};
+//        user.setCards(cards);
+
+        user.setPermissionIds(newrole.getPermissionIds());
+
+        // createtime, createby, updatetime, updateby, status
+        user.setCreateTime(su.getCreateTime());
+        user.setCreateBy("TTABO");
+        user.setUpdateTime(su.getCreateTime());
+        user.setUpdateBy("TTABO");
+        user.setStatus(ModelUserStatus.ENABLED);
+        return user;
+    }
+
+    private Subject syncSystemUserToSubject(SystemUser su) {
+
+        Subject subject = new Subject();
+
+//        sequence, id, name, gender
+        subject.setId(su.getUserAccount());
+        subject.setName(su.getUserDisplayName());
+
+        GenderType genderType;
+        if (su.getSex() == Sex.male)
+            genderType = GenderType.MALE;
+        else
+            genderType = GenderType.FEMALE;
+        subject.setGender(genderType);
+
+//        birthday, home_phone, address, ethnicity
+        subject.setBirthday(su.getUserBirthday());
+        subject.setHomePhone(su.getUserPhone());
+        subject.setAddress(su.getUserAddress());
+
+//        種族註記，0：未填寫，1：漢族，2：客家，3：原住民，4：外籍
+
+        int suEthnicity = su.getEthnicity();
+        EthnicityType ethnicityType;
+
+        switch (suEthnicity){
+            case 1:
+                ethnicityType = EthnicityType.HAN;
+                break;
+            case 2:
+                ethnicityType = EthnicityType.HAKKA;
+                break;
+            case 3:
+                ethnicityType = EthnicityType.FOREIGN;
+                break;
+            default:
+                ethnicityType = EthnicityType.???;
+        }
+
+        subject.setEthnicity(ethnicityType);
+
+//        personal_history, family_history, smoke, drink
+
+        ArrayList<PersonalHistoryType>  personalHistoryTypes = new ArrayList();
+        if(su.getWithHighBloodPressure() == YN.Y)
+            personalHistoryTypes.add(PersonalHistoryType.HYPERTENSION);
+        YN brainAttack = su.getWithBrainAttack();
+        if(su.getWithBrainAttack() == YN.Y)
+            personalHistoryTypes.add(PersonalHistoryType.STROKE);
+        YN diabetesMellitus = su.getWithDiabetesMellitus();
+        if(su.getWithDiabetesMellitus() == YN.Y)
+            personalHistoryTypes.add(PersonalHistoryType.DIABETES_MELLITUS);
+        if(su.getWithHeartAttack() == YN.Y)
+            personalHistoryTypes.add(PersonalHistoryType.HEART_DISEASE);
+        subject.setPersonalHistory(personalHistoryTypes);
+
+
+        ArrayList<FamilyHistoryType>  familyHistoryTypes = new ArrayList();
+        if(su.getFamilyWithBrainAttack() == YN.Y)
+            familyHistoryTypes.add(FamilyHistoryType.STROKE);
+        if(su.getFamilyWithDiabetesMellitus() == YN.Y)
+            familyHistoryTypes.add(FamilyHistoryType.DIABETES_MELLITUS);
+        if(su.getFamilyWithHeartAttack() == YN.Y)
+            familyHistoryTypes.add(FamilyHistoryType.HEART_DISEASE);
+        if(su.getFamilyWithHighBloodPressure() == YN.Y)
+            familyHistoryTypes.add(FamilyHistoryType.HYPERTENSION);
+        subject.setFamilyHistory(familyHistoryTypes);
+
+        // TODO
+        su.getFrequencyOfSmoking()
+        subject.setSmoke(SmokeType.SOCIALITY);
+        su.getFrequencyOfDrinking()
+        subject.setDrink(DrinkType.OFTEN);
+
+//        chewing_areca, user_id, unit_id, unit_name
+        su.getFrequencyOfChewingBetelNut()
+        subject.setChewingAreca(ChewingArecaType.OFTEN);
+
+
+        subject.setUserId(su.getUserAccount());
+        subject.setUnitId(???);
+        subject.setUnitName("unit_name");
+
+//        tenant_id, createtime, createby, updatetime
+        subject.setTenantId("TTABO");
+
+        subject.setCreateTime(su.getCreateTime());
+        subject.setCreateBy("TTABO");
+        subject.setUpdateTime(su.getCreateTime());
+
+//                    updateby, status
+        subject.setUpdateBy("TTABO");
+        subject.setStatus(ModelStatus.ENABLED);
+        return subject;
     }
 
     public void syncLocationToUnit(){
