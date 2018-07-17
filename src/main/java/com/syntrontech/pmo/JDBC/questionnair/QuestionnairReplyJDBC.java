@@ -1,25 +1,12 @@
 package com.syntrontech.pmo.JDBC.questionnair;
 
-import com.syntrontech.pmo.JDBC.cip.CIP_GET_CONNECTION;
-import com.syntrontech.pmo.JDBC.cip.UnitMetaJDBC;
-import com.syntrontech.pmo.cip.model.UnitMeta;
-import com.syntrontech.pmo.model.common.ModelMgmtStatus;
-import com.syntrontech.pmo.questionnair.model.QuestionnairReply;
-import com.syntrontech.pmo.questionnair.model.common.UnmodifiableDataStatus;
-import org.hibernate.annotations.Type;
+import com.syntrontech.pmo.questionnair.QuestionnairReply;
+import com.syntrontech.pmo.model.common.UnmodifiableDataStatus;
 
-import javax.persistence.Column;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.Lob;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-
-import static java.util.stream.Collectors.toSet;
 
 public class QuestionnairReplyJDBC {
 

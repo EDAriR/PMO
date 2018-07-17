@@ -7,6 +7,7 @@ import com.syntrontech.pmo.JDBC.cip.CIP_GET_CONNECTION;
 import com.syntrontech.pmo.JDBC.cip.DeviceJDBC;
 import com.syntrontech.pmo.JDBC.cip.SubjectJDBC;
 import com.syntrontech.pmo.JDBC.cip.UnitMetaJDBC;
+import com.syntrontech.pmo.JDBC.measurement.AbnormalBloodPressureJDBC;
 import com.syntrontech.pmo.JDBC.syncare1JDBC.DeviceSyncare1JDBC;
 import com.syntrontech.pmo.JDBC.syncare1JDBC.LocationJDBC;
 import com.syntrontech.pmo.JDBC.syncare1JDBC.SystemUserJDBC;
@@ -48,6 +49,7 @@ public class Sync {
         SystemUserJDBC systemUserJDBC = new SystemUserJDBC();
         SubjectJDBC subjectJDBC = new SubjectJDBC();
         UserJDBC userJDBC = new UserJDBC();
+        AbnormalBloodPressureJDBC abnormalBloodPressureJDBC = new AbnormalBloodPressureJDBC();
 
 //        DEFAULT_TENANT_ADMIN
 //        TTABO
@@ -61,6 +63,7 @@ public class Sync {
                     subjectJDBC.insertSubject(syncSystemUserToSubject(su));
                     // TODO 緊急聯絡人
                     // TODO 異常
+//                    abnormalBloodPressureJDBC
 
                 });
     }
@@ -124,7 +127,7 @@ public class Sync {
         subject.setAddress(su.getUserAddress());
 
 //        種族註記，0：未填寫，1：漢族，2：客家，3：原住民，4：外籍
-
+        // 0 預設為HAN
         int suEthnicity = su.getEthnicity();
         EthnicityType ethnicityType;
 
