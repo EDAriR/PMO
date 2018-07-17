@@ -14,7 +14,7 @@ import java.util.List;
 
 public class UserRoleJDBC {
 
-    private static final String GET_ALL_STMT = "SELECT * FROM user_role  WHERE role_id = '1' AND sync_status = 'N' ORDER BY sequence;";
+    private static final String GET_ALL_STMT = "SELECT * FROM user_role  WHERE role_id = '1' AND sync_status = 'N';";
 
     public static void main(String[] args) throws SQLException {
 

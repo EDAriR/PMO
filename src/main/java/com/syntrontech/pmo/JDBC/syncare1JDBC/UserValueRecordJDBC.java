@@ -49,8 +49,8 @@ public class UserValueRecordJDBC {
                     userValueRecord.setColumnType(rs.getString("COLUMN_TYPE"));
                     userValueRecord.setLocationId(rs.getString("location_id"));
                     userValueRecord.setLocationName(rs.getString("location_name"));
-                    userValueRecord.setRecordDate(rs.getDate("RECORD_DATE"));
-                    userValueRecord.setUpdateDate(rs.getDate("UPDATE_DATE"));
+                    userValueRecord.setRecordDate(rs.getTimestamp("RECORD_DATE"));
+                    userValueRecord.setUpdateDate(rs.getTimestamp("UPDATE_DATE"));
 
                     System.out.println("Device >>" + rs.getString("serial_no") + "<<");
 
@@ -92,6 +92,5 @@ System.out.println("MySQL操作错误");
         }
         return userValueRecordlist;
     }
-
 
 }

@@ -96,7 +96,7 @@ public class UserJDBC {
                     // createtime, createby, updatetime, updateby, status
                     user.setCreateTime(rs.getDate("createtime"));
                     user.setCreateBy(rs.getString("createby"));
-                    user.setUpdateTime(rs.getDate("updatetime"));
+                    user.setUpdateTime(rs.getTime("updatetime"));
                     user.setUpdateBy(rs.getString("updateby"));
 
                     ModelUserStatus modelUserStatus = rs.getString("status") != null ? ModelUserStatus.valueOf(rs.getString("status")) : null;
@@ -163,9 +163,9 @@ public class UserJDBC {
             Array permission_ids = conn.createArrayOf("varchar", user.getPermissionIds());
             pstmt.setArray(11, permission_ids);
 
-            pstmt.setDate(12, new java.sql.Date(user.getCreateTime().getTime()));
+            pstmt.setTimestamp(12, new java.sql.Timestamp(user.getCreateTime().getTime()));
             pstmt.setString(13, user.getCreateBy());
-            pstmt.setDate(14, new java.sql.Date(user.getUpdateTime().getTime()));
+            pstmt.setTimestamp(14, new java.sql.Timestamp(user.getUpdateTime().getTime()));
             pstmt.setString(15, user.getUpdateBy());
             pstmt.setString(16, user.getStatus().toString());
 
@@ -276,9 +276,9 @@ public class UserJDBC {
                     user.setPermissionIds(permissionIds);
 
                     // createtime, createby, updatetime, updateby, status
-                    user.setCreateTime(rs.getDate("createtime"));
+                    user.setCreateTime(rs.getTimestamp("createtime"));
                     user.setCreateBy(rs.getString("createby"));
-                    user.setUpdateTime(rs.getDate("updatetime"));
+                    user.setUpdateTime(rs.getTimestamp("updatetime"));
                     user.setUpdateBy(rs.getString("updateby"));
 
                     ModelUserStatus modelUserStatus = rs.getString("status") != null ? ModelUserStatus.valueOf(rs.getString("status")) : null;

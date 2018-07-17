@@ -105,10 +105,10 @@ public class UnitJDBC {
             pstmt.setString(5, unit.getTenantId());
             // meta, createtime, createby,
             pstmt.setString(6, unit.getMeta());
-            pstmt.setDate(7, new java.sql.Date(unit.getCreateTime().getTime()));
+            pstmt.setTimestamp(7, new java.sql.Timestamp(unit.getCreateTime().getTime()));
             pstmt.setString(8, unit.getCreateBy());
             // updatetime, updateby, status
-            pstmt.setDate(9, new java.sql.Date(unit.getUpdateTime().getTime()));
+            pstmt.setTimestamp(9, new java.sql.Timestamp(unit.getUpdateTime().getTime()));
             pstmt.setString(10, unit.getUpdateBy());
             pstmt.setString(11, unit.getStatus().toString());
 
@@ -182,7 +182,7 @@ public class UnitJDBC {
                     unit.setMeta(rs.getString("meta"));
                     unit.setCreateTime(rs.getDate("createtime"));
                     unit.setCreateBy(rs.getString("createby"));
-                    unit.setUpdateTime(rs.getDate("updatetime"));
+                    unit.setUpdateTime(rs.getTimestamp("updatetime"));
                     unit.setUpdateBy(rs.getString("updateby"));
                     unit.setStatus(ModelStatus.valueOf(rs.getString("status")));
 

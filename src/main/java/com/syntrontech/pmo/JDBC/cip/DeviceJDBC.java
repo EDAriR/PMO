@@ -67,10 +67,10 @@ public class DeviceJDBC {
             pstmt.setString(6, device.getUnitName());
             pstmt.setString(7, device.getTenantId());
             pstmt.setString(8, device.getStatus().toString());
-            pstmt.setDate(9, new Date(device.getCreateTime().getTime()));
+            pstmt.setTimestamp(9, new Timestamp(device.getCreateTime().getTime()));
             pstmt.setString(10, device.getCreateBy());
 
-            pstmt.setDate(11, new Date(device.getUpdateTime().getTime()));
+            pstmt.setTimestamp(11, new Timestamp(device.getUpdateTime().getTime()));
             pstmt.setString(12, device.getUpdateBy());
 
             System.out.println(pstmt);
@@ -167,14 +167,14 @@ public class DeviceJDBC {
             pstmt.setString(8, device.get("status"));
             java.util.Date date = new java.util.Date();
             System.out.println("date :" + date);
-            pstmt.setDate(9, new Date(date.getTime()));
+            pstmt.setTimestamp(9, new Timestamp(date.getTime()));
             pstmt.setString(10, device.get("createby"));
 
             java.util.Date utilDate=new java.util.Date();
-            java.sql.Date sqlDate=new java.sql.Date(utilDate.getTime());
+            java.sql.Timestamp sqlDate=new java.sql.Timestamp(utilDate.getTime());
 
             System.out.println(sqlDate);
-            pstmt.setDate(11, sqlDate);
+            pstmt.setTimestamp(11, sqlDate);
             pstmt.setString(12, device.get("updateby"));
 
             System.out.println(pstmt);

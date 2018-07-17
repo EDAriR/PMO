@@ -79,7 +79,7 @@ public class SubjectJDBC {
                     subject.setGender(gender);
 
 //                    birthday, home_phone, address, ethnicity
-                    subject.setBirthday(rs.getDate("birthday"));
+                    subject.setBirthday(rs.getTimestamp("birthday"));
                     subject.setHomePhone(rs.getString("home_phone"));
                     subject.setAddress(rs.getString("address"));
 
@@ -118,9 +118,9 @@ public class SubjectJDBC {
 
 //                    tenant_id, createtime, createby, updatetime
                     subject.setTenantId(rs.getString("tenant_id"));
-                    subject.setCreateTime(rs.getDate("createtime"));
+                    subject.setCreateTime(rs.getTimestamp("createtime"));
                     subject.setCreateBy(rs.getString("createby"));
-                    subject.setUpdateTime(rs.getDate("updatetime"));
+                    subject.setUpdateTime(rs.getTimestamp("updatetime"));
 
 //                    updateby, status
                     subject.setUpdateBy(rs.getString("updateby"));
@@ -155,7 +155,7 @@ public class SubjectJDBC {
             pstmt.setString(1, subject.getId());
             pstmt.setString(2,subject.getName());
             pstmt.setString(3, subject.getGender().toString());
-            pstmt.setDate(4, new java.sql.Date(subject.getBirthday().getTime()));
+            pstmt.setTimestamp(4, new java.sql.Timestamp(subject.getBirthday().getTime()));
 
             //    home_phone, address, ethnicity
             pstmt.setString(5, subject.getHomePhone());
@@ -182,9 +182,9 @@ public class SubjectJDBC {
 
             System.out.println("subject.getCreateTime() ++" + subject.getCreateTime());
             System.out.println("new java.sql.Date(subject.getCreateTime().getTime()) ++" + new java.sql.Date(subject.getCreateTime().getTime()));
-            pstmt.setDate(17, new java.sql.Date(subject.getCreateTime().getTime()));
+            pstmt.setTimestamp(17, new java.sql.Timestamp(subject.getCreateTime().getTime()));
             pstmt.setString(18, subject.getCreateBy());
-            pstmt.setDate(19, new java.sql.Date(subject.getUpdateTime().getTime()));
+            pstmt.setTimestamp(19, new java.sql.Timestamp(subject.getUpdateTime().getTime()));
             pstmt.setString(20, subject.getUpdateBy());
             pstmt.setString(21, subject.getStatus().toString());
 

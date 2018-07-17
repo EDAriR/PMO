@@ -22,8 +22,7 @@ public class PasswordListJDBC {
             "?, ?, ?, ?, ?, ?," +
             "?, ?, ?, ?, ?);";
 
-    private static final String GET_ONE = "SELECT * FROM role WHERE id=? and tenant_id='DEFAULT_TENANT'" +
-            " AND status='ENABLED';";
+    private static final String GET_ONE = "SELECT * FROM password_list WHERE user_id=?";
 
 
     public static void main(String[] args) {
@@ -34,13 +33,13 @@ public class PasswordListJDBC {
 //        List<PasswordList> ss = s.getAllPasswordLists();
         Date end_time = new Date(new java.util.Date().getTime());
 
-        System.out.println("star_time:" + star_time.toInstant());
-        System.out.println("end_time:" + end_time.toInstant());
+//        System.out.println("star_time:" + star_time.toInstant());
+//        System.out.println("end_time:" + end_time.toInstant());
 //        System.out.println("ss size:" + ss.size());
 
 //        s.insertPasswordList(s.getTestPasswordList());
 
-        PasswordList passwordList = s.getPasswordListById("DEFAULT_TENANT_ADMIN");
+        PasswordList passwordList = s.getPasswordListById("systemAdmin");
 
         System.out.println(passwordList);
     }
@@ -70,7 +69,7 @@ public class PasswordListJDBC {
                     passwordList.setUserId(rs.getString("user_id"));
                     passwordList.setAccount(rs.getString("account"));
 
-                    passwordList.setPasswordUpdateTime(rs.getDate("password_updatetime"));
+                    passwordList.setPasswordUpdateTime(rs.getTimestamp("password_updatetime"));
 
                 }
             }

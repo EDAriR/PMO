@@ -137,9 +137,9 @@ public class UnitMetaJDBC {
 
             // comment, createtime, createby, updatetime, updateby
             pstmt.setString(12, unitMeta.getComment());
-            pstmt.setDate(13, new java.sql.Date(unitMeta.getCreateTime().getTime()));
+            pstmt.setTimestamp(13, new java.sql.Timestamp(unitMeta.getCreateTime().getTime()));
             pstmt.setString(14, unitMeta.getCreateBy());
-            pstmt.setDate(15, new java.sql.Date(unitMeta.getUpdateTime().getTime()));
+            pstmt.setTimestamp(15, new java.sql.Timestamp(unitMeta.getUpdateTime().getTime()));
             pstmt.setString(16, unitMeta.getUpdateBy());
 
             System.out.println(pstmt);
@@ -227,9 +227,9 @@ public class UnitMetaJDBC {
                     unitMeta.setHomePhone(rs.getString("home_phone"));
                     unitMeta.setMobilePhone(rs.getString("mobile_phone"));
                     // comment, createtime, createby, updatetime, updateby
-                    unitMeta.setCreateTime(rs.getDate("createtime"));
+                    unitMeta.setCreateTime(rs.getTimestamp("createtime"));
                     unitMeta.setCreateBy(rs.getString("createby"));
-                    unitMeta.setUpdateTime(rs.getDate("updatetime"));
+                    unitMeta.setUpdateTime(rs.getTimestamp("updatetime"));
                     unitMeta.setUpdateBy(rs.getString("updateby"));
 
 //                    System.out.println("unit:" + unit);

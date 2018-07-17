@@ -77,9 +77,8 @@ public class Sync {
         user.setTenantId("TTABO");
         user.setSource(Source.CREATE);
 
-        // TODO 預設台東其他? null?
         // unit_ids, role_ids, emails, mobilephones, cards, permission_ids
-        user.setUnitIds(null);
+//        user.setUnitIds(null);
 
         String[] roleIds = {newrole.getId()};
         user.setRoleIds(roleIds);
@@ -140,7 +139,8 @@ public class Sync {
                 ethnicityType = EthnicityType.FOREIGN;
                 break;
             default:
-                ethnicityType = EthnicityType.???;
+                // TODO 等回覆
+                ethnicityType = EthnicityType.HAN;
         }
 
         subject.setEthnicity(ethnicityType);
@@ -173,18 +173,64 @@ public class Sync {
         subject.setFamilyHistory(familyHistoryTypes);
 
         // TODO
-        su.getFrequencyOfSmoking()
-        subject.setSmoke(SmokeType.SOCIALITY);
-        su.getFrequencyOfDrinking()
-        subject.setDrink(DrinkType.OFTEN);
+        SmokeType smokeType;
+        switch (su.getFrequencyOfSmoking()){
+            case 1:
+                smokeType = SmokeType.NONE;
+                break;
+            case 2:
+                smokeType = SmokeType.SOCIALITY;
+                break;
+            case 3:
+                smokeType = SmokeType.OFTEN;
+                break;
+            case 4:
+                smokeType = SmokeType.ALWAYS;
+                break;
+            default:
+                smokeType = SmokeType.NONE;
+
+        }
+        subject.setSmoke(smokeType);
+
+        DrinkType drinkType;
+        switch(su.getFrequencyOfDrinking()){
+            case 1:
+                drinkType = DrinkType.NONE;
+                break;
+            case 2:
+                drinkType = DrinkType.SOCIALITY;
+                break;
+            case 3:
+                drinkType = DrinkType.OFTEN;
+            break;
+            default:
+                drinkType = DrinkType.NONE;
+        }
+        subject.setDrink(drinkType);
+
 
 //        chewing_areca, user_id, unit_id, unit_name
-        su.getFrequencyOfChewingBetelNut()
-        subject.setChewingAreca(ChewingArecaType.OFTEN);
+        ChewingArecaType chewingArecaType;
+        switch(su.getFrequencyOfDrinking()) {
+            case 1:
+                chewingArecaType = ChewingArecaType.NONE;
+                break;
+            case 2:
+                chewingArecaType = ChewingArecaType.SOCIALITY;
+                break;
+            case 3:
+                chewingArecaType = ChewingArecaType.OFTEN;
+                break;
+            default:
+                chewingArecaType = ChewingArecaType.NONE;
+        }
+        su.getFrequencyOfChewingBetelNut();
+        subject.setChewingAreca(chewingArecaType);
 
 
         subject.setUserId(su.getUserAccount());
-        subject.setUnitId(???);
+//        subject.setUnitId(???);
         subject.setUnitName("unit_name");
 
 //        tenant_id, createtime, createby, updatetime

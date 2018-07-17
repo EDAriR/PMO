@@ -70,5 +70,14 @@ public class PasswordList {
 	public void setUserId(String userId) {
 		this.userId = userId;
 	}
-	
+
+	@Override
+	public String toString() {
+
+		return "PasswordList={password:[" + password +
+				"], passwordUpdateTime:[" + passwordUpdateTime +
+				"], account:[" + account +
+				"], userId:[" + userId + "]}";
+
+	}
 }

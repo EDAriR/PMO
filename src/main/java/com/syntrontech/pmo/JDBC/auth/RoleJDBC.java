@@ -79,7 +79,7 @@ public class RoleJDBC {
                     // createtime, createby, updatetime, updateby, status
                     role.setCreateTime(rs.getDate("createtime"));
                     role.setCreateBy(rs.getString("createby"));
-                    role.setUpdateTime(rs.getDate("updatetime"));
+                    role.setUpdateTime(rs.getTimestamp("updatetime"));
                     role.setUpdateBy(rs.getString("updateby"));
 
                     ModelStatus modelStatus = rs.getString("status") != null ? ModelStatus.valueOf(rs.getString("status")) : null;
