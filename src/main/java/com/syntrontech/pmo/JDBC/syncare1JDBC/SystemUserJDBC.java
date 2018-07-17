@@ -15,7 +15,7 @@ import java.util.stream.Collectors;
 
 public class SystemUserJDBC {
 
-    private static final String GET_ALL_STMT = "SELECT * FROM system_user WHERE sync_status = 'N' ORDER BY USER_ID;";
+    private static final String GET_ALL_STMT = "SELECT * FROM system_user WHERE recluse='Y' AND sync_status = 'N' ORDER BY USER_ID;";
 
     private static final String GET_ONE = "SELECT * FROM system_user WHERE USER_ID=?";
 
@@ -31,9 +31,9 @@ public class SystemUserJDBC {
         Map<String, List<SystemUser>> aaa = ss.stream()
                 .collect(Collectors.groupingBy(SystemUser::getUserGender));
 
-        SystemUser sss = s.getSystemUserById("4");
+//        SystemUser sss = s.getSystemUserById("4");
 
-        System.out.println(sss);
+//        System.out.println(sss);
     }
 
     public List<SystemUser> getAllSystemUser(){

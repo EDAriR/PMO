@@ -45,7 +45,7 @@ public class Sync {
 
         List<String> userIds = new UserRoleJDBC().getAllUserRoles();
 
-        SystemUserJDBC sujdbc = new SystemUserJDBC();
+        SystemUserJDBC systemUserJDBC = new SystemUserJDBC();
         SubjectJDBC subjectJDBC = new SubjectJDBC();
         UserJDBC userJDBC = new UserJDBC();
 
@@ -54,15 +54,15 @@ public class Sync {
         Role newrole = new RoleJDBC().getRoleById("DEFAULT_TENANT_ADMIN");
 
         userIds.stream()
-                .map(id -> sujdbc.getSystemUserById(id))
+                .map(id -> systemUserJDBC.getSystemUserById(id))
                 .forEach(su -> {
                     // TODO subjectJDBC 驗證是否存在
                     userJDBC.insertUser(syncSystemUserToUser(su, newrole));
                     subjectJDBC.insertSubject(syncSystemUserToSubject(su));
+                    // TODO 緊急聯絡人
+                    // TODO 異常
 
                 });
-
-
     }
 
     private User syncSystemUserToUser(SystemUser su, Role newrole) {
@@ -139,7 +139,6 @@ public class Sync {
                 ethnicityType = EthnicityType.FOREIGN;
                 break;
             default:
-                // TODO 等回覆
                 ethnicityType = EthnicityType.HAN;
         }
 
@@ -172,7 +171,6 @@ public class Sync {
             familyHistoryTypes.add(FamilyHistoryType.HYPERTENSION);
         subject.setFamilyHistory(familyHistoryTypes);
 
-        // TODO
         SmokeType smokeType;
         switch (su.getFrequencyOfSmoking()){
             case 1:
@@ -230,8 +228,9 @@ public class Sync {
 
 
         subject.setUserId(su.getUserAccount());
-//        subject.setUnitId(???);
-        subject.setUnitName("unit_name");
+        // 舊版身上都是 10014
+        subject.setUnitId("100140102310");
+        subject.setUnitName("其他");
 
 //        tenant_id, createtime, createby, updatetime
         subject.setTenantId("TTABO");
