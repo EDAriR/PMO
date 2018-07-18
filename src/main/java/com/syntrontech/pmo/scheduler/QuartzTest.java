@@ -35,7 +35,7 @@ public class QuartzTest {
         //
         Thread.sleep(20L * 1000L);
         // 关闭调度器
-        scheduler.shutdown(true);
+//        scheduler.shutdown(true);
 
     }
 }

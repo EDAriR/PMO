@@ -15,8 +15,6 @@ import com.syntrontech.pmo.cip.exception.server.InternalServiceException;
 import com.syntrontech.pmo.cip.model.to.SearchTO;
 import com.syntrontech.pmo.cip.model.to.SubjectTO;
 import com.syntrontech.pmo.cip.model.vo.SearchVO;
-import com.syntrontech.pmo.cip.service.EmergencyContactService;
-import com.syntrontech.pmo.service.SubjectService;
 import com.syntrontech.pmo.solr.SolrException;
 import com.syntrontech.pmo.util.RedisUser;
 import com.syntrontech.pmo.util.RedisUserService;
@@ -30,15 +28,15 @@ import com.syntrontech.autoTool.exception.client.ParamFormatErrorException;
 @Path("/user")
 public class UserSubjectResource {
 
-	@Autowired
-	private SubjectService subjectService;
+//	@Autowired
+//	private SubjectService subjectService;
 
 	@Autowired
 	private RedisUserService redisUserService;
 	
 
-	@Autowired
-	private EmergencyContactService emergencyContactService;
+//	@Autowired
+//	private EmergencyContactService emergencyContactService;
 
 
 	@GET
@@ -50,14 +48,16 @@ public class UserSubjectResource {
 		RedisUser validateUser = (RedisUser) request.getAttribute("validatedUser");
 
 		String tenantId = validateUser.getTenantId();
-		SubjectTO to = (SubjectTO)subjectService.findSubjectByIdAndUserIdAndTenantId(subjectId, userId, tenantId)
-				.map(subject -> subjectService.convertFromModel(subject)).orElseThrow(() -> new NotFoundException());
+//		SubjectTO to = (SubjectTO)subjectService.findSubjectByIdAndUserIdAndTenantId(subjectId, userId, tenantId)
+//				.map(subject -> subjectService.convertFromModel(subject)).orElseThrow(() -> new NotFoundException());
 		
 //		if(projectSetting.isTTSHB()) {
 //			to.setEmergencyContacts(emergencyContactService.findBySubjectIdAndTenantId(subjectId, tenantId));
 //		}
 
-		return Response.status(Response.Status.OK).type(MediaType.APPLICATION_JSON).entity(to).build();
+		return Response.status(Response.Status.OK).type(MediaType.APPLICATION_JSON)
+//				.entity(to)
+				.build();
 	}
 
 	@GET
@@ -70,7 +70,7 @@ public class UserSubjectResource {
 		redisUserService.findRedisUserByUserId(userId).filter(u -> u.getTenantId().equals(validateUser.getTenantId()))
 				.orElseThrow(() -> new NotFoundException());
 
-		SearchTO<SubjectTO> subjects = subjectService.searchSubject(searchVO, userId, validateUser.getTenantId());
+//		SearchTO<SubjectTO> subjects = subjectService.searchSubject(searchVO, userId, validateUser.getTenantId());
 		
 		ArrayList<SubjectTO> list = new ArrayList<>();
 //		if(projectSetting.isTTSHB()) {
@@ -79,14 +79,16 @@ public class UserSubjectResource {
 //				list.add(s);
 //			}
 //		}
-		subjects.setContent(list);
+//		subjects.setContent(list);
 		
-		return Response.status(Response.Status.OK).type(MediaType.APPLICATION_JSON).entity(subjects).build();
+		return Response.status(Response.Status.OK).type(MediaType.APPLICATION_JSON)
+//				.entity(subjects)
+				.build();
 	}
 	
-	private SubjectTO setEmergencyContacts(SubjectTO to, String tenantId) throws SolrException, ParamFormatErrorException {
-		to.setEmergencyContacts(emergencyContactService.findBySubjectIdAndTenantId(to.getSubjectId(), tenantId));
-		return to;
-	}
+//	private SubjectTO setEmergencyContacts(SubjectTO to, String tenantId) throws SolrException, ParamFormatErrorException {
+//		to.setEmergencyContacts(emergencyContactService.findBySubjectIdAndTenantId(to.getSubjectId(), tenantId));
+//		return to;
+//	}
 
 }
