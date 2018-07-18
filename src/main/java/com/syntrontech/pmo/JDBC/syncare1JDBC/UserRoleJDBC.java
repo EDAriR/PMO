@@ -18,6 +18,7 @@ public class UserRoleJDBC {
 
     public static void main(String[] args) throws SQLException {
 
+        // 沒用
         Connection conn = new Syncare1_GET_CONNECTION().getConn();
         UserRoleJDBC s = new UserRoleJDBC();
 

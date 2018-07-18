@@ -18,6 +18,7 @@ public class SystemUserJDBC {
     private static final String GET_ALL_STMT = "SELECT * FROM system_user WHERE recluse='Y' AND sync_status = 'N' ORDER BY USER_ID;";
 
     private static final String GET_ONE = "SELECT * FROM system_user WHERE USER_ID=? AND sync_status = 'N' ";
+    private static final String UPDATE = "UPDATE system_user SET sync_status= 'Y' WHERE USER_ID=? ;";
 
     public static void main( String[] args ) throws SQLException
     {
@@ -34,6 +35,39 @@ public class SystemUserJDBC {
 //        SystemUser sss = s.getSystemUserById("4");
 
 //        System.out.println(sss);
+    }
+
+    public void updateSystemUser(String id) {
+
+        Connection conn = new Syncare1_GET_CONNECTION().getConn();
+        PreparedStatement pstmt = null;
+
+        try {
+
+            pstmt = conn.prepareStatement(UPDATE);
+
+            pstmt.setString(1, id);
+            pstmt.executeUpdate();
+
+            System.out.println("update " + id + " successful ==============");
+
+
+        } catch (SQLException e) {
+            System.out.println("MySQL操作错误");
+            e.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+
+            try {
+                pstmt.close();
+                conn.close();
+            } catch (SQLException e) {
+                System.out.println("conn or pstmt close fail" + conn + " || " + pstmt);
+                e.printStackTrace();
+            }
+
+        }
     }
 
     public List<SystemUser> getAllSystemUser(){

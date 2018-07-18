@@ -13,7 +13,7 @@ import java.util.List;
 @Entity
 @Table(name = "user_value_record")
 @NamedQuery(name = "UserValueRecord.findAll", query = "SELECT u FROM UserValueRecord u")
-public class UserValueRecord {
+public class UserValueRecord implements Comparable<UserValueRecord> {
 	public enum RecordPmoStatus {
 		Sync, NotSync, Error
 	}
@@ -75,6 +75,26 @@ public class UserValueRecord {
 	private List<UserValueRecordMapping> userValueRecordMappings = new ArrayList<>();
 
 	public UserValueRecord() {
+	}
+
+	@Override
+	public int compareTo(UserValueRecord other) {
+		return this.bodyValueRecordId - other.bodyValueRecordId;
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+
+		UserValueRecord that = (UserValueRecord) o;
+
+		return bodyValueRecordId == that.bodyValueRecordId;
+	}
+
+	@Override
+	public int hashCode() {
+		return bodyValueRecordId;
 	}
 
 	public int getBodyValueRecordId() {
