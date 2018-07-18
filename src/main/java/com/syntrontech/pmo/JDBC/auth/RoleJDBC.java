@@ -15,33 +15,13 @@ import java.util.List;
 
 public class RoleJDBC {
 
-    private static final String GET_ALL_STMT = "SELECT * FROM users WHERE tenant_id='DEFAULT_TENANT' ORDER BY sequence;";
-    private static final String INSERT_STMT = "INSERT INTO users " +
-            "(sequence, id, name, tenant_id, source, meta," +
-            "unit_ids, role_ids, emails, mobilephones, cards, permission_ids," +
-            "createtime, createby, updatetime, updateby, status) "
-            + "VALUES (nextval('users_sequence_seq'), ?, ?, ?, ?, ?," +
-            "?, ?, ?, ?, ?, ?," +
-            "?, ?, ?, ?, ?);";
-
-    private static final String GET_ONE = "SELECT * FROM role WHERE id=? and tenant_id='DEFAULT_TENANT'" +
+    private static final String GET_ONE = "SELECT * FROM role WHERE id=? and tenant_id='TTABO'" +
             " AND status='ENABLED';";
 
 
     public static void main(String[] args) {
 
         RoleJDBC s = new RoleJDBC();
-
-        Date star_time = new Date(new java.util.Date().getTime());
-//        List<Role> ss = s.getAllRoles();
-        Date end_time = new Date(new java.util.Date().getTime());
-
-//        System.out.println("star_time:" + star_time.toInstant());
-//        System.out.println("end_time:" + end_time.toInstant());
-//        System.out.println("ss size:" + ss.size());
-
-//        System.out.println(ss);
-//        s.insertUser(s.getTestUser());
 
         Role role = s.getRoleById("DEFAULT_TENANT_ADMIN");
 

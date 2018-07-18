@@ -17,7 +17,7 @@ public class SystemUserJDBC {
 
     private static final String GET_ALL_STMT = "SELECT * FROM system_user WHERE recluse='Y' AND sync_status = 'N' ORDER BY USER_ID;";
 
-    private static final String GET_ONE = "SELECT * FROM system_user WHERE USER_ID=?";
+    private static final String GET_ONE = "SELECT * FROM system_user WHERE USER_ID=? AND sync_status = 'N' ";
 
     public static void main( String[] args ) throws SQLException
     {
