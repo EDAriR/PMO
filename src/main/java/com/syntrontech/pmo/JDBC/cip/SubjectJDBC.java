@@ -27,6 +27,7 @@ public class SubjectJDBC {
 //    personal_history, family_history, smoke, drink, chewing_areca, user_id, unit_id, unit_name
 //    tenant_id, createtime, createby, updatetime, updateby, status
 
+    private static final String GET_ONE = "SELECT * FROM subject WHERE id=? AND user_id=? AND tenant_id='DEFAULT_TENANT' AND status='ENABLED';";
 
     public static void main(String[] args) {
 
@@ -53,10 +54,94 @@ public class SubjectJDBC {
 
     }
 
+    public Subject getOneSubject(String id, String user_id) {
 
-    List<Subject> getAllSubjects(){
+        Connection conn = new CIP_GET_CONNECTION().getConn();
 
-        List<Subject> devices = new ArrayList<>();
+        PreparedStatement pstmt = null;
+        ResultSet rs;
+
+        Subject subject = null;
+        try {
+            pstmt = conn.prepareStatement(GET_ONE);
+            pstmt.setString(1, id);
+            pstmt.setString(2, user_id);
+            rs = pstmt.executeQuery();
+
+
+            if (rs != null) {
+                while (rs.next()) {
+
+                    subject = new Subject();
+//                    sequence, id, name, gender
+                    subject.setSequence(rs.getLong("sequence"));
+                    subject.setId(rs.getString("id"));
+                    subject.setName(rs.getString("name"));
+                    GenderType gender = rs.getString("gender") == null ? GenderType.valueOf(rs.getString("gender")) : null;
+                    subject.setGender(gender);
+
+//                    birthday, home_phone, address, ethnicity
+                    subject.setBirthday(rs.getTimestamp("birthday"));
+                    subject.setHomePhone(rs.getString("home_phone"));
+                    subject.setAddress(rs.getString("address"));
+
+                    EthnicityType ethnicityType = rs.getString("gender") == null ? EthnicityType.valueOf(rs.getString("gender")) : null;
+                    subject.setEthnicity(ethnicityType);
+
+//                    personal_history, family_history, smoke, drink
+
+                    List<PersonalHistoryType> personal_history = Arrays.asList((String[]) rs.getArray("personal_history").getArray())
+                            .stream()
+                            .map(ph -> PersonalHistoryType.valueOf(ph))
+                            .collect(Collectors.toList());
+
+                    subject.setPersonalHistory(personal_history);
+
+                    List<FamilyHistoryType> family_history = Arrays.asList((String[]) rs.getArray("family_history").getArray())
+                            .stream()
+                            .map(ph -> FamilyHistoryType.valueOf(ph))
+                            .collect(Collectors.toList());
+                    subject.setFamilyHistory(family_history);
+
+                    SmokeType smoke = rs.getString("smoke") == null ? SmokeType.valueOf(rs.getString("smoke")) : null;
+                    subject.setSmoke(smoke);
+
+                    DrinkType drink = rs.getString("drink") == null ? DrinkType.valueOf(rs.getString("drink")) : null;
+                    subject.setDrink(drink);
+
+//                    chewing_areca, user_id, unit_id, unit_name
+                    ChewingArecaType chewingAreca = rs.getString("chewing_areca") == null ?
+                            ChewingArecaType.valueOf(rs.getString("chewing_areca")) : null;
+                    subject.setChewingAreca(chewingAreca);
+
+                    subject.setUserId(rs.getString("user_id"));
+                    subject.setUnitId(rs.getString("unit_id"));
+                    subject.setUnitName(rs.getString("unit_name"));
+
+//                    tenant_id, createtime, createby, updatetime
+                    subject.setTenantId(rs.getString("tenant_id"));
+                    subject.setCreateTime(rs.getTimestamp("createtime"));
+                    subject.setCreateBy(rs.getString("createby"));
+                    subject.setUpdateTime(rs.getTimestamp("updatetime"));
+
+//                    updateby, status
+                    subject.setUpdateBy(rs.getString("updateby"));
+                    ModelStatus status = rs.getString("status") == null ? ModelStatus.valueOf(rs.getString("status")) : null;
+                    subject.setStatus(status);
+
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return subject;
+    }
+
+
+    List<Subject> getAllSubjects() {
+
+        List<Subject> subjects = new ArrayList<>();
         Connection conn = new CIP_GET_CONNECTION().getConn();
 
         PreparedStatement pstmt = null;
@@ -88,14 +173,14 @@ public class SubjectJDBC {
 
 //                    personal_history, family_history, smoke, drink
 
-                    List<PersonalHistoryType> personal_history = Arrays.asList((String[])rs.getArray("personal_history").getArray())
+                    List<PersonalHistoryType> personal_history = Arrays.asList((String[]) rs.getArray("personal_history").getArray())
                             .stream()
                             .map(ph -> PersonalHistoryType.valueOf(ph))
                             .collect(Collectors.toList());
 
                     subject.setPersonalHistory(personal_history);
 
-                    List<FamilyHistoryType> family_history = Arrays.asList((String[])rs.getArray("family_history").getArray())
+                    List<FamilyHistoryType> family_history = Arrays.asList((String[]) rs.getArray("family_history").getArray())
                             .stream()
                             .map(ph -> FamilyHistoryType.valueOf(ph))
                             .collect(Collectors.toList());
@@ -128,18 +213,23 @@ public class SubjectJDBC {
                     subject.setStatus(status);
 
                     System.out.println("subject:" + subject);
-                    devices.add(subject);
+                    subjects.add(subject);
                 }
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
 
-        return devices;
+        return subjects;
     }
 
 
-    public void insertSubject(Subject subject){
+    public Subject insertSubject(Subject subject) {
+
+        Subject old = getOneSubject(subject.getId(), subject.getUserId());
+
+        if(Objects.nonNull(old))
+            return old;
 
         Connection conn = new CIP_GET_CONNECTION().getConn();
 
@@ -153,7 +243,7 @@ public class SubjectJDBC {
 
             //    sequence, id, name, gender, birthday,
             pstmt.setString(1, subject.getId());
-            pstmt.setString(2,subject.getName());
+            pstmt.setString(2, subject.getName());
             pstmt.setString(3, subject.getGender().toString());
             pstmt.setTimestamp(4, new java.sql.Timestamp(subject.getBirthday().getTime()));
 
@@ -166,7 +256,7 @@ public class SubjectJDBC {
             Array personalHistory = conn.createArrayOf("varchar", subject.getPersonalHistory());
             pstmt.setArray(8, personalHistory);
 
-            Array familyHistory = conn.createArrayOf("varchar", subject.getFamilyHistory() );
+            Array familyHistory = conn.createArrayOf("varchar", subject.getFamilyHistory());
             pstmt.setArray(9, familyHistory);
             pstmt.setString(10, subject.getSmoke().toString());
             pstmt.setString(11, subject.getDrink().toString());
@@ -197,6 +287,8 @@ public class SubjectJDBC {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+
+        return subject;
     }
 
     Subject getSubject() {

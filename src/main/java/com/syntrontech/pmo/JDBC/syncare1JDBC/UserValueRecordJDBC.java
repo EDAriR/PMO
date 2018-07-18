@@ -102,7 +102,7 @@ public class UserValueRecordJDBC {
         return userValueRecord;
     }
 
-    public UserValueRecord getOneBUserValueRecord(String id) {
+    public UserValueRecord getOneBUserValueRecord(int id) {
 
         Connection conn = new Syncare1_GET_CONNECTION().getConn();
         PreparedStatement pstmt = null;
@@ -112,7 +112,7 @@ public class UserValueRecordJDBC {
 
             pstmt = conn.prepareStatement(GET_ONE_B_STMT);
 
-            pstmt.setString(1, id);
+            pstmt.setInt(1, id);
             ResultSet rs = pstmt.executeQuery();
 
             if (rs != null) {

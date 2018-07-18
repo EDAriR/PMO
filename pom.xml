@@ -109,10 +109,10 @@
 		<!-- dbcp2 end -->
 		
 		<!-- Liquibase start -->
-		<!-- <dependency>
+		<dependency>
 			<groupId>org.liquibase</groupId>
 			<artifactId>liquibase-core</artifactId>
-		</dependency> -->
+		</dependency>
 		<!-- Liquibase end -->
 		
 		<!-- Jersey multipart start -->

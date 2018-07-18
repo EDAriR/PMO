@@ -3,24 +3,18 @@ package com.syntrontech.pmo.JDBC;
 import com.syntrontech.pmo.JDBC.auth.RoleJDBC;
 import com.syntrontech.pmo.JDBC.auth.UnitJDBC;
 import com.syntrontech.pmo.JDBC.auth.UserJDBC;
-import com.syntrontech.pmo.JDBC.cip.CIP_GET_CONNECTION;
-import com.syntrontech.pmo.JDBC.cip.DeviceJDBC;
-import com.syntrontech.pmo.JDBC.cip.SubjectJDBC;
-import com.syntrontech.pmo.JDBC.cip.UnitMetaJDBC;
+import com.syntrontech.pmo.JDBC.cip.*;
 import com.syntrontech.pmo.JDBC.measurement.AbnormalBloodPressureJDBC;
-import com.syntrontech.pmo.JDBC.syncare1JDBC.DeviceSyncare1JDBC;
-import com.syntrontech.pmo.JDBC.syncare1JDBC.LocationJDBC;
-import com.syntrontech.pmo.JDBC.syncare1JDBC.SystemUserJDBC;
-import com.syntrontech.pmo.JDBC.syncare1JDBC.UserRoleJDBC;
+import com.syntrontech.pmo.JDBC.measurement.BloodPressureHeartBeatJDBC;
+import com.syntrontech.pmo.JDBC.syncare1JDBC.*;
 import com.syntrontech.pmo.auth.model.Role;
 import com.syntrontech.pmo.auth.model.Unit;
 import com.syntrontech.pmo.auth.model.User;
+import com.syntrontech.pmo.cip.model.EmergencyContact;
 import com.syntrontech.pmo.cip.model.Subject;
 import com.syntrontech.pmo.cip.model.UnitMeta;
 import com.syntrontech.pmo.model.common.*;
-import com.syntrontech.pmo.syncare1.model.Device;
-import com.syntrontech.pmo.syncare1.model.Location;
-import com.syntrontech.pmo.syncare1.model.SystemUser;
+import com.syntrontech.pmo.syncare1.model.*;
 import com.syntrontech.pmo.syncare1.model.common.Sex;
 import com.syntrontech.pmo.syncare1.model.common.YN;
 
@@ -49,8 +43,15 @@ public class Sync {
         SystemUserJDBC systemUserJDBC = new SystemUserJDBC();
         SubjectJDBC subjectJDBC = new SubjectJDBC();
         UserJDBC userJDBC = new UserJDBC();
+        EmergencyContactJDBC emergencyContactJDBC = new EmergencyContactJDBC();
         AbnormalBloodPressureJDBC abnormalBloodPressureJDBC = new AbnormalBloodPressureJDBC();
 
+        BloodPressureHeartBeatJDBC bloodPressureHeartBeatJDBC = new BloodPressureHeartBeatJDBC();
+        UserValueRecordMappingJDBC userValueRecordMappingJDBC = new UserValueRecordMappingJDBC();
+        UserValueRecordJDBC userValueRecordJDBC = new UserValueRecordJDBC();
+
+        // <body_value_record_id, UserValueRecordMappings>
+        Map<Integer, List<UserValueRecordMapping>> userValueRecordMap = userValueRecordMappingJDBC.getAllUserValueRecordMapping();
 //        DEFAULT_TENANT_ADMIN
 //        TTABO
         Role newrole = new RoleJDBC().getRoleById("DEFAULT_TENANT_ADMIN");
@@ -62,10 +63,38 @@ public class Sync {
                     userJDBC.insertUser(syncSystemUserToUser(su, newrole));
                     subjectJDBC.insertSubject(syncSystemUserToSubject(su));
                     // TODO 緊急聯絡人
+                    if (su.getAlert() == YN.Y)
+                        emergencyContactJDBC.insertEmergencyContact(syncSystemUserToEmergencyContact(su));
                     // TODO 異常
 //                    abnormalBloodPressureJDBC
+                    // 取出最新一筆血壓心跳紀錄
+                    UserValueRecord userValueRecord = userValueRecordJDBC.getOneBUserValueRecord(su.getUserId());
+                    // 最新一筆資料的值
+                    List<UserValueRecordMapping> userValueRecordMappings = userValueRecordMap.get(userValueRecord.getBodyValueRecordId());
+
+                    // 同步至 新的血壓心跳
+                    bloodPressureHeartBeatJDBC.insertBloodPressureHeartBeat();
+
+                    // TODO PMO
+                    // ALBUM_NAME	varchar(45) NULL
+                    // ALBUM_TYPE	int(11) unsigned [0]	使用者mapping的相本為 -> 1;picasa, 2:無名 .....
+                    // ADVERTISMENT_STATUS 好康報報對於使用者的狀態_1: 此使用者尚未收到"新廣告通知了"(包含修改),2:此使用者已經收到"新廣告通知了
 
                 });
+    }
+
+    private EmergencyContact syncSystemUserToEmergencyContact(SystemUser su) {
+
+        EmergencyContact emergencyContact = new EmergencyContact();
+
+        emergencyContact.setSubjectId(su.getUserAccount());
+        emergencyContact.setUserId(su.getUserAccount());
+        emergencyContact.setTenantId("DEFAULT_TENANT_ADMIN");
+        emergencyContact.setName(su.getAlertNotifierName());
+        emergencyContact.setPhone(su.getAlertNotifierMobilePhone());
+        emergencyContact.setEmail(su.getAlertNotifierEmail());
+
+        return emergencyContact;
     }
 
     private User syncSystemUserToUser(SystemUser su, Role newrole) {

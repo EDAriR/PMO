@@ -162,7 +162,7 @@ public class AbnormalBloodPressureJDBC {
 
                     // private MeasurementStatusType status;
                     abnormalBloodPressure.setStatus(MeasurementStatusType.valueOf(rs.getString("status")));
-                    abnormalBloodPressure.setRuleDescription(rs.getString(""));
+                    abnormalBloodPressure.setRuleDescription(rs.getString("rule_description"));
 
                     // parent_unit_id, parent_unit_name, device_id
                     abnormalBloodPressure.setParentUnitId(rs.getString("parent_unit_id"));
@@ -240,7 +240,7 @@ public class AbnormalBloodPressureJDBC {
 
                     // private MeasurementStatusType status;
                     abnormalBloodPressure.setStatus(MeasurementStatusType.valueOf(rs.getString("status")));
-                    abnormalBloodPressure.setRuleDescription(rs.getString(""));
+                    abnormalBloodPressure.setRuleDescription(rs.getString("rule_description"));
 
                     // parent_unit_id, parent_unit_name, device_id
                     abnormalBloodPressure.setParentUnitId(rs.getString("parent_unit_id"));
