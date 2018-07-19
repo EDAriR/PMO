@@ -1,5 +1,6 @@
 package com.syntrontech.pmo.JDBC.auth;
 
+import com.syntrontech.pmo.auth.Encrypt;
 import com.syntrontech.pmo.auth.model.PasswordList;
 import com.syntrontech.pmo.auth.model.Role;
 import com.syntrontech.pmo.model.common.ModelStatus;
@@ -90,5 +91,22 @@ public class PasswordListJDBC {
         }
 
         return passwordList;
+    }
+
+    void insert(){
+
+        String encryptPassword = getEncryptPassword(password, passwordUpdateTime);
+
+        PasswordList passwordList = new PasswordList();
+        passwordList.setPassword(encryptPassword);
+        passwordList.setPasswordUpdateTime(passwordUpdateTime);
+        passwordList.setUserId(userId);
+
+        passwordListRepository.save(passwordList);
+    }
+
+    protected String getEncryptPassword(String password, Date passwordUpdateTime){
+        Encrypt encrypt = new Encrypt();
+        return encrypt.encrypt_sha512(password+passwordUpdateTime.getTime());
     }
 }

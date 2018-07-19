@@ -10,7 +10,7 @@ import org.springframework.context.annotation.Primary;
 
 //@Configuration
 public class DBBean {
-//
+
 //	@Bean
 //	@Primary
 //	@ConfigurationProperties(prefix = "spring.mysql")

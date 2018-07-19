@@ -5,6 +5,7 @@ import com.syntrontech.pmo.JDBC.auth.UnitJDBC;
 import com.syntrontech.pmo.JDBC.auth.UserJDBC;
 import com.syntrontech.pmo.JDBC.cip.*;
 import com.syntrontech.pmo.JDBC.measurement.AbnormalBloodPressureJDBC;
+import com.syntrontech.pmo.JDBC.measurement.AbnormalBloodPressureLogJDBC;
 import com.syntrontech.pmo.JDBC.measurement.BloodPressureHeartBeatJDBC;
 import com.syntrontech.pmo.JDBC.syncare1JDBC.*;
 import com.syntrontech.pmo.auth.model.Role;
@@ -47,7 +48,7 @@ public class Sync {
         EmergencyContactJDBC emergencyContactJDBC = new EmergencyContactJDBC();
 
         AbnormalBloodPressureJDBC abnormalBloodPressureJDBC = new AbnormalBloodPressureJDBC();
-
+        AbnormalBloodPressureLogJDBC abnormalBloodPressureLogJDBC = new AbnormalBloodPressureLogJDBC();
         UserValueRecordJDBC userValueRecordJDBC = new UserValueRecordJDBC();
 
         // 取出新的role 只要user 的  DEFAULT_TENANT_ADMIN TTABO
@@ -91,6 +92,10 @@ public class Sync {
                         if (oldBloodPressureHeartBeat != null){
                             // 判斷是否為異常
                             // TODO 異常
+                            if(isBloodPressureAbnormal(oldBloodPressureHeartBeat) && isBloodPressureAbnormal(bloodPressureHeartBeat)){
+                                abnormalBloodPressureJDBC.insertAbnormalBloodPressure();
+//                                abnormalBloodPressureLogJDBC.
+                            }
 
                         }
 
@@ -104,6 +109,31 @@ public class Sync {
                     // ADVERTISMENT_STATUS 好康報報對於使用者的狀態_1: 此使用者尚未收到"新廣告通知了"(包含修改),2:此使用者已經收到"新廣告通知了
 
                 });
+    }
+
+    private boolean isBloodPressureAbnormal(BloodPressureHeartBeat record) {
+        Integer age = record.getSubjectAge();
+        Integer systolic=record.getSystolicPressure();
+        Integer diastolic=record.getDiastolicPressure();
+
+        if (isSystolicAbnormal(age, systolic) || isDiastolicAbnormal(diastolic)) {
+            return true;
+        }
+        return false;
+    }
+
+    private boolean isSystolicAbnormal(Integer age, Integer systolic) {
+        if (systolic > 150 || systolic == 150 || (age < 80 && systolic > 140 && systolic == 140)) {
+            return true;
+        }
+        return false;
+    }
+
+    private boolean isDiastolicAbnormal(Integer diastolic) {
+        if (diastolic > 90 || diastolic == 90) {
+            return true;
+        }
+        return false;
     }
 
     private BloodPressureHeartBeat syncBloodPressureHeartBeat(

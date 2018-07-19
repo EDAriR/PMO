@@ -12,7 +12,6 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import com.syntrontech.pmo.cip.exception.server.InternalServiceException;
-import com.syntrontech.pmo.cip.model.to.SearchTO;
 import com.syntrontech.pmo.cip.model.to.SubjectTO;
 import com.syntrontech.pmo.cip.model.vo.SearchVO;
 import com.syntrontech.pmo.solr.SolrException;
