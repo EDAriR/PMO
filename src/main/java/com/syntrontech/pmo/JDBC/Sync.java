@@ -1,18 +1,15 @@
 package com.syntrontech.pmo.JDBC;
 
 import com.syntrontech.pmo.JDBC.auth.RoleJDBC;
-import com.syntrontech.pmo.JDBC.auth.UnitJDBC;
 import com.syntrontech.pmo.JDBC.auth.UserJDBC;
 import com.syntrontech.pmo.JDBC.cip.*;
 import com.syntrontech.pmo.JDBC.measurement.AbnormalBloodPressureJDBC;
 import com.syntrontech.pmo.JDBC.measurement.BloodPressureHeartBeatJDBC;
 import com.syntrontech.pmo.JDBC.syncare1JDBC.*;
 import com.syntrontech.pmo.auth.model.Role;
-import com.syntrontech.pmo.auth.model.Unit;
 import com.syntrontech.pmo.auth.model.User;
 import com.syntrontech.pmo.cip.model.EmergencyContact;
 import com.syntrontech.pmo.cip.model.Subject;
-import com.syntrontech.pmo.cip.model.UnitMeta;
 import com.syntrontech.pmo.measurement.BloodPressureHeartBeat;
 import com.syntrontech.pmo.measurement.common.MeasurementStatusType;
 import com.syntrontech.pmo.model.common.*;
@@ -20,13 +17,6 @@ import com.syntrontech.pmo.syncare1.model.*;
 import com.syntrontech.pmo.syncare1.model.common.Sex;
 import com.syntrontech.pmo.syncare1.model.common.YN;
 
-import java.io.IOException;
-import java.io.OutputStreamWriter;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.ProtocolException;
-import java.net.URL;
-import java.sql.Connection;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -38,9 +28,8 @@ public class Sync {
 
         // TODO syncare_questionnair_answer
 
-
-//        sync.syncLocationToUnit();
-//        sync.syncDevice();
+//        new SyncUnit().syncLocationToUnit();
+//        new SyncDevice().syncDevice();
         sync.syncSystemUserToUserAndSubject();
     }
 
@@ -101,7 +90,6 @@ public class Sync {
                             // TODO 異常
 
                         }
-
 
                         bloodPressureHeartBeats.add(bloodPressureHeartBeat);
                     });
@@ -202,17 +190,13 @@ public class Sync {
 
         User user = new User();
         // sequence, id, name, tenant_id, source, meta
-
-
-
         user.setId(su.getUserAccount());
         user.setName(su.getUserDisplayName());
         user.setTenantId("TTABO");
         user.setSource(Source.CREATE);
 
         // unit_ids, role_ids, emails, mobilephones, cards, permission_ids
-//        user.setUnitIds(null);
-
+//        user.setUnitIds(null); unitId 在 subject 上
         String[] roleIds = {newrole.getId()};
         user.setRoleIds(roleIds);
 
@@ -229,6 +213,7 @@ public class Sync {
 
         // createtime, createby, updatetime, updateby, status
         user.setCreateTime(su.getCreateTime());
+        // TODO
         user.setCreateBy("TTABO");
         user.setUpdateTime(su.getCreateTime());
         user.setUpdateBy("TTABO");
@@ -364,6 +349,7 @@ public class Sync {
         subject.setUnitName("其他");
 
 //        tenant_id, createtime, createby, updatetime
+        // TODO
         subject.setTenantId("TTABO");
 
         subject.setCreateTime(su.getCreateTime());
