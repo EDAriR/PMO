@@ -13,11 +13,19 @@ import com.syntrontech.pmo.auth.model.User;
 import com.syntrontech.pmo.cip.model.EmergencyContact;
 import com.syntrontech.pmo.cip.model.Subject;
 import com.syntrontech.pmo.cip.model.UnitMeta;
+import com.syntrontech.pmo.measurement.BloodPressureHeartBeat;
+import com.syntrontech.pmo.measurement.common.MeasurementStatusType;
 import com.syntrontech.pmo.model.common.*;
 import com.syntrontech.pmo.syncare1.model.*;
 import com.syntrontech.pmo.syncare1.model.common.Sex;
 import com.syntrontech.pmo.syncare1.model.common.YN;
 
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.ProtocolException;
+import java.net.URL;
 import java.sql.Connection;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -29,51 +37,75 @@ public class Sync {
         Sync sync = new Sync();
 
         // TODO syncare_questionnair_answer
-        // TODO blood_pressure_record_report
-        // TODO abnormal_blood_pressure_record
+
 
 //        sync.syncLocationToUnit();
 //        sync.syncDevice();
+        sync.syncSystemUserToUserAndSubject();
     }
 
     public void syncSystemUserToUserAndSubject(){
 
+        // 取出所有 未同步 且 角色為使用者的使用者
         List<String> userIds = new UserRoleJDBC().getAllUserRoles();
 
         SystemUserJDBC systemUserJDBC = new SystemUserJDBC();
-        SubjectJDBC subjectJDBC = new SubjectJDBC();
         UserJDBC userJDBC = new UserJDBC();
+        SubjectJDBC subjectJDBC = new SubjectJDBC();
         EmergencyContactJDBC emergencyContactJDBC = new EmergencyContactJDBC();
+
         AbnormalBloodPressureJDBC abnormalBloodPressureJDBC = new AbnormalBloodPressureJDBC();
 
-        BloodPressureHeartBeatJDBC bloodPressureHeartBeatJDBC = new BloodPressureHeartBeatJDBC();
-        UserValueRecordMappingJDBC userValueRecordMappingJDBC = new UserValueRecordMappingJDBC();
         UserValueRecordJDBC userValueRecordJDBC = new UserValueRecordJDBC();
 
-        // <body_value_record_id, UserValueRecordMappings>
-        Map<Integer, List<UserValueRecordMapping>> userValueRecordMap = userValueRecordMappingJDBC.getAllUserValueRecordMapping();
-//        DEFAULT_TENANT_ADMIN
-//        TTABO
+        // 取出新的role 只要user 的  DEFAULT_TENANT_ADMIN TTABO
         Role newrole = new RoleJDBC().getRoleById("DEFAULT_TENANT_ADMIN");
 
-        userIds.stream()
+        // 取出所有未同步量測紀錄數值 <body_value_record_id, UserValueRecordMappings>
+        Map<Integer, List<UserValueRecordMapping>> userValueRecordMap = new UserValueRecordMappingJDBC()
+                .getAllUserValueRecordMapping();
+
+
+        userIds.stream()   // 找出未同步systemuser
                 .map(id -> systemUserJDBC.getSystemUserById(id))
                 .forEach(su -> {
-                    // TODO subjectJDBC 驗證是否存在
+
+                    // 新增 user
                     userJDBC.insertUser(syncSystemUserToUser(su, newrole));
-                    subjectJDBC.insertSubject(syncSystemUserToSubject(su));
-                    // TODO 緊急聯絡人
+                    // TODO 密碼
+                    // 新增 subject
+                    Subject subject = subjectJDBC.insertSubject(syncSystemUserToSubject(su));
+                    // 新增 緊急聯絡人 Alert = Y 為接受緊急通知
                     if (su.getAlert() == YN.Y)
                         emergencyContactJDBC.insertEmergencyContact(syncSystemUserToEmergencyContact(su));
-                    // TODO 異常
-//                    abnormalBloodPressureJDBC
-                    // 取出最新一筆血壓心跳紀錄
-                    UserValueRecord userValueRecord = userValueRecordJDBC.getOneBUserValueRecord(su.getUserId());
-                    // 最新一筆資料的值
-                    List<UserValueRecordMapping> userValueRecordMappings = userValueRecordMap.get(userValueRecord.getBodyValueRecordId());
+
+                    // 取出該使用者所有血壓重算異常
+                    // 根據使用者身上異常追蹤狀態 例如為 2就醫確診異常
+                    // 重算後新增的全部異常log 處理狀態為舊資料狀態 2就醫確診異常
+                    List<UserValueRecord>  userValueRecords = userValueRecordJDBC.getOneBUserValueRecord(su.getUserId());
 
                     // 同步至 新的血壓心跳
-                    bloodPressureHeartBeatJDBC.insertBloodPressureHeartBeat();
+                    List<BloodPressureHeartBeat>  bloodPressureHeartBeats = new ArrayList<>();
+                    userValueRecords.forEach(old ->{
+
+
+                        BloodPressureHeartBeat bloodPressureHeartBeat = syncBloodPressureHeartBeat(userValueRecordMap, old, subject);
+
+                        // 連續兩筆紀錄為異常 做異常紀錄
+                        BloodPressureHeartBeat oldBloodPressureHeartBeat = null;
+                        if(bloodPressureHeartBeats.size() > 0 ){
+                            oldBloodPressureHeartBeat = bloodPressureHeartBeats.get(bloodPressureHeartBeats.size() - 1 );
+                        }
+                        if (oldBloodPressureHeartBeat != null){
+                            // 判斷是否為異常
+                            // TODO 異常
+
+                        }
+
+
+                        bloodPressureHeartBeats.add(bloodPressureHeartBeat);
+                    });
+
 
                     // TODO PMO
                     // ALBUM_NAME	varchar(45) NULL
@@ -82,6 +114,75 @@ public class Sync {
 
                 });
     }
+
+    private BloodPressureHeartBeat syncBloodPressureHeartBeat(
+            Map<Integer, List<UserValueRecordMapping>> userValueRecordMap, UserValueRecord old, Subject subject) {
+
+        // 取出該筆紀錄的值
+        List<UserValueRecordMapping> recordValues = userValueRecordMap.get(old.getBodyValueRecordId());
+        // 7 收縮壓 8 舒張壓 9 心跳
+        Map<Integer, List<UserValueRecordMapping>> values = recordValues.stream()
+                .collect(Collectors.groupingBy(s -> s.getMapping().getTypeId()));
+
+        BloodPressureHeartBeatJDBC bloodPressureHeartBeatJDBC = new BloodPressureHeartBeatJDBC();
+
+        BloodPressureHeartBeat bloodPressureHeartBeat = bloodPressureHeartBeatJDBC
+                .insertBloodPressureHeartBeat(turnOldRecordsToBloodPressureHeartBeat(old, values, subject));
+
+        return bloodPressureHeartBeat;
+
+    }
+
+    private BloodPressureHeartBeat turnOldRecordsToBloodPressureHeartBeat(
+            UserValueRecord old, Map<Integer, List<UserValueRecordMapping>> values, Subject subject) {
+
+        BloodPressureHeartBeat bloodPressureHeartBeat = new BloodPressureHeartBeat();
+
+        // 7 收縮壓 8 舒張壓 9 心跳
+        // systolic_pressure, diastolic_pressure, heart_rate
+        List<UserValueRecordMapping> systolicPressure = values.get(7);
+        if(systolicPressure.size() > 0 )
+            bloodPressureHeartBeat.setSystolicPressure(Integer.valueOf(systolicPressure.get(0).getRecordValue()));
+        List<UserValueRecordMapping> diastolicPressure = values.get(8);
+        if(diastolicPressure.size() > 0 )
+            bloodPressureHeartBeat.setDiastolicPressure(Integer.valueOf(diastolicPressure.get(0).getRecordValue()));
+        // constraints:nullable: false
+        List<UserValueRecordMapping> heartRate = values.get(9);
+        if(heartRate.size() > 0 )
+            bloodPressureHeartBeat.setHeartRate(Integer.valueOf(heartRate.get(0).getRecordValue()));
+
+
+        // recordtime, latitude, longitude
+        bloodPressureHeartBeat.setRecordTime(old.getRecordDate());
+
+
+        // status, createtime, createby, tenant_id, device_mac_address
+        // private MeasurementStatusType status;
+        bloodPressureHeartBeat.setStatus(MeasurementStatusType.EXISTED);
+        bloodPressureHeartBeat.setCreateTime(old.getUpdateDate());
+        bloodPressureHeartBeat.setCreateBy(subject.getId());
+        bloodPressureHeartBeat.setTenantId("DEAFULT_TENTANT");
+
+        // subject_seq, subject_id, subject_name, subject_gender, subject_age, subject_user_id, subject_user_name,
+        bloodPressureHeartBeat.setSubjectSeq(subject.getSequence());
+        bloodPressureHeartBeat.setSubjectId(subject.getId());
+        bloodPressureHeartBeat.setSubjectName(subject.getName());
+        bloodPressureHeartBeat.setSubjectGender(subject.getGender());
+        bloodPressureHeartBeat.setSubjectAge();
+        bloodPressureHeartBeat.setSubjectUserId(subject.getUserId());
+        bloodPressureHeartBeat.setSubjectUserName(subject.getName());
+
+        // rule_seq, rule_description, unit_id, unit_name, parent_unit_id, parent_unit_name, device_id
+        bloodPressureHeartBeat.setRuleSeq(rs.getLong("rule_seq"));
+        bloodPressureHeartBeat.setRuleDescription(rs.getString("rule_description"));
+        bloodPressureHeartBeat.setUnitId(old.getLocationId());
+        bloodPressureHeartBeat.setUnitName(rs.getString("unit_name"));
+        bloodPressureHeartBeat.setParentUnitId(rs.getString("parent_unit_id"));
+        bloodPressureHeartBeat.setParentUnitName(rs.getString("parent_unit_name"));
+
+        return bloodPressureHeartBeat;
+    }
+
 
     private EmergencyContact syncSystemUserToEmergencyContact(SystemUser su) {
 
@@ -102,7 +203,7 @@ public class Sync {
         User user = new User();
         // sequence, id, name, tenant_id, source, meta
 
-        // TODO 密碼
+
 
         user.setId(su.getUserAccount());
         user.setName(su.getUserDisplayName());
@@ -155,7 +256,7 @@ public class Sync {
         subject.setHomePhone(su.getUserPhone());
         subject.setAddress(su.getUserAddress());
 
-//        種族註記，0：未填寫，1：漢族，2：客家，3：原住民，4：外籍
+        // 種族註記，0：未填寫，1：漢族，2：客家，3：原住民，4：外籍
         // 0 預設為HAN
         int suEthnicity = su.getEthnicity();
         EthnicityType ethnicityType;
@@ -181,10 +282,8 @@ public class Sync {
         ArrayList<PersonalHistoryType>  personalHistoryTypes = new ArrayList();
         if(su.getWithHighBloodPressure() == YN.Y)
             personalHistoryTypes.add(PersonalHistoryType.HYPERTENSION);
-        YN brainAttack = su.getWithBrainAttack();
         if(su.getWithBrainAttack() == YN.Y)
             personalHistoryTypes.add(PersonalHistoryType.STROKE);
-        YN diabetesMellitus = su.getWithDiabetesMellitus();
         if(su.getWithDiabetesMellitus() == YN.Y)
             personalHistoryTypes.add(PersonalHistoryType.DIABETES_MELLITUS);
         if(su.getWithHeartAttack() == YN.Y)
@@ -277,169 +376,4 @@ public class Sync {
         return subject;
     }
 
-    public void syncLocationToUnit(){
-
-        LocationJDBC locationJDBC = new LocationJDBC();
-        UnitJDBC unitJDBC = new UnitJDBC();
-        UnitMetaJDBC unitMetaJDBC = new UnitMetaJDBC();
-
-        List<Location> locations = locationJDBC.getAllLocation(new Syncare1_GET_CONNECTION().getConn());
-
-        System.out.println(locations.size());
-        locations.forEach(l -> {
-            System.out.println(l);
-            if (l.getId().equals("") || l.getId() == null){
-
-            }else{
-
-                if(unitJDBC.getUnitById(l.getId()).getId() == null)
-                    unitJDBC.insertUnit(convertLocationToUnit(l));
-                if(unitMetaJDBC.getUnitMetaById(l.getId()).getUnitId() == null)
-                    unitMetaJDBC.insertUnitMeta(convertLocationToUnitMeta(l));
-
-                locationJDBC.updateLocation(new Syncare1_GET_CONNECTION().getConn(), l.getId());
-            }
-        });
-
-        System.out.println("sync unit : " + locations.size() + " successful");
-
-    }
-
-    private UnitMeta convertLocationToUnitMeta(Location location) {
-
-        UnitJDBC unitJDBC = new UnitJDBC();
-        UnitMeta unitMeta = new UnitMeta();
-
-
-        String unitId = location.getId();
-        unitMeta.setUnitId(unitId);
-        unitMeta.setUnitName(location.getName());
-
-        if(unitId.length() > 7) {
-            Unit parentUnit = unitJDBC.getUnitById(unitId.substring(0, 7));
-            unitMeta.setUnitParentId(parentUnit.getId());
-            unitMeta.setUnitParentName(parentUnit.getName());
-        }
-
-        unitMeta.setUnitStatus(ModelMgmtStatus.ENABLED); // ModelMgmtStatus
-        unitMeta.setTenantId("DEFAULT_TENANT");
-
-        if (unitId.length() > 6 )
-            unitMeta.setCategory(getCategory(unitId.substring(0, 7)));
-        else
-            unitMeta.setCategory("台東市");
-        unitMeta.setContact(location.getContact());
-        unitMeta.setAddress(location.getAddress());
-        unitMeta.setHomePhone(location.getPhone());
-        unitMeta.setMobilePhone(location.getPhone());
-        Date date = new Date();
-        unitMeta.setCreateTime(date); // Date
-        unitMeta.setCreateBy("systemAdmin");
-        unitMeta.setUpdateTime(date); // Date
-        unitMeta.setUpdateBy("systemAdmin");
-        return unitMeta;
-    }
-
-    String getCategory(String category){
-
-        Map<String, String> map = new HashMap<>();
-        //        離島 : [1001411, 1001416]
-        //        離島 : [綠島鄉, 蘭嶼鄉]
-        map.put("1001411","離島");
-        map.put("1001416","離島");
-
-        //        台東市 : [1001401, 1001404]
-        //        台東市 : [卑南鄉, 台東市]
-        map.put("1001401","台東市");
-
-        //        南迴線 : [太麻里鄉, 卑南鄉, 金峰鄉, 大武鄉, 達仁鄉]
-        //        南迴線 : [1001414, 1001410, 1001409, 1001415, 1001404]
-        map.put("1001404","南迴線");
-        map.put("1001410","南迴線");
-        map.put("1001409","南迴線");
-        map.put("1001415","南迴線");
-        map.put("1001404","南迴線");
-
-        //        海線 : [長濱鄉, 東河鄉, 成功鎮]
-        //        海線 : [1001402, 1001408, 1001407]
-        map.put("1001402","海線");
-        map.put("1001408","海線");
-        map.put("1001407","海線");
-
-        //        縱谷線 : [關山鎮, 海端鄉, 延平鄉, 鹿野鄉, 池上鄉]
-        //        縱谷線 : [1001412, 1001403, 1001413, 1001405, 1001406]
-        map.put("1001412","縱谷線");
-        map.put("1001403","縱谷線");
-        map.put("1001413","縱谷線");
-        map.put("1001405","縱谷線");
-        map.put("1001406","縱谷線");
-
-        return  map.get(category);
-
-    }
-
-    private Unit convertLocationToUnit(Location location) {
-
-        UnitJDBC unitJDBC = new UnitJDBC();
-        Unit unit = new Unit();
-
-        String unitId = location.getId();
-        unit.setId(unitId);
-        unit.setName(location.getName());
-        if(unitId.length() > 7){
-
-            Unit parentUnit = unitJDBC.getUnitById(unitId.substring(0, 7));
-            unit.setParentId(parentUnit.getId());
-            unit.setParentName(parentUnit.getName());
-
-        }
-        unit.setTenantId("DEFAULT_TENANT");
-        unit.setMeta(null);
-        unit.setCreateTime(new Date());
-        unit.setCreateBy("systemAdmin");
-        unit.setUpdateTime(new Date());
-        unit.setUpdateBy("systemAdmin");
-        unit.setStatus(ModelStatus.ENABLED);
-
-        return unit;
-    }
-
-    public void syncDevice(){
-
-        DeviceSyncare1JDBC syncare1DeviceJDBC = new DeviceSyncare1JDBC();
-
-        List<Device> syncare1Devices = syncare1DeviceJDBC.getAllDevice(new Syncare1_GET_CONNECTION().getConn());
-
-        DeviceJDBC cipDeviceJDBC = new DeviceJDBC();
-
-        syncare1Devices.forEach(sd -> {
-            insertCIPDevice(cipDeviceJDBC, new CIP_GET_CONNECTION().getConn(), sd);
-            syncare1DeviceJDBC.updateDevice(new Syncare1_GET_CONNECTION().getConn(), sd.getSerialNo());
-        });
-
-        System.out.println("sync devices total :" + syncare1Devices.size() + " successful");
-
-    }
-
-    private void insertCIPDevice(DeviceJDBC cipDeviceJDBC, Connection cip_conn, Device sd) {
-
-        com.syntrontech.pmo.cip.model.Device device = new com.syntrontech.pmo.cip.model.Device();
-
-        String serialNo = sd.getSerialNo();
-        device.setId(serialNo);
-        device.setName(sd.getName());
-        device.setSerialNumber(sd.getSerialNo());
-        device.setUnitId(sd.getLocation());
-        device.setUnitName(sd.getSyntronLocationId());
-        device.setTenantId("DEFAULT_TENANT");
-        Date date = new Date();
-        device.setCreateTime(new Date());
-        device.setCreateBy("systemAdmin");
-        device.setUpdateTime(date);
-        device.setUpdateBy("systemAdmin");
-        device.setStatus(ModelStatus.ENABLED);
-
-        cipDeviceJDBC.insertDevice(cip_conn, device);
-
-    }
 }

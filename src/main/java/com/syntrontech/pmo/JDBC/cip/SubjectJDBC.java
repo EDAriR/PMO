@@ -234,7 +234,6 @@ public class SubjectJDBC {
         Connection conn = new CIP_GET_CONNECTION().getConn();
 
         PreparedStatement pstmt = null;
-        ResultSet rs;
 
         try {
             pstmt = conn.prepareStatement(INSERT_STMT);
@@ -282,6 +281,12 @@ public class SubjectJDBC {
 
             pstmt.executeUpdate();
             System.out.println(pstmt);
+            try (ResultSet rs = pstmt.getGeneratedKeys()) {
+                if (rs.next()) {
+                    subject.setSequence(rs.getLong(1));
+                }
+                rs.close();
+            }
             System.out.println("create successful ==> " + subject);
 
         } catch (SQLException e) {

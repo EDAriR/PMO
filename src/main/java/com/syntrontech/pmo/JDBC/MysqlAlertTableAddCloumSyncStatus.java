@@ -1,4 +1,4 @@
-package com.syntrontech.pmo.JDBC.syncare1JDBC;
+package com.syntrontech.pmo.JDBC;
 
 import com.syntrontech.pmo.JDBC.Syncare1_GET_CONNECTION;
 

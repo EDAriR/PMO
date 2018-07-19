@@ -16,24 +16,21 @@ public class UserValueRecordJDBC {
     private static final String GET_A_STMT = "SELECT * FROM user_value_record WHERE COLUMN_TYPE='A' AND sync_status = 'N' ORDER BY BODY_VALUE_RECORD_ID;";
     private static final String GET_BG_STMT = "SELECT * FROM user_value_record WHERE COLUMN_TYPE='BG' AND sync_status = 'N' ORDER BY BODY_VALUE_RECORD_ID;";
 
-    private static final String GET_ONE_B_STMT = "SELECT * FROM user_value_record WHERE USER_ID=? AND COLUMN_TYPE='B' AND sync_status = 'N' ORDER BY RECORD_DATE DESC LIMIT 1;";
+    private static final String GET_ONE_B_STMT = "SELECT * FROM user_value_record WHERE USER_ID=? AND COLUMN_TYPE='B' AND sync_status = 'N' ORDER BY RECORD_DATE;";
     private static final String GET_ONE_STMT = "SELECT * FROM user_value_record WHERE BODY_VALUE_RECORD_ID=? ;";
 
     private static final String UPDATE = "UPDATE user_value_record SET sync_status= 'Y' WHERE BODY_VALUE_RECORD_ID=? ;";
 
     public static void main(String[] args) throws SQLException {
 
-        Connection conn = new Syncare1_GET_CONNECTION().getConn();
+//        Connection conn = new Syncare1_GET_CONNECTION().getConn();
         UserValueRecordJDBC s = new UserValueRecordJDBC();
 
-        Date star_time = new Date();
-//        List<UserValueRecord> ss = s.getAllBGUserValueRecord();
-        Date end_time = new Date();
+        List<UserValueRecord> getByUserId = s.getOneBUserValueRecord(1);
+        System.out.println("get one by id : " + getByUserId.size());
 
-        System.out.println("star_time:" + star_time.toInstant());
-        System.out.println("end_time:" + end_time.toInstant());
-//        System.out.println("ss size:" + ss.size());
-        System.out.println("get one : " + s.getOneUserValueRecord("1"));
+        getByUserId.forEach(b -> System.out.println(b));
+
     }
 
     public UserValueRecord getOneUserValueRecord(String id) {
@@ -102,12 +99,12 @@ public class UserValueRecordJDBC {
         return userValueRecord;
     }
 
-    public UserValueRecord getOneBUserValueRecord(int id) {
+    public List<UserValueRecord> getOneBUserValueRecord(int id) {
 
         Connection conn = new Syncare1_GET_CONNECTION().getConn();
         PreparedStatement pstmt = null;
-        UserValueRecord userValueRecord = null;
 
+        List<UserValueRecord> userValueRecords = new ArrayList<>();
         try {
 
             pstmt = conn.prepareStatement(GET_ONE_B_STMT);
@@ -116,8 +113,9 @@ public class UserValueRecordJDBC {
             ResultSet rs = pstmt.executeQuery();
 
             if (rs != null) {
+
                 while (rs.next()) {
-                    userValueRecord = new UserValueRecord();
+                    UserValueRecord userValueRecord = new UserValueRecord();
                     userValueRecord.setBodyValueRecordId(rs.getInt("BODY_VALUE_RECORD_ID"));
                     userValueRecord.setColumnType(rs.getString("COLUMN_TYPE"));
                     userValueRecord.setLocationId(rs.getString("location_id"));
@@ -145,6 +143,8 @@ public class UserValueRecordJDBC {
                     System.out.println("USER_ID :" + rs.getString("USER_ID"));
 
                     System.out.println(userValueRecord);
+
+                    userValueRecords.add(userValueRecord);
                 }
             }
 
@@ -165,7 +165,7 @@ public class UserValueRecordJDBC {
 
         }
 
-        return userValueRecord;
+        return userValueRecords;
     }
 
     public void updateUserValueRecord(String id) {

@@ -16,10 +16,11 @@ public class UserRoleJDBC {
 
     private static final String GET_ALL_STMT = "SELECT * FROM user_role  WHERE role_id = '1' AND sync_status = 'N';";
 
+    private static final String UPDATE = "UPDATE user_role SET sync_status= 'Y' WHERE user_id=? AND sync_status = 'N';";
+
     public static void main(String[] args) throws SQLException {
 
         // 沒用
-        Connection conn = new Syncare1_GET_CONNECTION().getConn();
         UserRoleJDBC s = new UserRoleJDBC();
 
         Date star_time = new Date();
@@ -32,6 +33,40 @@ public class UserRoleJDBC {
         System.out.println(ss);
 
     }
+
+    public void updateUserRoles(int id){
+
+        Connection conn = new Syncare1_GET_CONNECTION().getConn();
+        PreparedStatement pstmt = null;
+
+        try {
+
+            pstmt = conn.prepareStatement(UPDATE);
+
+            pstmt.setInt(1, id);
+            pstmt.executeUpdate();
+
+            System.out.println("update " + id + " successful ==============");
+
+
+        } catch (SQLException e) {
+            System.out.println("MySQL操作错误");
+            e.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+
+            try {
+                pstmt.close();
+                conn.close();
+            } catch (SQLException e) {
+                System.out.println("conn or pstmt close fail" + conn + " || " + pstmt);
+                e.printStackTrace();
+            }
+
+        }
+    }
+
 
     public List<String> getAllUserRoles() {
 
