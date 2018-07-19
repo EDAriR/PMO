@@ -4,8 +4,8 @@ spring:
     show-sql: false
     hibernate:
       ddl-auto: none
-  cipdb:
-    url: jdbc:postgresql://localhost:5432/cipdb
+  datasource:
+    url: jdbc:postgresql://localhost:5432/pmodb
     username: postgres
     password: 1qaz2wsx
     type: org.apache.commons.dbcp2.BasicDataSource
@@ -17,50 +17,51 @@ spring:
       validation-query: select 1
       max-wait-millis: 5000
       max-conn-lifetime-millis: 3600000
-  authdb:
-    url: jdbc:postgresql://localhost:5432/authdb
-    username: postgres
-    password: 1qaz2wsx
-    type: org.apache.commons.dbcp2.BasicDataSource
-    dbcp2:
-      initial-size: 15
-      min-idle: 10
-      max-total: 100
-      test-on-borrow: true
-      validation-query: select 1
-      max-wait-millis: 5000
-      max-conn-lifetime-millis: 3600000
-  measurementdb:
-    url: jdbc:postgresql://localhost:5432/measurementdb
-    username: postgres
-    password: 1qaz2wsx
-    type: org.apache.commons.dbcp2.BasicDataSource
-    dbcp2:
-      initial-size: 15
-      min-idle: 10
-      max-total: 100
-      test-on-borrow: true
-      validation-query: select 1
-      max-wait-millis: 5000
-      max-conn-lifetime-millis: 3600000
-  mysql:
-    url: jdbc:mysql://localhost:3307/SynCare
-    username: root
-    password: 1qaz2wsx
-    type: org.apache.commons.dbcp2.BasicDataSource
-    dbcp2:
-      initial-size: 15
-      min-idle: 10
-      max-total: 100
-      test-on-borrow: true
-      validation-query: select 1
-      max-wait-millis: 5000
-      max-conn-lifetime-millis: 3600000
+#liquibase
+liquibase:
+  change-log: classpath:/db/changelog/db.changelog-master.yml
+#  authdb:
+#    url: jdbc:postgresql://localhost:5432/authdb
+#    username: postgres
+#    password: 1qaz2wsx
+#    type: org.apache.commons.dbcp2.BasicDataSource
+#    dbcp2:
+#      initial-size: 15
+#      min-idle: 10
+#      max-total: 100
+#      test-on-borrow: true
+#      validation-query: select 1
+#      max-wait-millis: 5000
+#      max-conn-lifetime-millis: 3600000
+#  measurementdb:
+#    url: jdbc:postgresql://localhost:5432/measurementdb
+#    username: postgres
+#    password: 1qaz2wsx
+#    type: org.apache.commons.dbcp2.BasicDataSource
+#    dbcp2:
+#      initial-size: 15
+#      min-idle: 10
+#      max-total: 100
+#      test-on-borrow: true
+#      validation-query: select 1
+#      max-wait-millis: 5000
+#      max-conn-lifetime-millis: 3600000
+#  mysql:
+#    url: jdbc:mysql://localhost:3307/SynCare
+#    username: root
+#    password: 1qaz2wsx
+#    type: org.apache.commons.dbcp2.BasicDataSource
+#    dbcp2:
+#      initial-size: 15
+#      min-idle: 10
+#      max-total: 100
+#      test-on-borrow: true
+#      validation-query: select 1
+#      max-wait-millis: 5000
+#      max-conn-lifetime-millis: 3600000
 #  profiles:
 #    active: ttshb 
-#liquibase
-#liquibase:
-#  change-log: classpath:/db/changelog/db.changelog-master.yml
+
 #Customize zookeeper properties
 #registry:
 #  address:

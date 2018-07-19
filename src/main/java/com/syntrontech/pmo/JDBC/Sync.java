@@ -1,12 +1,14 @@
 package com.syntrontech.pmo.JDBC;
 
 import com.syntrontech.pmo.JDBC.auth.RoleJDBC;
+import com.syntrontech.pmo.JDBC.auth.UnitJDBC;
 import com.syntrontech.pmo.JDBC.auth.UserJDBC;
 import com.syntrontech.pmo.JDBC.cip.*;
 import com.syntrontech.pmo.JDBC.measurement.AbnormalBloodPressureJDBC;
 import com.syntrontech.pmo.JDBC.measurement.BloodPressureHeartBeatJDBC;
 import com.syntrontech.pmo.JDBC.syncare1JDBC.*;
 import com.syntrontech.pmo.auth.model.Role;
+import com.syntrontech.pmo.auth.model.Unit;
 import com.syntrontech.pmo.auth.model.User;
 import com.syntrontech.pmo.cip.model.EmergencyContact;
 import com.syntrontech.pmo.cip.model.Subject;
@@ -16,6 +18,7 @@ import com.syntrontech.pmo.model.common.*;
 import com.syntrontech.pmo.syncare1.model.*;
 import com.syntrontech.pmo.syncare1.model.common.Sex;
 import com.syntrontech.pmo.syncare1.model.common.YN;
+import com.syntrontech.pmo.util.CalendarUtil;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -156,17 +159,22 @@ public class Sync {
         bloodPressureHeartBeat.setSubjectId(subject.getId());
         bloodPressureHeartBeat.setSubjectName(subject.getName());
         bloodPressureHeartBeat.setSubjectGender(subject.getGender());
-        bloodPressureHeartBeat.setSubjectAge();
+        bloodPressureHeartBeat.setSubjectAge(CalendarUtil.getAgeFromBirthDate(subject.getBirthday(), old.getRecordDate()));
         bloodPressureHeartBeat.setSubjectUserId(subject.getUserId());
         bloodPressureHeartBeat.setSubjectUserName(subject.getName());
 
+
         // rule_seq, rule_description, unit_id, unit_name, parent_unit_id, parent_unit_name, device_id
-        bloodPressureHeartBeat.setRuleSeq(rs.getLong("rule_seq"));
-        bloodPressureHeartBeat.setRuleDescription(rs.getString("rule_description"));
-        bloodPressureHeartBeat.setUnitId(old.getLocationId());
-        bloodPressureHeartBeat.setUnitName(rs.getString("unit_name"));
-        bloodPressureHeartBeat.setParentUnitId(rs.getString("parent_unit_id"));
-        bloodPressureHeartBeat.setParentUnitName(rs.getString("parent_unit_name"));
+        // TODO
+//        bloodPressureHeartBeat.setRuleSeq(rs.getLong("rule_seq"));
+//        bloodPressureHeartBeat.setRuleDescription(rs.getString("rule_description"));
+
+        UnitJDBC unitJDBC = new UnitJDBC();
+        Unit unit = unitJDBC.getUnitById(old.getLocationId());
+        bloodPressureHeartBeat.setUnitId(unit.getId());
+        bloodPressureHeartBeat.setUnitName(unit.getName());
+        bloodPressureHeartBeat.setParentUnitId(unit.getParentId());
+        bloodPressureHeartBeat.setParentUnitName(unit.getParentName());
 
         return bloodPressureHeartBeat;
     }
