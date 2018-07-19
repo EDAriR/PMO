@@ -1,182 +1,188 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-  <modelVersion>4.0.0</modelVersion>
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
 
-  <parent>
-    <groupId>org.springframework.boot</groupId>
-    <artifactId>spring-boot-starter-parent</artifactId>
-    <version>1.5.1.RELEASE</version>
-  </parent>
-  
-  <groupId>com.syntrontech</groupId>
-  <artifactId>pmo-service</artifactId>
-  <version>0.0.1</version>
-  <name>pmo-service</name>
+    <parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>1.5.1.RELEASE</version>
+    </parent>
 
-  <properties>
-    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <java.version>1.8</java.version>
-	<maven.compiler.plugin.version>3.1</maven.compiler.plugin.version>
-	<quartz.version>2.2.1</quartz.version>
-  </properties>
+    <groupId>com.syntrontech</groupId>
+    <artifactId>pmo-service</artifactId>
+    <version>0.0.1</version>
+    <name>pmo-service</name>
 
-  <dependencies>
-		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-			<scope>test</scope>
-		</dependency>
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <java.version>1.8</java.version>
+        <maven.compiler.plugin.version>3.1</maven.compiler.plugin.version>
+        <quartz.version>2.2.1</quartz.version>
+    </properties>
 
-		<!-- use jersey in spring boot start -->
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-jersey</artifactId>
+    <dependencies>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <scope>test</scope>
+        </dependency>
 
-			<!-- use jetty instead of tomcat -->
-			<exclusions>
-				<exclusion>
-					<groupId>org.springframework.boot</groupId>
-					<artifactId>spring-boot-starter-tomcat</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-		<!-- use jersey in spring boot end -->
+        <!-- use jersey in spring boot start -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-jersey</artifactId>
 
-		<!-- jetty start -->
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-jetty</artifactId>
-		</dependency>
-		<!-- jetty end -->
+            <!-- use jetty instead of tomcat -->
+            <exclusions>
+                <exclusion>
+                    <groupId>org.springframework.boot</groupId>
+                    <artifactId>spring-boot-starter-tomcat</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <!-- use jersey in spring boot end -->
 
-		<!-- jpa start -->
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-data-jpa</artifactId>
-		</dependency>
-	    <dependency>
-		    <groupId>org.springframework.boot</groupId>
-		    <artifactId>spring-boot-starter-jdbc</artifactId>
-	    </dependency>
-		<!-- jpa end -->
-		
-		<!-- redis start -->
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-data-redis</artifactId>
-		</dependency>
-		<!-- redis end -->
-		
-		<!-- syntrontech registry start -->
-		<dependency>
-			<groupId>com.syntrontech</groupId>
-			<artifactId>service-registry</artifactId>
-			<version>1.0.0-RC</version>
-		</dependency>
-		<!--  syntrontech registry end -->
-		
-		<!-- syntrontech redis-orm start -->
-		<dependency>
-			<groupId>com.syntrontech</groupId>
-			<artifactId>redis-orm</artifactId>
-			<version>1.2.1-GA</version>
-		</dependency>
-		<!-- syntrontech redis-orm end -->
-		
-		<!-- syntrontech auto-development-tool start -->
-		<dependency>
-			<groupId>com.syntrontech</groupId>
-			<artifactId>auto-development-tool</artifactId>
-			<version>1.1.0-RC</version>
-		</dependency>
-		<!-- syntrontech auto-development-tool end -->
-		
-		<!-- postgres start -->
-		<dependency>
-			<groupId>org.postgresql</groupId>
-			<artifactId>postgresql</artifactId>
-		</dependency>
-		<!-- postgres end -->
-		
-		<!-- https://mvnrepository.com/artifact/mysql/mysql-connector-java -->
-		<dependency>
-		    <groupId>mysql</groupId>
-		    <artifactId>mysql-connector-java</artifactId>
-		    <version>8.0.9-rc</version>
-		</dependency>
-		
-		<!-- dbcp2 start -->
-		<dependency>
-			<groupId>org.apache.commons</groupId>
-			<artifactId>commons-dbcp2</artifactId>
-		</dependency>
-		<!-- dbcp2 end -->
-		
-		<!-- Liquibase start -->
-		<dependency>
-			<groupId>org.liquibase</groupId>
-			<artifactId>liquibase-core</artifactId>
-		</dependency>
-		<!-- Liquibase end -->
-		
-		<!-- Jersey multipart start -->
-		<dependency>
-			<groupId>org.glassfish.jersey.media</groupId>
-			<artifactId>jersey-media-multipart</artifactId>
-			<version>2.25.1</version>
-		</dependency>
-	  <!-- Jersey multipart end -->
+        <!-- jetty start -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-jetty</artifactId>
+        </dependency>
+        <!-- jetty end -->
 
-	  <dependency>
-		  <groupId>commons-lang</groupId>
-		  <artifactId>commons-lang</artifactId>
-		  <version>2.5</version>
-	  </dependency>
+        <dependency>
+            <groupId>commons-httpclient</groupId>
+            <artifactId>commons-httpclient</artifactId>
+            <version>3.1</version>
+        </dependency>
+
+        <!-- jpa start -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-jpa</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-jdbc</artifactId>
+        </dependency>
+        <!-- jpa end -->
+
+        <!-- redis start -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-redis</artifactId>
+        </dependency>
+        <!-- redis end -->
+
+        <!-- syntrontech registry start -->
+        <dependency>
+            <groupId>com.syntrontech</groupId>
+            <artifactId>service-registry</artifactId>
+            <version>1.0.0-RC</version>
+        </dependency>
+        <!--  syntrontech registry end -->
+
+        <!-- syntrontech redis-orm start -->
+        <dependency>
+            <groupId>com.syntrontech</groupId>
+            <artifactId>redis-orm</artifactId>
+            <version>1.2.1-GA</version>
+        </dependency>
+        <!-- syntrontech redis-orm end -->
+
+        <!-- syntrontech auto-development-tool start -->
+        <dependency>
+            <groupId>com.syntrontech</groupId>
+            <artifactId>auto-development-tool</artifactId>
+            <version>1.1.0-RC</version>
+        </dependency>
+        <!-- syntrontech auto-development-tool end -->
+
+        <!-- postgres start -->
+        <dependency>
+            <groupId>org.postgresql</groupId>
+            <artifactId>postgresql</artifactId>
+        </dependency>
+        <!-- postgres end -->
+
+        <!-- https://mvnrepository.com/artifact/mysql/mysql-connector-java -->
+        <dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+            <version>8.0.9-rc</version>
+        </dependency>
+
+        <!-- dbcp2 start -->
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-dbcp2</artifactId>
+        </dependency>
+        <!-- dbcp2 end -->
+
+        <!-- Liquibase start -->
+        <dependency>
+            <groupId>org.liquibase</groupId>
+            <artifactId>liquibase-core</artifactId>
+        </dependency>
+        <!-- Liquibase end -->
+
+        <!-- Jersey multipart start -->
+        <dependency>
+            <groupId>org.glassfish.jersey.media</groupId>
+            <artifactId>jersey-media-multipart</artifactId>
+            <version>2.25.1</version>
+        </dependency>
+        <!-- Jersey multipart end -->
+
+        <dependency>
+            <groupId>commons-lang</groupId>
+            <artifactId>commons-lang</artifactId>
+            <version>2.5</version>
+        </dependency>
 
 
-	  <dependency>
-		  <groupId>org.quartz-scheduler</groupId>
-		  <artifactId>quartz</artifactId>
-		  <version>${quartz.version}</version>
-	  </dependency>
-	  <dependency>
-		  <groupId>org.quartz-scheduler</groupId>
-		  <artifactId>quartz-jobs</artifactId>
-		  <version>${quartz.version}</version>
-	  </dependency>
-	  <dependency>
-		  <groupId>com.squareup.retrofit</groupId>
-		  <artifactId>retrofit</artifactId>
-		  <version>1.9.0</version>
-	  </dependency>
-	  <dependency>
-		  <groupId>com.squareup.retrofit</groupId>
-		  <artifactId>converter-jackson</artifactId>
-		  <version>1.9.0</version>
-		  <exclusions>
-			  <exclusion>
-				  <groupId>com.fasterxml.jackson.core</groupId>
-				  <artifactId>jackson-annotations</artifactId>
-			  </exclusion>
-			  <exclusion>
-				  <groupId>com.fasterxml.jackson.core</groupId>
-				  <artifactId>jackson-core</artifactId>
-			  </exclusion>
-		  </exclusions>
-	  </dependency>
+        <dependency>
+            <groupId>org.quartz-scheduler</groupId>
+            <artifactId>quartz</artifactId>
+            <version>${quartz.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.quartz-scheduler</groupId>
+            <artifactId>quartz-jobs</artifactId>
+            <version>${quartz.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.squareup.retrofit</groupId>
+            <artifactId>retrofit</artifactId>
+            <version>1.9.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.squareup.retrofit</groupId>
+            <artifactId>converter-jackson</artifactId>
+            <version>1.9.0</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>com.fasterxml.jackson.core</groupId>
+                    <artifactId>jackson-annotations</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>com.fasterxml.jackson.core</groupId>
+                    <artifactId>jackson-core</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
 
-  </dependencies>
-	<build>
-		<plugins>
-			<plugin>
-				<groupId>org.springframework.boot</groupId>
-				<artifactId>spring-boot-maven-plugin</artifactId>
-				<!-- <configuration> 
-						<source>${javac.compile.level}</source> 
-						<target>${javac.compile.level}</target> 
-					</configuration> -->
-			</plugin>
-		</plugins>
-	</build>
-  
+    </dependencies>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <!-- <configuration>
+                        <source>${javac.compile.level}</source>
+                        <target>${javac.compile.level}</target>
+                    </configuration> -->
+            </plugin>
+        </plugins>
+    </build>
+
 </project>

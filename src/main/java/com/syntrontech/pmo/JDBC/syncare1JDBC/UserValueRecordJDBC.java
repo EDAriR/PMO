@@ -168,7 +168,7 @@ public class UserValueRecordJDBC {
         return userValueRecords;
     }
 
-    public void updateUserValueRecord(String id) {
+    public void updateUserValueRecord(int id) {
 
         Connection conn = new Syncare1_GET_CONNECTION().getConn();
         PreparedStatement pstmt = null;
@@ -177,7 +177,7 @@ public class UserValueRecordJDBC {
 
             pstmt = conn.prepareStatement(UPDATE);
 
-            pstmt.setString(1, id);
+            pstmt.setInt(1, id);
             pstmt.executeUpdate();
 
             System.out.println("update " + id + " successful ==============");

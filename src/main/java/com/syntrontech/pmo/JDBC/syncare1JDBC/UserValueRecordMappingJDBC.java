@@ -102,7 +102,7 @@ public class UserValueRecordMappingJDBC {
         return map;
     }
 
-    public void updateUserValueRecordMapping(String id) {
+    public void updateUserValueRecordMapping(int id) {
 
         Connection conn = new Syncare1_GET_CONNECTION().getConn();
         PreparedStatement pstmt = null;
@@ -111,7 +111,7 @@ public class UserValueRecordMappingJDBC {
 
             pstmt = conn.prepareStatement(UPDATE);
 
-            pstmt.setString(1, id);
+            pstmt.setInt(1, id);
             pstmt.executeUpdate();
 
             System.out.println("update " + id + " successful ==============");

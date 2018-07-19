@@ -1,5 +1,6 @@
 package com.syntrontech.pmo.JDBC;
 
+import com.syntrontech.pmo.JDBC.auth.PasswordListJDBC;
 import com.syntrontech.pmo.JDBC.auth.RoleJDBC;
 import com.syntrontech.pmo.JDBC.auth.UnitJDBC;
 import com.syntrontech.pmo.JDBC.auth.UserJDBC;
@@ -13,6 +14,7 @@ import com.syntrontech.pmo.auth.model.Unit;
 import com.syntrontech.pmo.auth.model.User;
 import com.syntrontech.pmo.cip.model.EmergencyContact;
 import com.syntrontech.pmo.cip.model.Subject;
+import com.syntrontech.pmo.measurement.AbnormalBloodPressure;
 import com.syntrontech.pmo.measurement.BloodPressureHeartBeat;
 import com.syntrontech.pmo.measurement.common.MeasurementStatusType;
 import com.syntrontech.pmo.model.common.*;
@@ -51,6 +53,8 @@ public class Sync {
         AbnormalBloodPressureLogJDBC abnormalBloodPressureLogJDBC = new AbnormalBloodPressureLogJDBC();
         UserValueRecordJDBC userValueRecordJDBC = new UserValueRecordJDBC();
 
+        PasswordListJDBC passwordListJDBC = new PasswordListJDBC();
+
         // 取出新的role 只要user 的  DEFAULT_TENANT_ADMIN TTABO
         Role newrole = new RoleJDBC().getRoleById("DEFAULT_TENANT_ADMIN");
 
@@ -58,14 +62,14 @@ public class Sync {
         Map<Integer, List<UserValueRecordMapping>> userValueRecordMap = new UserValueRecordMappingJDBC()
                 .getAllUserValueRecordMapping();
 
-
         userIds.stream()   // 找出未同步systemuser
                 .map(id -> systemUserJDBC.getSystemUserById(id))
                 .forEach(su -> {
 
                     // 新增 user
-                    userJDBC.insertUser(syncSystemUserToUser(su, newrole));
-                    // TODO 密碼
+                    User user = userJDBC.insertUser(syncSystemUserToUser(su, newrole));
+                    // 密碼
+                    passwordListJDBC.insertPassword(user, su.getUserPassword());
                     // 新增 subject
                     Subject subject = subjectJDBC.insertSubject(syncSystemUserToSubject(su));
                     // 新增 緊急聯絡人 Alert = Y 為接受緊急通知
@@ -75,14 +79,16 @@ public class Sync {
                     // 取出該使用者所有血壓重算異常
                     // 根據使用者身上異常追蹤狀態 例如為 2就醫確診異常
                     // 重算後新增的全部異常log 處理狀態為舊資料狀態 2就醫確診異常
-                    List<UserValueRecord>  userValueRecords = userValueRecordJDBC.getOneBUserValueRecord(su.getUserId());
+                    List<UserValueRecord> userValueRecords = userValueRecordJDBC.getOneBUserValueRecord(su.getUserId());
 
                     // 同步至 新的血壓心跳
                     List<BloodPressureHeartBeat>  bloodPressureHeartBeats = new ArrayList<>();
                     userValueRecords.forEach(old ->{
 
-
                         BloodPressureHeartBeat bloodPressureHeartBeat = syncBloodPressureHeartBeat(userValueRecordMap, old, subject);
+
+                        // 更新舊 UserValueRecord 資料狀態
+                        userValueRecordJDBC.updateUserValueRecord(old.getBodyValueRecordId());
 
                         // 連續兩筆紀錄為異常 做異常紀錄
                         BloodPressureHeartBeat oldBloodPressureHeartBeat = null;
@@ -93,7 +99,7 @@ public class Sync {
                             // 判斷是否為異常
                             // TODO 異常
                             if(isBloodPressureAbnormal(oldBloodPressureHeartBeat) && isBloodPressureAbnormal(bloodPressureHeartBeat)){
-                                abnormalBloodPressureJDBC.insertAbnormalBloodPressure();
+                                abnormalBloodPressureJDBC.insertAbnormalBloodPressure(turnNoarmalToAbnormal(bloodPressureHeartBeat));
 //                                abnormalBloodPressureLogJDBC.
                             }
 
@@ -104,11 +110,78 @@ public class Sync {
 
 
                     // TODO PMO
+                    // ↓  不需要
                     // ALBUM_NAME	varchar(45) NULL
                     // ALBUM_TYPE	int(11) unsigned [0]	使用者mapping的相本為 -> 1;picasa, 2:無名 .....
                     // ADVERTISMENT_STATUS 好康報報對於使用者的狀態_1: 此使用者尚未收到"新廣告通知了"(包含修改),2:此使用者已經收到"新廣告通知了
 
                 });
+    }
+
+    private AbnormalBloodPressure turnNoarmalToAbnormal(BloodPressureHeartBeat bloodPressureHeartBeat) {
+
+        AbnormalBloodPressure abnormalBloodPressure = new AbnormalBloodPressure();
+
+        private Long subjectSeq;
+
+        abnormalBloodPressure.setSubjectSeq();
+
+        private String subjectId;
+        abnormalBloodPressure.setSubjectId();
+
+        private String subjectName;
+        abnormalBloodPressure.setSubjectName();
+        private GenderType subjectGender;
+        abnormalBloodPressure.setSubjectGender();
+        private Integer subjectAge;
+        abnormalBloodPressure.setSubjectAge();
+        private String subjectUserId;
+        abnormalBloodPressure.setSubjectUserId();
+        private String subjectUserName;
+        abnormalBloodPressure.setSubjectUserName();
+        private Integer systolicPressure;
+        abnormalBloodPressure.setSystolicPressure();
+        private Integer diastolicPressure;
+        abnormalBloodPressure.setDiastolicPressure();
+        private Integer heartRate;
+        abnormalBloodPressure.setHeartRate();
+        private Date recordtime;
+        abnormalBloodPressure.setRecordtime();
+        private String createBy;
+        abnormalBloodPressure.setCreateBy();
+        private BloodPressureCaseStatus caseStatus;
+        abnormalBloodPressure.setCaseStatus();
+        @Column(name = "last_change_case_status_time", nullable = false)
+        private Date lastChangeCaseStatusTime;
+
+        @Column(name = "unit_id")
+        private String unitId;
+
+        @Column(name = "tenant_id", nullable = false)
+        private String tenantId;
+
+        @Column(name = "device_mac_address")
+        private String deviceMacAddress;
+
+        @Column(name = "unit_name")
+        private String unitName;
+
+        @Column(name = "status", nullable = false)
+        @Enumerated(EnumType.STRING)
+        private MeasurementStatusType status;
+
+        @Column(name = "rule_description")
+        private String ruleDescription;
+
+        @Column(name = "parent_unit_id")
+        private String parentUnitId;
+
+        @Column(name = "parent_unit_name")
+        private String parentUnitName;
+
+        @Column(name = "device_id")
+        private String deviceId;
+        return abnormalBloodPressure;
     }
 
     private boolean isBloodPressureAbnormal(BloodPressureHeartBeat record) {
@@ -149,6 +222,12 @@ public class Sync {
 
         BloodPressureHeartBeat bloodPressureHeartBeat = bloodPressureHeartBeatJDBC
                 .insertBloodPressureHeartBeat(turnOldRecordsToBloodPressureHeartBeat(old, values, subject));
+
+        // 更新舊 UserValueRecordMapping 資料狀態
+        recordValues.forEach(mapping -> new UserValueRecordMappingJDBC()
+                .updateUserValueRecordMapping(mapping.getUserValueRecordMappingId())
+        );
+
 
         return bloodPressureHeartBeat;
 

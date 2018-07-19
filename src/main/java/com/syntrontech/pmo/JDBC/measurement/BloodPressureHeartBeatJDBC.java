@@ -55,15 +55,15 @@ public class BloodPressureHeartBeatJDBC {
             // systolic_pressure, diastolic_pressure, heart_rate
             pstmt.setInt(1, bloodPressureHeartBeat.getSystolicPressure());
             pstmt.setInt(2, bloodPressureHeartBeat.getDiastolicPressure());
-            pstmt.setInt(2, bloodPressureHeartBeat.getHeartRate());
+            pstmt.setInt(3, bloodPressureHeartBeat.getHeartRate());
 
             // recordtime, latitude, longitude
-            pstmt.setTimestamp(3, new Timestamp(bloodPressureHeartBeat.getRecordTime().getTime()));
-            pstmt.setString(4, bloodPressureHeartBeat.getLatitude());
-            pstmt.setString(5, bloodPressureHeartBeat.getLongitude());
+            pstmt.setTimestamp(4, new Timestamp(bloodPressureHeartBeat.getRecordTime().getTime()));
+            pstmt.setString(5, bloodPressureHeartBeat.getLatitude());
+            pstmt.setString(6, bloodPressureHeartBeat.getLongitude());
 
             // status, createtime, createby, tenant_id, device_mac_address
-            pstmt.setString(6, bloodPressureHeartBeat.getStatus().toString());
+            pstmt.setString(7, bloodPressureHeartBeat.getStatus().toString());
             pstmt.setTimestamp(7, new Timestamp(bloodPressureHeartBeat.getCreateTime().getTime()));
             pstmt.setString(8, bloodPressureHeartBeat.getCreateBy());
             pstmt.setString(9, bloodPressureHeartBeat.getTenantId());
@@ -71,21 +71,21 @@ public class BloodPressureHeartBeatJDBC {
 
             // subject_seq, subject_id, subject_name, subject_gender, subject_age, subject_user_id, subject_user_name,
             pstmt.setLong(11, bloodPressureHeartBeat.getSubjectSeq());
-            pstmt.setString(11, bloodPressureHeartBeat.getSubjectId());
-            pstmt.setString(11, bloodPressureHeartBeat.getSubjectName());
-            pstmt.setString(11, bloodPressureHeartBeat.getSubjectGender().toString());
-            pstmt.setInt(11, bloodPressureHeartBeat.getSubjectAge());
-            pstmt.setString(11, bloodPressureHeartBeat.getSubjectUserId());
-            pstmt.setString(11, bloodPressureHeartBeat.getSubjectUserName());
+            pstmt.setString(12, bloodPressureHeartBeat.getSubjectId());
+            pstmt.setString(13, bloodPressureHeartBeat.getSubjectName());
+            pstmt.setString(14, bloodPressureHeartBeat.getSubjectGender().toString());
+            pstmt.setInt(15, bloodPressureHeartBeat.getSubjectAge());
+            pstmt.setString(16, bloodPressureHeartBeat.getSubjectUserId());
+            pstmt.setString(17, bloodPressureHeartBeat.getSubjectUserName());
 
             // rule_seq, rule_description, unit_id, unit_name, parent_unit_id, parent_unit_name, device_id
-            pstmt.setLong(20, bloodPressureHeartBeat.getRuleSeq());
-            pstmt.setString(20, bloodPressureHeartBeat.getRuleDescription());
-            pstmt.setString(16, bloodPressureHeartBeat.getUnitId());
-            pstmt.setString(18, bloodPressureHeartBeat.getUnitName());
-            pstmt.setString(20, bloodPressureHeartBeat.getParentUnitId());
-            pstmt.setString(20, bloodPressureHeartBeat.getParentUnitName());
-            pstmt.setString(20, bloodPressureHeartBeat.getDeviceId());
+            pstmt.setLong(18, bloodPressureHeartBeat.getRuleSeq());
+            pstmt.setString(19, bloodPressureHeartBeat.getRuleDescription());
+            pstmt.setString(20, bloodPressureHeartBeat.getUnitId());
+            pstmt.setString(21, bloodPressureHeartBeat.getUnitName());
+            pstmt.setString(22, bloodPressureHeartBeat.getParentUnitId());
+            pstmt.setString(23, bloodPressureHeartBeat.getParentUnitName());
+            pstmt.setString(24, bloodPressureHeartBeat.getDeviceId());
 
             System.out.println(pstmt);
             pstmt.executeUpdate();
