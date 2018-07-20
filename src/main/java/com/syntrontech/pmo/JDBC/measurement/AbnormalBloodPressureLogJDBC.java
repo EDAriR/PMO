@@ -3,10 +3,7 @@ package com.syntrontech.pmo.JDBC.measurement;
 import com.syntrontech.pmo.measurement.AbnormalBloodPressureLog;
 import com.syntrontech.pmo.measurement.common.BloodPressureCaseStatus;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -31,6 +28,45 @@ public class AbnormalBloodPressureLogJDBC {
         List<AbnormalBloodPressureLog> ss = abnormalBloodPressureLogJDBC.getAllAbnormalBloodPressureLog();
 
         System.out.println("ss size:" + ss.size());
+    }
+
+    public void insertAbnormalBloodPressure(AbnormalBloodPressureLog abnormalBloodPressureLog){
+
+        Connection conn = new MEASUREMENT_GET_CONNECTION().getConn();
+        PreparedStatement pstmt = null;
+
+        try {
+            pstmt = conn.prepareStatement(INSERT_STMT);
+            // abnormal_blood_pressure_squence, case_status, subject_id, subject_name
+
+            pstmt.setLong(1, abnormalBloodPressureLog.getAbnormalBloodPressureSquence());
+            pstmt.setString(2, abnormalBloodPressureLog.getCaseStatus().toString());
+            pstmt.setString(3, abnormalBloodPressureLog.getSubjectId());
+            pstmt.setString(4, abnormalBloodPressureLog.getSubjectName());
+            // case_creator_user_id, case_creator_user_name, case_description, recordtime, tenant_id
+            pstmt.setString(5, abnormalBloodPressureLog.getCaseCreatorUserId());
+            pstmt.setString(6, abnormalBloodPressureLog.getCaseCreatorUserName());
+            pstmt.setString(7, abnormalBloodPressureLog.getCaseDescription());
+            pstmt.setTimestamp(8, new Timestamp(abnormalBloodPressureLog.getChangeCaseStatusTime().getTime()));
+            pstmt.setString(9, abnormalBloodPressureLog.getTenantId());
+
+            System.out.println(pstmt);
+            pstmt.executeUpdate();
+            System.out.println("create successful ==> " + abnormalBloodPressureLog);
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+
+            try {
+                if(pstmt != null)
+                    pstmt.close();
+                conn.close();
+            } catch (SQLException e) {
+                System.out.println("conn or pstmt close fail" + conn + " || " + pstmt);
+                e.printStackTrace();
+            }
+        }
     }
 
     public List<AbnormalBloodPressureLog> getAllAbnormalBloodPressureLog() {

@@ -15,7 +15,9 @@ import com.syntrontech.pmo.auth.model.User;
 import com.syntrontech.pmo.cip.model.EmergencyContact;
 import com.syntrontech.pmo.cip.model.Subject;
 import com.syntrontech.pmo.measurement.AbnormalBloodPressure;
+import com.syntrontech.pmo.measurement.AbnormalBloodPressureLog;
 import com.syntrontech.pmo.measurement.BloodPressureHeartBeat;
+import com.syntrontech.pmo.measurement.common.BloodPressureCaseStatus;
 import com.syntrontech.pmo.measurement.common.MeasurementStatusType;
 import com.syntrontech.pmo.model.common.*;
 import com.syntrontech.pmo.syncare1.model.*;
@@ -30,6 +32,8 @@ public class Sync {
 
     public static void main(String[] args) {
 
+        // TODO 台東 預設 系統管理員 TENANT ==> TTSHB
+        // 測試流程 ==> 新建TTSHB  TENANT 給 default user 權限後測試
         Sync sync = new Sync();
 
         // TODO syncare_questionnair_answer
@@ -56,7 +60,7 @@ public class Sync {
         PasswordListJDBC passwordListJDBC = new PasswordListJDBC();
 
         // 取出新的role 只要user 的  DEFAULT_TENANT_ADMIN TTABO
-        Role newrole = new RoleJDBC().getRoleById("DEFAULT_TENANT_ADMIN");
+        Role newrole = new RoleJDBC().getRoleById("TTSHB");
 
         // 取出所有未同步量測紀錄數值 <body_value_record_id, UserValueRecordMappings>
         Map<Integer, List<UserValueRecordMapping>> userValueRecordMap = new UserValueRecordMappingJDBC()
@@ -99,8 +103,14 @@ public class Sync {
                             // 判斷是否為異常
                             // TODO 異常
                             if(isBloodPressureAbnormal(oldBloodPressureHeartBeat) && isBloodPressureAbnormal(bloodPressureHeartBeat)){
-                                abnormalBloodPressureJDBC.insertAbnormalBloodPressure(turnNoarmalToAbnormal(bloodPressureHeartBeat));
-//                                abnormalBloodPressureLogJDBC.
+                                AbnormalBloodPressure abnormalBloodPressure = abnormalBloodPressureJDBC
+                                        .insertAbnormalBloodPressure(
+                                                turnNoarmalToAbnormal(bloodPressureHeartBeat, su));
+                                // 尚未處理不需存log
+                                if(su.getCaseStatus() != 0 && su.getCaseNote() != null)
+                                    abnormalBloodPressureLogJDBC
+                                            .insertAbnormalBloodPressure(
+                                                    turnBloodPressureAbnormalToLog(abnormalBloodPressure, su));
                             }
 
                         }
@@ -118,69 +128,85 @@ public class Sync {
                 });
     }
 
-    private AbnormalBloodPressure turnNoarmalToAbnormal(BloodPressureHeartBeat bloodPressureHeartBeat) {
+    private AbnormalBloodPressureLog turnBloodPressureAbnormalToLog(AbnormalBloodPressure abnormalBloodPressure, SystemUser su) {
+        AbnormalBloodPressureLog abnormalBloodPressureLog = new AbnormalBloodPressureLog();
+
+        // abnormal_blood_pressure_squence, case_status, subject_id, subject_name
+        abnormalBloodPressureLog.setAbnormalBloodPressureSquence(abnormalBloodPressure.getBloodPressureSeq());
+        abnormalBloodPressureLog.setCaseStatus(abnormalBloodPressure.getCaseStatus());
+        abnormalBloodPressureLog.setSubjectId(abnormalBloodPressure.getSubjectId());
+        abnormalBloodPressureLog.setSubjectName(abnormalBloodPressure.getSubjectName());
+
+        // case_creator_user_id, case_creator_user_name, case_description, recordtime, tenant_id
+        abnormalBloodPressureLog.setCaseCreatorUserId("TTSHB");
+        abnormalBloodPressureLog.setCaseCreatorUserName("TTSB");
+        abnormalBloodPressureLog.setCaseDescription(su.getCaseNote());
+        abnormalBloodPressureLog.setChangeCaseStatusTime(su.getCaseUpdateDate());
+        abnormalBloodPressureLog.setTenantId(abnormalBloodPressure.getTenantId());
+
+        return abnormalBloodPressureLog;
+
+    }
+
+    private AbnormalBloodPressure turnNoarmalToAbnormal(BloodPressureHeartBeat bloodPressureHeartBeat, SystemUser systemUser) {
 
         AbnormalBloodPressure abnormalBloodPressure = new AbnormalBloodPressure();
 
-        private Long subjectSeq;
+        abnormalBloodPressure.setSubjectSeq(bloodPressureHeartBeat.getSubjectSeq());
 
-        abnormalBloodPressure.setSubjectSeq();
+        abnormalBloodPressure.setSubjectId(bloodPressureHeartBeat.getSubjectId());
 
-        private String subjectId;
-        abnormalBloodPressure.setSubjectId();
+        abnormalBloodPressure.setSubjectName(bloodPressureHeartBeat.getSubjectName());
+        abnormalBloodPressure.setSubjectGender(bloodPressureHeartBeat.getSubjectGender());
+        abnormalBloodPressure.setSubjectAge(bloodPressureHeartBeat.getSubjectAge());
+        abnormalBloodPressure.setSubjectUserId(bloodPressureHeartBeat.getSubjectUserId());
+        abnormalBloodPressure.setSubjectUserName(bloodPressureHeartBeat.getSubjectUserName());
+        abnormalBloodPressure.setSystolicPressure(bloodPressureHeartBeat.getSystolicPressure());
+        abnormalBloodPressure.setDiastolicPressure(bloodPressureHeartBeat.getDiastolicPressure());
+        abnormalBloodPressure.setHeartRate(bloodPressureHeartBeat.getHeartRate());
+        abnormalBloodPressure.setRecordtime(bloodPressureHeartBeat.getRecordTime());
+        abnormalBloodPressure.setCreateBy(bloodPressureHeartBeat.getCreateBy());
 
-        private String subjectName;
-        abnormalBloodPressure.setSubjectName();
-        private GenderType subjectGender;
-        abnormalBloodPressure.setSubjectGender();
-        private Integer subjectAge;
-        abnormalBloodPressure.setSubjectAge();
-        private String subjectUserId;
-        abnormalBloodPressure.setSubjectUserId();
-        private String subjectUserName;
-        abnormalBloodPressure.setSubjectUserName();
-        private Integer systolicPressure;
-        abnormalBloodPressure.setSystolicPressure();
-        private Integer diastolicPressure;
-        abnormalBloodPressure.setDiastolicPressure();
-        private Integer heartRate;
-        abnormalBloodPressure.setHeartRate();
-        private Date recordtime;
-        abnormalBloodPressure.setRecordtime();
-        private String createBy;
-        abnormalBloodPressure.setCreateBy();
-        private BloodPressureCaseStatus caseStatus;
-        abnormalBloodPressure.setCaseStatus();
-        @Column(name = "last_change_case_status_time", nullable = false)
-        private Date lastChangeCaseStatusTime;
+//        private BloodPressureCaseStatus caseStatus;
+        // 0尚未處理  1就醫確診正常  2就醫確診異常  3拒絕就醫及複查  4無法聯繫
+        BloodPressureCaseStatus casetStatus = null;
+        switch(systemUser.getCaseStatus()){
+            case 0:
+                casetStatus = BloodPressureCaseStatus.NOT_YET;
+                break;
+            case 1:
+                casetStatus = BloodPressureCaseStatus.DIAGNOSIS_NORMAL;
 
-        @Column(name = "unit_id")
-        private String unitId;
+                break;
+            case 2:
+                casetStatus = BloodPressureCaseStatus.DIAGNOSIS_ABNORMALITY;
+                break;
+            case 3:
+                casetStatus = BloodPressureCaseStatus.REFUSE_DIAGNOSIS;
+                break;
+            case 4:
+                casetStatus = BloodPressureCaseStatus.NOT_CONTACT;
+                break;
+            default:
+        }
+        abnormalBloodPressure.setCaseStatus(casetStatus);
 
-        @Column(name = "tenant_id", nullable = false)
-        private String tenantId;
+//        private Date lastChangeCaseStatusTime;
+        abnormalBloodPressure.setLastChangeCaseStatusTime(systemUser.getCaseUpdateDate());
 
-        @Column(name = "device_mac_address")
-        private String deviceMacAddress;
+        abnormalBloodPressure.setUnitId(bloodPressureHeartBeat.getUnitId());
+        abnormalBloodPressure.setTenantId(bloodPressureHeartBeat.getTenantId());
+        abnormalBloodPressure.setDeviceMacAddress(bloodPressureHeartBeat.getDeviceMacAddress());
+        abnormalBloodPressure.setUnitName(bloodPressureHeartBeat.getUnitName());
+//        private MeasurementStatusType status;
+        abnormalBloodPressure.setStatus(bloodPressureHeartBeat.getStatus());
+//        private String ruleDescription;
+//        abnormalBloodPressure.setRuleDescription();
 
-        @Column(name = "unit_name")
-        private String unitName;
+        abnormalBloodPressure.setParentUnitId(bloodPressureHeartBeat.getParentUnitId());
+        abnormalBloodPressure.setParentUnitName(bloodPressureHeartBeat.getParentUnitName());
+        abnormalBloodPressure.setDeviceId(bloodPressureHeartBeat.getDeviceId());
 
-        @Column(name = "status", nullable = false)
-        @Enumerated(EnumType.STRING)
-        private MeasurementStatusType status;
-
-        @Column(name = "rule_description")
-        private String ruleDescription;
-
-        @Column(name = "parent_unit_id")
-        private String parentUnitId;
-
-        @Column(name = "parent_unit_name")
-        private String parentUnitName;
-
-        @Column(name = "device_id")
-        private String deviceId;
         return abnormalBloodPressure;
     }
 
@@ -227,10 +253,7 @@ public class Sync {
         recordValues.forEach(mapping -> new UserValueRecordMappingJDBC()
                 .updateUserValueRecordMapping(mapping.getUserValueRecordMappingId())
         );
-
-
         return bloodPressureHeartBeat;
-
     }
 
     private BloodPressureHeartBeat turnOldRecordsToBloodPressureHeartBeat(
@@ -261,7 +284,7 @@ public class Sync {
         bloodPressureHeartBeat.setStatus(MeasurementStatusType.EXISTED);
         bloodPressureHeartBeat.setCreateTime(old.getUpdateDate());
         bloodPressureHeartBeat.setCreateBy(subject.getId());
-        bloodPressureHeartBeat.setTenantId("DEAFULT_TENTANT");
+        bloodPressureHeartBeat.setTenantId("TTSHB");
 
         // subject_seq, subject_id, subject_name, subject_gender, subject_age, subject_user_id, subject_user_name,
         bloodPressureHeartBeat.setSubjectSeq(subject.getSequence());
@@ -274,10 +297,6 @@ public class Sync {
 
 
         // rule_seq, rule_description, unit_id, unit_name, parent_unit_id, parent_unit_name, device_id
-        // TODO
-//        bloodPressureHeartBeat.setRuleSeq(rs.getLong("rule_seq"));
-//        bloodPressureHeartBeat.setRuleDescription(rs.getString("rule_description"));
-
         UnitJDBC unitJDBC = new UnitJDBC();
         Unit unit = unitJDBC.getUnitById(old.getLocationId());
         bloodPressureHeartBeat.setUnitId(unit.getId());

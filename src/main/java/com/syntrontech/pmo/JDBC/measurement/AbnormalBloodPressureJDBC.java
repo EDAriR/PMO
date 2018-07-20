@@ -49,7 +49,7 @@ public class AbnormalBloodPressureJDBC {
     }
 
 
-    public void insertAbnormalBloodPressure(AbnormalBloodPressure abnormalBloodPressure){
+    public AbnormalBloodPressure insertAbnormalBloodPressure(AbnormalBloodPressure abnormalBloodPressure){
 
         Connection conn = new MEASUREMENT_GET_CONNECTION().getConn();
         PreparedStatement pstmt = null;
@@ -92,6 +92,14 @@ public class AbnormalBloodPressureJDBC {
 
             System.out.println(pstmt);
             pstmt.executeUpdate();
+
+            try (ResultSet rs = pstmt.getGeneratedKeys()) {
+                if (rs.next()) {
+                    abnormalBloodPressure.setSequence(rs.getLong(1));
+                }
+                rs.close();
+            }
+
             System.out.println("create successful ==> " + abnormalBloodPressure);
 
         } catch (SQLException e) {
@@ -108,6 +116,8 @@ public class AbnormalBloodPressureJDBC {
             }
 
         }
+
+        return abnormalBloodPressure;
     }
 
 

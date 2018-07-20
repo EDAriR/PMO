@@ -14,6 +14,14 @@ public class CreatePMOTable {
 
             conn = new PMO_GET_CONNECTION().getConn();
 
+            String pmoUserSeqSql = "CREATE SEQUENCE pmo_user_sequence_seq";
+
+            stmt = conn.prepareStatement(pmoUserSeqSql);
+
+            stmt.executeQuery();
+
+            System.out.println(stmt);
+
             String pmoUserSql = "CREATE TABLE pmo_user " +
                     "(sequence bigint PRIMARY KEY DEFAULT nextval('pmo_user_sequence_seq'), " +
                     " user_id VARCHAR(255)  not NULL, " +
@@ -28,6 +36,14 @@ public class CreatePMOTable {
             System.out.println(stmt);
 
             System.out.println("Created table  pmo_user in pmodb ...");
+
+            String pmoResultSeqSql = "CREATE SEQUENCE pmo_result_sequence_seq";
+
+            stmt = conn.prepareStatement(pmoResultSeqSql);
+
+            stmt.executeQuery();
+
+            System.out.println(stmt);
 
             String pmoResultSql = "CREATE TABLE pmo_result " +
                     "(sequence bigint PRIMARY KEY DEFAULT nextval('pmo_result_sequence_seq'), " +
