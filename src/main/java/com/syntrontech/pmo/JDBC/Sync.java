@@ -7,6 +7,7 @@ import com.syntrontech.pmo.JDBC.auth.UserJDBC;
 import com.syntrontech.pmo.JDBC.cip.*;
 import com.syntrontech.pmo.JDBC.measurement.AbnormalBloodPressureJDBC;
 import com.syntrontech.pmo.JDBC.measurement.AbnormalBloodPressureLogJDBC;
+import com.syntrontech.pmo.JDBC.measurement.BloodGlucoseJDBC;
 import com.syntrontech.pmo.JDBC.measurement.BloodPressureHeartBeatJDBC;
 import com.syntrontech.pmo.JDBC.pmo.PmoResultJDBC;
 import com.syntrontech.pmo.JDBC.pmo.PmoUserJDBC;
@@ -18,8 +19,10 @@ import com.syntrontech.pmo.cip.model.EmergencyContact;
 import com.syntrontech.pmo.cip.model.Subject;
 import com.syntrontech.pmo.measurement.AbnormalBloodPressure;
 import com.syntrontech.pmo.measurement.AbnormalBloodPressureLog;
+import com.syntrontech.pmo.measurement.BloodGlucose;
 import com.syntrontech.pmo.measurement.BloodPressureHeartBeat;
 import com.syntrontech.pmo.measurement.common.BloodPressureCaseStatus;
+import com.syntrontech.pmo.measurement.common.GlucoseType;
 import com.syntrontech.pmo.measurement.common.MeasurementStatusType;
 import com.syntrontech.pmo.model.common.*;
 import com.syntrontech.pmo.pmo.MeasurementPMOType;
@@ -49,7 +52,7 @@ public class Sync {
         sync.syncSystemUserToUserAndSubject();
     }
 
-    public void syncSystemUserToUserAndSubject(){
+    public void syncSystemUserToUserAndSubject() {
 
         // 取出所有 未同步 且 角色為使用者的使用者
         List<String> userIds = new UserRoleJDBC().getAllUserRoles();
@@ -92,13 +95,10 @@ public class Sync {
                     // 同步至 新的血壓心跳 異常追蹤 異常追蹤log
                     syncMeasurementBloodPressureHeartBeat(userValueRecords, userValueRecordMap, subject, su, userValueRecordJDBC);
 
+                    // 同步新的血糖
+                    syncBloodGlucose(su, userValueRecordMap, subject, userValueRecordJDBC);
 
-                    // TODO sync 136 BG 取出使用者所有血糖
-                    List<UserValueRecord> userBGValueRecords = userValueRecordJDBC.getOneBGUserValueRecord(su.getUserId());
-                    userBGValueRecords.forEach(bg ->{
-
-                    });
-                    // TODO PMO
+                    // TODO BodyInfo
 
                     pmoUserJDBC.insert(turnSystemUserToPmoUser(su));
                     // update systemUser sync status
@@ -111,6 +111,70 @@ public class Sync {
                 });
     }
 
+    private void syncBloodGlucose(SystemUser su, Map<Integer, List<UserValueRecordMapping>> userValueRecordMap, Subject subject, UserValueRecordJDBC userValueRecordJDBC) {
+
+        // TODO sync 136 BG 取出使用者所有血糖
+        BloodGlucoseJDBC bloodGlucoseJDBC = new BloodGlucoseJDBC();
+        PmoResultJDBC pmoResultJDBC = new PmoResultJDBC();
+
+        List<UserValueRecord> userBGValueRecords = userValueRecordJDBC.getOneBGUserValueRecord(su.getUserId());
+        userBGValueRecords.forEach(bg -> {
+            BloodGlucose bloodGlucose = bloodGlucoseJDBC.insert(turnValueRecordToBloodGlucose(bg, subject, userValueRecordMap));
+            // TODO PMO_result
+            pmoResultJDBC.insert(turnOldRecordsToPmoResult(bg, bloodGlucose.getSubjectId(), bloodGlucose.getSequence(), MeasurementPMOType.BloodGlucose));
+
+        });
+    }
+
+    private BloodGlucose turnValueRecordToBloodGlucose(UserValueRecord bg, Subject subject, Map<Integer, List<UserValueRecordMapping>> userValueRecordMap) {
+
+        List<UserValueRecordMapping> values = userValueRecordMap.get(bg.getBodyValueRecordId());
+        if(values.size() == 0)
+            return null;
+
+        UserValueRecordMapping value = values.get(0);
+
+        BloodGlucose testBloodGlucose= new BloodGlucose();
+
+        testBloodGlucose.setGlucose(Integer.valueOf(value.getRecordValue()));
+        // TODO 舊的沒有量測時間
+        testBloodGlucose.setGlucoseType(GlucoseType.RANDOM_BLOOD_GLUCOSE);
+
+        // recordtime, latitude, longitude
+        testBloodGlucose.setRecordTime(bg.getRecordDate());
+        testBloodGlucose.setLatitude("0");
+        testBloodGlucose.setLongitude("0");
+
+
+        // status, createtime, createby, tenant_id, device_mac_address
+        // private MeasurementStatusType status;
+        testBloodGlucose.setStatus(MeasurementStatusType.EXISTED);
+        testBloodGlucose.setCreateTime(bg.getUpdateDate());
+        testBloodGlucose.setCreateBy("TTSB");
+        testBloodGlucose.setTenantId("TTSB");
+
+        // subject_seq, subject_id, subject_name, subject_gender, subject_age, subject_user_id, subject_user_name,
+        testBloodGlucose.setSubjectSeq(subject.getSequence());
+        testBloodGlucose.setSubjectId(subject.getId());
+        testBloodGlucose.setSubjectName(subject.getName());
+        testBloodGlucose.setSubjectGender(subject.getGender());
+        testBloodGlucose.setSubjectAge(CalendarUtil.getAgeFromBirthDate(subject.getBirthday(), bg.getRecordDate()));
+        testBloodGlucose.setSubjectUserId(subject.getUserId());
+        testBloodGlucose.setSubjectUserName(subject.getName());
+
+
+        // rule_seq, rule_description, unit_id, unit_name, parent_unit_id, parent_unit_name, device_id
+        UnitJDBC unitJDBC = new UnitJDBC();
+        Unit unit = unitJDBC.getUnitById(subject.getUnitId());
+        testBloodGlucose.setUnitId(unit.getId());
+        testBloodGlucose.setUnitName(unit.getName());
+        testBloodGlucose.setParentUnitId(unit.getParentId());
+        testBloodGlucose.setParentUnitName(unit.getParentName());
+
+        return testBloodGlucose;
+    }
+
+
     private void syncMeasurementBloodPressureHeartBeat(List<UserValueRecord> userValueRecords,
                                                        Map<Integer, List<UserValueRecordMapping>> userValueRecordMap,
                                                        Subject subject, SystemUser su, UserValueRecordJDBC userValueRecordJDBC) {
@@ -118,13 +182,13 @@ public class Sync {
 
         AbnormalBloodPressureJDBC abnormalBloodPressureJDBC = new AbnormalBloodPressureJDBC();
         AbnormalBloodPressureLogJDBC abnormalBloodPressureLogJDBC = new AbnormalBloodPressureLogJDBC();
-        PmoResultJDBC pmoResultJDBC =  new PmoResultJDBC();
+        PmoResultJDBC pmoResultJDBC = new PmoResultJDBC();
 
         // 重算異常
         // 根據使用者身上異常追蹤狀態 例如為 2就醫確診異常
         // 重算後新增的全部異常log 處理狀態為舊資料狀態 2就醫確診異常
-        List<BloodPressureHeartBeat>  bloodPressureHeartBeats = new ArrayList<>();
-        userValueRecords.forEach(old ->{
+        List<BloodPressureHeartBeat> bloodPressureHeartBeats = new ArrayList<>();
+        userValueRecords.stream().map(old -> {
 
             BloodPressureHeartBeat bloodPressureHeartBeat = syncBloodPressureHeartBeat(userValueRecordMap, old, subject);
 
@@ -132,18 +196,17 @@ public class Sync {
             userValueRecordJDBC.updateUserValueRecord(old.getBodyValueRecordId());
 
             // 連續兩筆紀錄為異常 做異常紀錄
-            BloodPressureHeartBeat oldBloodPressureHeartBeat = null;
-            if(bloodPressureHeartBeats.size() > 0 ){
-                oldBloodPressureHeartBeat = bloodPressureHeartBeats.get(bloodPressureHeartBeats.size() - 1 );
-            }
-            if (oldBloodPressureHeartBeat != null){
+            if (bloodPressureHeartBeats.size() > 0) {
+                BloodPressureHeartBeat oldBloodPressureHeartBeat = bloodPressureHeartBeats.get(bloodPressureHeartBeats.size() - 1);
+
                 // 判斷是否為異常
-                if(isBloodPressureAbnormal(oldBloodPressureHeartBeat) && isBloodPressureAbnormal(bloodPressureHeartBeat)){
+                if (isBloodPressureAbnormal(oldBloodPressureHeartBeat) && isBloodPressureAbnormal(bloodPressureHeartBeat)) {
                     AbnormalBloodPressure abnormalBloodPressure = abnormalBloodPressureJDBC
                             .insertAbnormalBloodPressure(
                                     turnNoarmalToAbnormal(bloodPressureHeartBeat, su));
+
                     // 尚未處理不需存log
-                    if(su.getCaseStatus() != 0 && su.getCaseNote() != null)
+                    if (su.getCaseStatus() != 0 || su.getCaseNote() != null)
                         abnormalBloodPressureLogJDBC
                                 .insertAbnormalBloodPressure(
                                         turnBloodPressureAbnormalToLog(abnormalBloodPressure, su));
@@ -151,10 +214,13 @@ public class Sync {
 
             }
 
-            pmoResultJDBC.insert(turnOldRecordsToPmoResult(old, bloodPressureHeartBeat));
+
+            pmoResultJDBC.insert(turnOldRecordsToPmoResult(old, bloodPressureHeartBeat.getSubjectId(), bloodPressureHeartBeat.getSequence(), MeasurementPMOType.BloodPressure ));
 
             userValueRecordJDBC.updateUserValueRecord(old.getBodyValueRecordId());
             bloodPressureHeartBeats.add(bloodPressureHeartBeat);
+
+            return null;
         });
     }
 
@@ -169,11 +235,11 @@ public class Sync {
 
         PmoStatus pmoStatus = PmoStatus.NotSync;
         SystemUser.SystemUserPmoStatus ss = su.getPmoStatus();
-        if(ss == SystemUser.SystemUserPmoStatus.Sync)
+        if (ss == SystemUser.SystemUserPmoStatus.Sync)
             pmoStatus = PmoStatus.Sync;
-        if(ss == SystemUser.SystemUserPmoStatus.NotSync)
+        if (ss == SystemUser.SystemUserPmoStatus.NotSync)
             pmoStatus = PmoStatus.NotSync;
-        if(ss == SystemUser.SystemUserPmoStatus.Error)
+        if (ss == SystemUser.SystemUserPmoStatus.Error)
             pmoStatus = PmoStatus.Error;
         pmoUser.setPmoStatus(pmoStatus);
 
@@ -181,25 +247,25 @@ public class Sync {
 
     }
 
-    private PmoResult turnOldRecordsToPmoResult(UserValueRecord old, BloodPressureHeartBeat bloodPressureHeartBeat) {
+    private PmoResult turnOldRecordsToPmoResult(UserValueRecord old, String userId, long sequence, MeasurementPMOType type) {
 
         PmoResult pmoResult = new PmoResult();
 
-        pmoResult.setUserId(bloodPressureHeartBeat.getSubjectUserId());
+        pmoResult.setUserId(userId);
         // measurement_type
-        pmoResult.setMeasurementType(MeasurementPMOType.BloodPressure);
+        pmoResult.setMeasurementType(type);
         // record_id
-        pmoResult.setRecordId(bloodPressureHeartBeat.getSequence());
+        pmoResult.setRecordId(sequence);
         // result
         pmoResult.setResult(old.getPmoResult());
         // status
         PmoStatus pmoStatus = PmoStatus.NotSync;
         UserValueRecord.RecordPmoStatus ss = old.getPmoStatus();
-        if(ss == UserValueRecord.RecordPmoStatus.Sync)
+        if (ss == UserValueRecord.RecordPmoStatus.Sync)
             pmoStatus = PmoStatus.Sync;
-        if(ss == UserValueRecord.RecordPmoStatus.NotSync)
+        if (ss == UserValueRecord.RecordPmoStatus.NotSync)
             pmoStatus = PmoStatus.NotSync;
-        if(ss == UserValueRecord.RecordPmoStatus.Error)
+        if (ss == UserValueRecord.RecordPmoStatus.Error)
             pmoStatus = PmoStatus.Error;
         pmoResult.setPmoStatus(pmoStatus);
         // synctime
@@ -250,7 +316,7 @@ public class Sync {
 //        private BloodPressureCaseStatus caseStatus;
         // 0尚未處理  1就醫確診正常  2就醫確診異常  3拒絕就醫及複查  4無法聯繫
         BloodPressureCaseStatus casetStatus = null;
-        switch(systemUser.getCaseStatus()){
+        switch (systemUser.getCaseStatus()) {
             case 0:
                 casetStatus = BloodPressureCaseStatus.NOT_YET;
                 break;
@@ -292,8 +358,8 @@ public class Sync {
 
     private boolean isBloodPressureAbnormal(BloodPressureHeartBeat record) {
         Integer age = record.getSubjectAge();
-        Integer systolic=record.getSystolicPressure();
-        Integer diastolic=record.getDiastolicPressure();
+        Integer systolic = record.getSystolicPressure();
+        Integer diastolic = record.getDiastolicPressure();
 
         if (isSystolicAbnormal(age, systolic) || isDiastolicAbnormal(diastolic)) {
             return true;
@@ -344,14 +410,14 @@ public class Sync {
         // 7 收縮壓 8 舒張壓 9 心跳
         // systolic_pressure, diastolic_pressure, heart_rate
         List<UserValueRecordMapping> systolicPressure = values.get(7);
-        if(systolicPressure.size() > 0 )
+        if (systolicPressure.size() > 0)
             bloodPressureHeartBeat.setSystolicPressure(Integer.valueOf(systolicPressure.get(0).getRecordValue()));
         List<UserValueRecordMapping> diastolicPressure = values.get(8);
-        if(diastolicPressure.size() > 0 )
+        if (diastolicPressure.size() > 0)
             bloodPressureHeartBeat.setDiastolicPressure(Integer.valueOf(diastolicPressure.get(0).getRecordValue()));
         // constraints:nullable: false
         List<UserValueRecordMapping> heartRate = values.get(9);
-        if(heartRate.size() > 0 )
+        if (heartRate.size() > 0)
             bloodPressureHeartBeat.setHeartRate(Integer.valueOf(heartRate.get(0).getRecordValue()));
 
 
@@ -378,7 +444,7 @@ public class Sync {
 
         // rule_seq, rule_description, unit_id, unit_name, parent_unit_id, parent_unit_name, device_id
         UnitJDBC unitJDBC = new UnitJDBC();
-        Unit unit = unitJDBC.getUnitById(old.getLocationId());
+        Unit unit = unitJDBC.getUnitById(subject.getUnitId());
         bloodPressureHeartBeat.setUnitId(unit.getId());
         bloodPressureHeartBeat.setUnitName(unit.getName());
         bloodPressureHeartBeat.setParentUnitId(unit.getParentId());
@@ -429,7 +495,6 @@ public class Sync {
 
         // createtime, createby, updatetime, updateby, status
         user.setCreateTime(su.getCreateTime());
-        // TODO
         user.setCreateBy("TTSHB");
         user.setUpdateTime(su.getCreateTime());
         user.setUpdateBy("TTSHB");
@@ -462,7 +527,7 @@ public class Sync {
         int suEthnicity = su.getEthnicity();
         EthnicityType ethnicityType;
 
-        switch (suEthnicity){
+        switch (suEthnicity) {
             case 1:
                 ethnicityType = EthnicityType.HAN;
                 break;
@@ -480,31 +545,31 @@ public class Sync {
 
 //        personal_history, family_history, smoke, drink
 
-        ArrayList<PersonalHistoryType>  personalHistoryTypes = new ArrayList();
-        if(su.getWithHighBloodPressure() == YN.Y)
+        ArrayList<PersonalHistoryType> personalHistoryTypes = new ArrayList();
+        if (su.getWithHighBloodPressure() == YN.Y)
             personalHistoryTypes.add(PersonalHistoryType.HYPERTENSION);
-        if(su.getWithBrainAttack() == YN.Y)
+        if (su.getWithBrainAttack() == YN.Y)
             personalHistoryTypes.add(PersonalHistoryType.STROKE);
-        if(su.getWithDiabetesMellitus() == YN.Y)
+        if (su.getWithDiabetesMellitus() == YN.Y)
             personalHistoryTypes.add(PersonalHistoryType.DIABETES_MELLITUS);
-        if(su.getWithHeartAttack() == YN.Y)
+        if (su.getWithHeartAttack() == YN.Y)
             personalHistoryTypes.add(PersonalHistoryType.HEART_DISEASE);
         subject.setPersonalHistory(personalHistoryTypes);
 
 
-        ArrayList<FamilyHistoryType>  familyHistoryTypes = new ArrayList();
-        if(su.getFamilyWithBrainAttack() == YN.Y)
+        ArrayList<FamilyHistoryType> familyHistoryTypes = new ArrayList();
+        if (su.getFamilyWithBrainAttack() == YN.Y)
             familyHistoryTypes.add(FamilyHistoryType.STROKE);
-        if(su.getFamilyWithDiabetesMellitus() == YN.Y)
+        if (su.getFamilyWithDiabetesMellitus() == YN.Y)
             familyHistoryTypes.add(FamilyHistoryType.DIABETES_MELLITUS);
-        if(su.getFamilyWithHeartAttack() == YN.Y)
+        if (su.getFamilyWithHeartAttack() == YN.Y)
             familyHistoryTypes.add(FamilyHistoryType.HEART_DISEASE);
-        if(su.getFamilyWithHighBloodPressure() == YN.Y)
+        if (su.getFamilyWithHighBloodPressure() == YN.Y)
             familyHistoryTypes.add(FamilyHistoryType.HYPERTENSION);
         subject.setFamilyHistory(familyHistoryTypes);
 
         SmokeType smokeType;
-        switch (su.getFrequencyOfSmoking()){
+        switch (su.getFrequencyOfSmoking()) {
             case 1:
                 smokeType = SmokeType.NONE;
                 break;
@@ -524,7 +589,7 @@ public class Sync {
         subject.setSmoke(smokeType);
 
         DrinkType drinkType;
-        switch(su.getFrequencyOfDrinking()){
+        switch (su.getFrequencyOfDrinking()) {
             case 1:
                 drinkType = DrinkType.NONE;
                 break;
@@ -533,7 +598,7 @@ public class Sync {
                 break;
             case 3:
                 drinkType = DrinkType.OFTEN;
-            break;
+                break;
             default:
                 drinkType = DrinkType.NONE;
         }
@@ -542,7 +607,7 @@ public class Sync {
 
 //        chewing_areca, user_id, unit_id, unit_name
         ChewingArecaType chewingArecaType;
-        switch(su.getFrequencyOfDrinking()) {
+        switch (su.getFrequencyOfDrinking()) {
             case 1:
                 chewingArecaType = ChewingArecaType.NONE;
                 break;

@@ -15,6 +15,8 @@ import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.io.IOException;
+import java.util.Arrays;
 
 /**
  * Hello world!
@@ -23,25 +25,41 @@ public class App {
 
     private static Logger logger = LoggerFactory.getLogger(App.class);
 
-    public static void main(String[] args) throws Exception {
+    public static void main(String[] args) throws IOException {
 
 
-//        URL url = new URL("https://stackoverflow.com/questions/1051004/how-to-send-put-delete-http-request-in-httpurlconnection");
-
-//        System.out.println(doGett("https://www.youtube.com/watch?v=Q95xanGEgdY&index=27&list=RDR2MnUWLhdhg"));
-        String url  = "http://localhost:8080/aaa/forSystem/sync/role";
+        String role  = "http://localhost:8080/aaa/forSystem/sync/role";
         String tenant  = "http://localhost:8080/aaa/forSystem/sync/tenant";
         String unit  = "http://localhost:8080/aaa/forSystem/sync/unit";
         String user  = "http://localhost:8080/aaa/forSystem/sync/user";
+        String url  = "http://localhost:8080/aaa/forSystem/sync/user";
 
-//        System.out.println(doGett(url));
-        System.out.println(doGet(url));
-        System.out.println("Hello World!");
+//        Arrays.stream(ServiceName.values())
+//                .map(name -> doRequest(name));
+
+        for (ServiceName name:ServiceName.values()) {
+            try {
+                doPut(name.geturl());
+            } catch (IOException e) {
+                logger.debug("sync " + name + " fail");
+                throw e;
+            }
+        }
+        System.out.println(doPut2(url));
+//        System.out.println(doPut(role));
+    }
+
+    static void doRequest(ServiceName name) throws IOException {
+        try {
+            doPut(name.geturl());
+        } catch (IOException e) {
+            logger.debug("sync " + name + " fail");
+            throw e;
+        }
     }
 
 
-
-    public static String doGett(String url) {
+    public static String doPut2(String url) {
 
 
         Client client = ClientBuilder.newClient();
@@ -50,7 +68,7 @@ public class App {
 
             Response response = client.target(url)
                     .request(MediaType.APPLICATION_JSON)
-                    .put(null);
+                    .put(Entity.json(""));
 
             entity = response.readEntity(String.class);
 
@@ -77,7 +95,7 @@ public class App {
         return entity;
     }
 
-    public static int doGet(String url) throws Exception {
+    public static int doPut(String url) throws IOException {
 
         // 太吵
         HttpClient client = new HttpClient();

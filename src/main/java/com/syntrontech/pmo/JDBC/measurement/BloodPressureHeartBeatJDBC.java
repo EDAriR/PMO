@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class BloodPressureHeartBeatJDBC {
@@ -39,13 +40,14 @@ public class BloodPressureHeartBeatJDBC {
 
     public static void main(String[] args) {
 
-        Connection conn = new MEASUREMENT_GET_CONNECTION().getConn();
-
         BloodPressureHeartBeatJDBC abnormalBloodPressureJDBC = new BloodPressureHeartBeatJDBC();
 
         List<BloodPressureHeartBeat> ss = abnormalBloodPressureJDBC.getAllBloodPressureHeartBeat();
 
         System.out.println("ss size:" + ss.size());
+
+        System.out.println(abnormalBloodPressureJDBC.insertBloodPressureHeartBeat(abnormalBloodPressureJDBC.getTestBloodPressureHeartBeat()));
+
     }
 
     public BloodPressureHeartBeat insertBloodPressureHeartBeat(BloodPressureHeartBeat bloodPressureHeartBeat){
@@ -68,29 +70,28 @@ public class BloodPressureHeartBeatJDBC {
 
             // status, createtime, createby, tenant_id, device_mac_address
             pstmt.setString(7, bloodPressureHeartBeat.getStatus().toString());
-            pstmt.setTimestamp(7, new Timestamp(bloodPressureHeartBeat.getCreateTime().getTime()));
-            pstmt.setString(8, bloodPressureHeartBeat.getCreateBy());
-            pstmt.setString(9, bloodPressureHeartBeat.getTenantId());
-            pstmt.setString(10, bloodPressureHeartBeat.getDeviceMacAddress());
+            pstmt.setTimestamp(8, new Timestamp(bloodPressureHeartBeat.getCreateTime().getTime()));
+            pstmt.setString(9, bloodPressureHeartBeat.getCreateBy());
+            pstmt.setString(10, bloodPressureHeartBeat.getTenantId());
+            pstmt.setString(11, bloodPressureHeartBeat.getDeviceMacAddress());
 
             // subject_seq, subject_id, subject_name, subject_gender, subject_age, subject_user_id, subject_user_name,
-            pstmt.setLong(11, bloodPressureHeartBeat.getSubjectSeq());
-            pstmt.setString(12, bloodPressureHeartBeat.getSubjectId());
-            pstmt.setString(13, bloodPressureHeartBeat.getSubjectName());
-            pstmt.setString(14, bloodPressureHeartBeat.getSubjectGender().toString());
-            pstmt.setInt(15, bloodPressureHeartBeat.getSubjectAge());
-            pstmt.setString(16, bloodPressureHeartBeat.getSubjectUserId());
-            pstmt.setString(17, bloodPressureHeartBeat.getSubjectUserName());
+            pstmt.setLong(12, bloodPressureHeartBeat.getSubjectSeq());
+            pstmt.setString(13, bloodPressureHeartBeat.getSubjectId());
+            pstmt.setString(14, bloodPressureHeartBeat.getSubjectName());
+            pstmt.setString(15, bloodPressureHeartBeat.getSubjectGender().toString());
+            pstmt.setInt(16, bloodPressureHeartBeat.getSubjectAge());
+            pstmt.setString(17, bloodPressureHeartBeat.getSubjectUserId());
+            pstmt.setString(18, bloodPressureHeartBeat.getSubjectUserName());
 
             // rule_seq, rule_description, unit_id, unit_name, parent_unit_id, parent_unit_name, device_id
-            pstmt.setLong(18, bloodPressureHeartBeat.getRuleSeq());
-            pstmt.setString(19, bloodPressureHeartBeat.getRuleDescription());
-            pstmt.setString(20, bloodPressureHeartBeat.getUnitId());
-            pstmt.setString(21, bloodPressureHeartBeat.getUnitName());
-            pstmt.setString(22, bloodPressureHeartBeat.getParentUnitId());
-            pstmt.setString(23, bloodPressureHeartBeat.getParentUnitName());
-            pstmt.setString(24, bloodPressureHeartBeat.getDeviceId());
-
+            pstmt.setLong(19, bloodPressureHeartBeat.getRuleSeq());
+            pstmt.setString(20, bloodPressureHeartBeat.getRuleDescription());
+            pstmt.setString(21, bloodPressureHeartBeat.getUnitId());
+            pstmt.setString(22, bloodPressureHeartBeat.getUnitName());
+            pstmt.setString(23, bloodPressureHeartBeat.getParentUnitId());
+            pstmt.setString(24, bloodPressureHeartBeat.getParentUnitName());
+            pstmt.setString(25, bloodPressureHeartBeat.getDeviceId());
 
             logger.info("sql => " + pstmt);
             pstmt.executeUpdate();
@@ -115,7 +116,6 @@ public class BloodPressureHeartBeatJDBC {
                 conn.close();
             } catch (SQLException e) {
                 logger.debug("conn or pstmt close fail" + conn + " || " + pstmt);
-
                 e.printStackTrace();
             }
 
@@ -123,7 +123,6 @@ public class BloodPressureHeartBeatJDBC {
 
         return bloodPressureHeartBeat;
     }
-
 
 
     public List<BloodPressureHeartBeat> getAllBloodPressureHeartBeat() {
@@ -196,12 +195,54 @@ public class BloodPressureHeartBeatJDBC {
                     pstmt.close();
                 conn.close();
             } catch (SQLException e) {
-                System.out.println("conn or pstmt close fail" + conn + " || " + pstmt);
+                logger.debug("conn or pstmt close fail" + conn + " || " + pstmt);
                 e.printStackTrace();
             }
 
         }
 
         return bloodPressureHeartBeats;
+    }
+
+    BloodPressureHeartBeat getTestBloodPressureHeartBeat(){
+
+        BloodPressureHeartBeat bloodPressureHeartBeat = new BloodPressureHeartBeat();
+
+        // systolic_pressure, diastolic_pressure, heart_rate
+        bloodPressureHeartBeat.setSystolicPressure(100);
+        bloodPressureHeartBeat.setDiastolicPressure(100);
+        bloodPressureHeartBeat.setHeartRate(100);
+
+
+        // recordtime, latitude, longitude
+        bloodPressureHeartBeat.setRecordTime(new Date());
+        bloodPressureHeartBeat.setLatitude("0");
+        bloodPressureHeartBeat.setLongitude("0");
+
+
+        // status, createtime, createby, tenant_id, device_mac_address
+        // private MeasurementStatusType status;
+        bloodPressureHeartBeat.setStatus(MeasurementStatusType.EXISTED);
+        bloodPressureHeartBeat.setCreateTime(new Date());
+        bloodPressureHeartBeat.setCreateBy("systemAdmin");
+        bloodPressureHeartBeat.setTenantId("DEFAULT_TENANT");
+
+        // subject_seq, subject_id, subject_name, subject_gender, subject_age, subject_user_id, subject_user_name,
+        bloodPressureHeartBeat.setSubjectSeq((long)1);
+        bloodPressureHeartBeat.setSubjectId("systemAdmin");
+        bloodPressureHeartBeat.setSubjectName("systemAdmin");
+        bloodPressureHeartBeat.setSubjectGender(GenderType.MALE);
+        bloodPressureHeartBeat.setSubjectAge(0);
+        bloodPressureHeartBeat.setSubjectUserId("systemAdmin");
+        bloodPressureHeartBeat.setSubjectUserName("systemAdmin");
+
+        // rule_seq, rule_description, unit_id, unit_name, parent_unit_id, parent_unit_name, device_id
+        bloodPressureHeartBeat.setUnitId("100140102310");
+        bloodPressureHeartBeat.setUnitName("");
+        bloodPressureHeartBeat.setParentUnitId("1001401");
+        bloodPressureHeartBeat.setParentUnitName("");
+
+        return bloodPressureHeartBeat;
+
     }
 }

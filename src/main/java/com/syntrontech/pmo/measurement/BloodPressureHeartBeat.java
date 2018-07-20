@@ -100,7 +100,23 @@ public class BloodPressureHeartBeat implements Measurement{
 
     @Column(name = "device_id")
     private String deviceId;
-    
+
+	@Override
+	public String toString() {
+		return "BloodPressureHeartBeat:[" +
+				"sequence=" + sequence + ", " +
+				"systolicPressure=" + systolicPressure + ", " +
+				"diastolicPressure=" + diastolicPressure + ", " +
+				"heartRate=" + heartRate + ", " +
+				"subjectId=" + subjectId + ", " +
+				"unitId=" + unitId + ", " +
+				"tenantId=" + tenantId + ", " +
+				"createBy=" + createBy + ", " +
+				"recordTime=" + recordTime + ", " +
+				"createTime=" + createTime + ", " +
+				"]";
+	}
+
 	public Long getSequence() {
 		return sequence;
 	}

@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory;
 
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class BloodGlucoseJDBC {
@@ -29,6 +30,51 @@ public class BloodGlucoseJDBC {
 
     public static void main(String[] args) {
 //        BloodGlucose
+        BloodGlucoseJDBC bloodGlucoseJDBC = new BloodGlucoseJDBC();
+
+        List<BloodGlucose> bloodGlucoses = bloodGlucoseJDBC.getALl();
+
+        System.out.println(bloodGlucoses.size());
+
+        bloodGlucoseJDBC.insert(bloodGlucoseJDBC.getTestBloodGlucose());
+    }
+
+    public BloodGlucose getTestBloodGlucose() {
+
+        BloodGlucose testBloodGlucose= new BloodGlucose();
+
+        testBloodGlucose.setGlucose(10);
+        testBloodGlucose.setGlucoseType(GlucoseType.POSTPRANDIAL_BLOOD_GLUCOSE);
+
+        // recordtime, latitude, longitude
+        testBloodGlucose.setRecordTime(new java.util.Date());
+        testBloodGlucose.setLatitude("0");
+        testBloodGlucose.setLongitude("0");
+
+
+        // status, createtime, createby, tenant_id, device_mac_address
+        // private MeasurementStatusType status;
+        testBloodGlucose.setStatus(MeasurementStatusType.EXISTED);
+        testBloodGlucose.setCreateTime(new Date());
+        testBloodGlucose.setCreateBy("systemAdmin");
+        testBloodGlucose.setTenantId("DEFAULT_TENANT");
+
+        // subject_seq, subject_id, subject_name, subject_gender, subject_age, subject_user_id, subject_user_name,
+        testBloodGlucose.setSubjectSeq((long)1);
+        testBloodGlucose.setSubjectId("systemAdmin");
+        testBloodGlucose.setSubjectName("systemAdmin");
+        testBloodGlucose.setSubjectGender(GenderType.MALE);
+        testBloodGlucose.setSubjectAge(0);
+        testBloodGlucose.setSubjectUserId("systemAdmin");
+        testBloodGlucose.setSubjectUserName("systemAdmin");
+
+        // rule_seq, rule_description, unit_id, unit_name, parent_unit_id, parent_unit_name, device_id
+        testBloodGlucose.setUnitId("100140102310");
+        testBloodGlucose.setUnitName("");
+        testBloodGlucose.setParentUnitId("1001401");
+        testBloodGlucose.setParentUnitName("");
+
+        return testBloodGlucose;
     }
 
     public BloodGlucose insert(BloodGlucose bloodGlucose){
