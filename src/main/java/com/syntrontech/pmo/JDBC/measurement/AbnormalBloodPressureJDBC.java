@@ -4,6 +4,8 @@ import com.syntrontech.pmo.measurement.AbnormalBloodPressure;
 import com.syntrontech.pmo.measurement.common.BloodPressureCaseStatus;
 import com.syntrontech.pmo.measurement.common.MeasurementStatusType;
 import com.syntrontech.pmo.model.common.GenderType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -13,6 +15,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class AbnormalBloodPressureJDBC {
+
+    private static Logger logger = LoggerFactory.getLogger(AbnormalBloodPressureJDBC.class);
 
     private static final String GET_ALL_STMT = "SELECT * FROM abnormal_blood_pressure ORDER BY sequence;";
     private static final String INSERT_STMT = "INSERT INTO abnormal_blood_pressure " +
@@ -90,7 +94,7 @@ public class AbnormalBloodPressureJDBC {
             pstmt.setString(20, abnormalBloodPressure.getParentUnitName());
             pstmt.setString(20, abnormalBloodPressure.getDeviceId());
 
-            System.out.println(pstmt);
+            logger.info("sql => " + pstmt);
             pstmt.executeUpdate();
 
             try (ResultSet rs = pstmt.getGeneratedKeys()) {
@@ -100,9 +104,10 @@ public class AbnormalBloodPressureJDBC {
                 rs.close();
             }
 
-            System.out.println("create successful ==> " + abnormalBloodPressure);
+            logger.info("create AbnormalBloodPressure successful => " + abnormalBloodPressure);
 
         } catch (SQLException e) {
+            logger.debug("create AbnormalBloodPressure fail =>" + abnormalBloodPressure);
             e.printStackTrace();
         } finally {
 
@@ -111,7 +116,7 @@ public class AbnormalBloodPressureJDBC {
                     pstmt.close();
                 conn.close();
             } catch (SQLException e) {
-                System.out.println("conn or pstmt close fail" + conn + " || " + pstmt);
+                logger.debug("conn or pstmt close fail" + conn + " || " + pstmt);
                 e.printStackTrace();
             }
 

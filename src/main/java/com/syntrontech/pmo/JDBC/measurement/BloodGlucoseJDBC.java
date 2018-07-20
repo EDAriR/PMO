@@ -4,12 +4,16 @@ import com.syntrontech.pmo.measurement.BloodGlucose;
 import com.syntrontech.pmo.measurement.common.GlucoseType;
 import com.syntrontech.pmo.measurement.common.MeasurementStatusType;
 import com.syntrontech.pmo.model.common.GenderType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
 public class BloodGlucoseJDBC {
+
+    private static Logger logger = LoggerFactory.getLogger(BloodGlucoseJDBC.class);
 
     private static final String GET_ALL_STMT = "SELECT * FROM blood_glucose ORDER BY sequence;";
     private static final String INSERT_STMT = "INSERT INTO blood_glucose " +
@@ -69,9 +73,11 @@ public class BloodGlucoseJDBC {
             pstmt.setString(23, bloodGlucose.getParentUnitName());
             pstmt.setString(24, bloodGlucose.getDeviceId());
 
-            System.out.println(pstmt);
+
+            logger.info("sql => " + pstmt);
             pstmt.executeUpdate();
-            System.out.println("create successful ==> " + bloodGlucose);
+            logger.info("create bloodGlucose successful => " + bloodGlucose);
+
 
             try (ResultSet rs = pstmt.getGeneratedKeys()) {
                 if (rs.next()) {
@@ -81,6 +87,8 @@ public class BloodGlucoseJDBC {
             }
 
         } catch (SQLException e) {
+            logger.debug("create bloodGlucose fail =>" + bloodGlucose);
+
             e.printStackTrace();
         } finally {
 
@@ -89,7 +97,8 @@ public class BloodGlucoseJDBC {
                     pstmt.close();
                 conn.close();
             } catch (SQLException e) {
-                System.out.println("conn or pstmt close fail" + conn + " || " + pstmt);
+                logger.debug("conn or pstmt close fail" + conn + " || " + pstmt);
+
                 e.printStackTrace();
             }
 

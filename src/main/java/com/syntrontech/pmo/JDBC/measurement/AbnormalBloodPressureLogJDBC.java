@@ -2,12 +2,16 @@ package com.syntrontech.pmo.JDBC.measurement;
 
 import com.syntrontech.pmo.measurement.AbnormalBloodPressureLog;
 import com.syntrontech.pmo.measurement.common.BloodPressureCaseStatus;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
 public class AbnormalBloodPressureLogJDBC {
+
+    private static Logger logger = LoggerFactory.getLogger(AbnormalBloodPressureLogJDBC.class);
 
     private static final String GET_ALL_STMT = "SELECT * FROM abnormal_blood_pressure ORDER BY sequence;";
     private static final String INSERT_STMT = "INSERT INTO abnormal_blood_pressure " +
@@ -50,11 +54,13 @@ public class AbnormalBloodPressureLogJDBC {
             pstmt.setTimestamp(8, new Timestamp(abnormalBloodPressureLog.getChangeCaseStatusTime().getTime()));
             pstmt.setString(9, abnormalBloodPressureLog.getTenantId());
 
-            System.out.println(pstmt);
+            logger.info("sql => " + pstmt);
             pstmt.executeUpdate();
-            System.out.println("create successful ==> " + abnormalBloodPressureLog);
+            logger.info("create AbnormalBloodPressureLog successful => " + abnormalBloodPressureLog);
 
         } catch (SQLException e) {
+            logger.debug("create AbnormalBloodPressureLog fail =>" + abnormalBloodPressureLog);
+
             e.printStackTrace();
         } finally {
 
@@ -63,7 +69,7 @@ public class AbnormalBloodPressureLogJDBC {
                     pstmt.close();
                 conn.close();
             } catch (SQLException e) {
-                System.out.println("conn or pstmt close fail" + conn + " || " + pstmt);
+                logger.debug("conn or pstmt close fail" + conn + " || " + pstmt);
                 e.printStackTrace();
             }
         }

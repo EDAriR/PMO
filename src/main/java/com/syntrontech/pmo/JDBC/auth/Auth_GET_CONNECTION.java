@@ -1,10 +1,15 @@
 package com.syntrontech.pmo.JDBC.auth;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
 public class Auth_GET_CONNECTION {
+
+    private static Logger logger = LoggerFactory.getLogger(Auth_GET_CONNECTION.class);
 
     private static final String DRIVER_PATH = "org.postgresql.Driver";
     private static final String DB_PATH = "jdbc:postgresql://127.0.0.1:5432/authdb";
@@ -18,19 +23,14 @@ public class Auth_GET_CONNECTION {
         try {
 
             Class.forName(DRIVER_PATH);
-            System.out.println("Connection postgresql ");
             conn = DriverManager.getConnection(DB_PATH, DB_USER, DB_PASSWORD);
 
         }catch (ClassNotFoundException e) {
+            logger.debug("JDBC not found");
 
-            System.out.println("Where is your PostgreSQL JDBC Driver? "
-                    + "Include in your library path!");
-            e.printStackTrace();
         } catch (SQLException e) {
-
-            System.out.println("Connection Failed! Check output console");
+            logger.debug("Connection Failed!");
             e.printStackTrace();
-
         }
 
         if (conn != null)

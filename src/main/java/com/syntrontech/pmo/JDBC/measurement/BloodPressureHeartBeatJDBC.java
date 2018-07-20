@@ -5,12 +5,16 @@ import com.syntrontech.pmo.measurement.BloodPressureHeartBeat;
 import com.syntrontech.pmo.measurement.common.BloodPressureCaseStatus;
 import com.syntrontech.pmo.measurement.common.MeasurementStatusType;
 import com.syntrontech.pmo.model.common.GenderType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
 public class BloodPressureHeartBeatJDBC {
+
+    private static Logger logger = LoggerFactory.getLogger(BloodPressureHeartBeatJDBC.class);
 
     private static final String GET_ALL_STMT = "SELECT * FROM blood_pressure_heartbeat ORDER BY sequence;";
     private static final String INSERT_STMT = "INSERT INTO blood_pressure_heartbeat " +
@@ -87,9 +91,11 @@ public class BloodPressureHeartBeatJDBC {
             pstmt.setString(23, bloodPressureHeartBeat.getParentUnitName());
             pstmt.setString(24, bloodPressureHeartBeat.getDeviceId());
 
-            System.out.println(pstmt);
+
+            logger.info("sql => " + pstmt);
             pstmt.executeUpdate();
-            System.out.println("create successful ==> " + bloodPressureHeartBeat);
+            logger.info("create bloodPressureHeartBeat successful => " + bloodPressureHeartBeat);
+
 
             try (ResultSet rs = pstmt.getGeneratedKeys()) {
                 if (rs.next()) {
@@ -99,6 +105,7 @@ public class BloodPressureHeartBeatJDBC {
             }
 
         } catch (SQLException e) {
+            logger.debug("create bloodPressureHeartBeat fail =>" + bloodPressureHeartBeat);
             e.printStackTrace();
         } finally {
 
@@ -107,7 +114,8 @@ public class BloodPressureHeartBeatJDBC {
                     pstmt.close();
                 conn.close();
             } catch (SQLException e) {
-                System.out.println("conn or pstmt close fail" + conn + " || " + pstmt);
+                logger.debug("conn or pstmt close fail" + conn + " || " + pstmt);
+
                 e.printStackTrace();
             }
 
