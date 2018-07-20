@@ -10,13 +10,23 @@ public class PmoResult {
     // user_id
     private String userId;
     // measurement_type
-    private String measurementType;
+    private MeasurementPMOType measurementType;
     // record_id
     private Long recordId;
+    // result
+    private String result;
     // status
     private PmoStatus pmoStatus;
     // synctime
     private Date synctime;
+
+    public String getResult() {
+        return result;
+    }
+
+    public void setResult(String result) {
+        this.result = result;
+    }
 
     public String getUserId() {
         return userId;
@@ -26,11 +36,11 @@ public class PmoResult {
         this.userId = userId;
     }
 
-    public String getMeasurementType() {
+    public MeasurementPMOType getMeasurementType() {
         return measurementType;
     }
 
-    public void setMeasurementType(String measurementType) {
+    public void setMeasurementType(MeasurementPMOType measurementType) {
         this.measurementType = measurementType;
     }
 

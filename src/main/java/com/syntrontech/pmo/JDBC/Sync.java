@@ -22,6 +22,7 @@ import com.syntrontech.pmo.measurement.BloodPressureHeartBeat;
 import com.syntrontech.pmo.measurement.common.BloodPressureCaseStatus;
 import com.syntrontech.pmo.measurement.common.MeasurementStatusType;
 import com.syntrontech.pmo.model.common.*;
+import com.syntrontech.pmo.pmo.MeasurementPMOType;
 import com.syntrontech.pmo.pmo.PmoResult;
 import com.syntrontech.pmo.pmo.PmoUser;
 import com.syntrontech.pmo.pmo.PmoStatus;
@@ -58,11 +59,8 @@ public class Sync {
         SubjectJDBC subjectJDBC = new SubjectJDBC();
         EmergencyContactJDBC emergencyContactJDBC = new EmergencyContactJDBC();
 
-        AbnormalBloodPressureJDBC abnormalBloodPressureJDBC = new AbnormalBloodPressureJDBC();
-        AbnormalBloodPressureLogJDBC abnormalBloodPressureLogJDBC = new AbnormalBloodPressureLogJDBC();
         UserValueRecordJDBC userValueRecordJDBC = new UserValueRecordJDBC();
 
-        PmoResultJDBC pmoResultJDBC =  new PmoResultJDBC();
         PmoUserJDBC pmoUserJDBC = new PmoUserJDBC();
 
         PasswordListJDBC passwordListJDBC = new PasswordListJDBC();
@@ -88,63 +86,123 @@ public class Sync {
                     if (su.getAlert() == YN.Y)
                         emergencyContactJDBC.insertEmergencyContact(syncSystemUserToEmergencyContact(su));
 
-                    // 取出該使用者所有血壓重算異常
-                    // 根據使用者身上異常追蹤狀態 例如為 2就醫確診異常
-                    // 重算後新增的全部異常log 處理狀態為舊資料狀態 2就醫確診異常
+                    // 取出該使用者所有血壓
                     List<UserValueRecord> userValueRecords = userValueRecordJDBC.getOneBUserValueRecord(su.getUserId());
 
-                    // 同步至 新的血壓心跳
-                    List<BloodPressureHeartBeat>  bloodPressureHeartBeats = new ArrayList<>();
-                    userValueRecords.forEach(old ->{
+                    // 同步至 新的血壓心跳 異常追蹤 異常追蹤log
+                    syncMeasurementBloodPressureHeartBeat(userValueRecords, userValueRecordMap, subject, su, userValueRecordJDBC);
 
-                        BloodPressureHeartBeat bloodPressureHeartBeat = syncBloodPressureHeartBeat(userValueRecordMap, old, subject);
 
-                        // 更新舊 UserValueRecord 資料狀態
-                        userValueRecordJDBC.updateUserValueRecord(old.getBodyValueRecordId());
+                    // TODO sync 136 BG 取出使用者所有血糖
+                    List<UserValueRecord> userBGValueRecords = userValueRecordJDBC.getOneBGUserValueRecord(su.getUserId());
+                    userBGValueRecords.forEach(bg ->{
 
-                        // 連續兩筆紀錄為異常 做異常紀錄
-                        BloodPressureHeartBeat oldBloodPressureHeartBeat = null;
-                        if(bloodPressureHeartBeats.size() > 0 ){
-                            oldBloodPressureHeartBeat = bloodPressureHeartBeats.get(bloodPressureHeartBeats.size() - 1 );
-                        }
-                        if (oldBloodPressureHeartBeat != null){
-                            // 判斷是否為異常
-                            // TODO 異常
-                            if(isBloodPressureAbnormal(oldBloodPressureHeartBeat) && isBloodPressureAbnormal(bloodPressureHeartBeat)){
-                                AbnormalBloodPressure abnormalBloodPressure = abnormalBloodPressureJDBC
-                                        .insertAbnormalBloodPressure(
-                                                turnNoarmalToAbnormal(bloodPressureHeartBeat, su));
-                                // 尚未處理不需存log
-                                if(su.getCaseStatus() != 0 && su.getCaseNote() != null)
-                                    abnormalBloodPressureLogJDBC
-                                            .insertAbnormalBloodPressure(
-                                                    turnBloodPressureAbnormalToLog(abnormalBloodPressure, su));
-                            }
-
-                        }
-
-                        pmoResultJDBC.insert(turnOldRecordsToPmoResult(old, bloodPressureHeartBeat));
-
-                        userValueRecordJDBC.updateUserValueRecord(old.getBodyValueRecordId());
-                        bloodPressureHeartBeats.add(bloodPressureHeartBeat);
                     });
-
-
                     // TODO PMO
+
+                    pmoUserJDBC.insert(turnSystemUserToPmoUser(su));
+                    // update systemUser sync status
+                    systemUserJDBC.updateSystemUser(su.getUserId());
                     // ↓  不需要
                     // ALBUM_NAME	varchar(45) NULL
                     // ALBUM_TYPE	int(11) unsigned [0]	使用者mapping的相本為 -> 1;picasa, 2:無名 .....
                     // ADVERTISMENT_STATUS 好康報報對於使用者的狀態_1: 此使用者尚未收到"新廣告通知了"(包含修改),2:此使用者已經收到"新廣告通知了
 
-                    // TODO sync 136 BG
-                    // TODO PMO
-                    // TODO su update sync status
                 });
+    }
+
+    private void syncMeasurementBloodPressureHeartBeat(List<UserValueRecord> userValueRecords,
+                                                       Map<Integer, List<UserValueRecordMapping>> userValueRecordMap,
+                                                       Subject subject, SystemUser su, UserValueRecordJDBC userValueRecordJDBC) {
+
+
+        AbnormalBloodPressureJDBC abnormalBloodPressureJDBC = new AbnormalBloodPressureJDBC();
+        AbnormalBloodPressureLogJDBC abnormalBloodPressureLogJDBC = new AbnormalBloodPressureLogJDBC();
+        PmoResultJDBC pmoResultJDBC =  new PmoResultJDBC();
+
+        // 重算異常
+        // 根據使用者身上異常追蹤狀態 例如為 2就醫確診異常
+        // 重算後新增的全部異常log 處理狀態為舊資料狀態 2就醫確診異常
+        List<BloodPressureHeartBeat>  bloodPressureHeartBeats = new ArrayList<>();
+        userValueRecords.forEach(old ->{
+
+            BloodPressureHeartBeat bloodPressureHeartBeat = syncBloodPressureHeartBeat(userValueRecordMap, old, subject);
+
+            // 更新舊 UserValueRecord 資料狀態
+            userValueRecordJDBC.updateUserValueRecord(old.getBodyValueRecordId());
+
+            // 連續兩筆紀錄為異常 做異常紀錄
+            BloodPressureHeartBeat oldBloodPressureHeartBeat = null;
+            if(bloodPressureHeartBeats.size() > 0 ){
+                oldBloodPressureHeartBeat = bloodPressureHeartBeats.get(bloodPressureHeartBeats.size() - 1 );
+            }
+            if (oldBloodPressureHeartBeat != null){
+                // 判斷是否為異常
+                if(isBloodPressureAbnormal(oldBloodPressureHeartBeat) && isBloodPressureAbnormal(bloodPressureHeartBeat)){
+                    AbnormalBloodPressure abnormalBloodPressure = abnormalBloodPressureJDBC
+                            .insertAbnormalBloodPressure(
+                                    turnNoarmalToAbnormal(bloodPressureHeartBeat, su));
+                    // 尚未處理不需存log
+                    if(su.getCaseStatus() != 0 && su.getCaseNote() != null)
+                        abnormalBloodPressureLogJDBC
+                                .insertAbnormalBloodPressure(
+                                        turnBloodPressureAbnormalToLog(abnormalBloodPressure, su));
+                }
+
+            }
+
+            pmoResultJDBC.insert(turnOldRecordsToPmoResult(old, bloodPressureHeartBeat));
+
+            userValueRecordJDBC.updateUserValueRecord(old.getBodyValueRecordId());
+            bloodPressureHeartBeats.add(bloodPressureHeartBeat);
+        });
+    }
+
+    private PmoUser turnSystemUserToPmoUser(SystemUser su) {
+        PmoUser pmoUser = new PmoUser();
+
+        // user_id
+        pmoUser.setUserId(su.getUserAccount());
+        // pmo_password
+        pmoUser.setPmoPassword(su.getPmoPassword());
+        // status
+
+        PmoStatus pmoStatus = PmoStatus.NotSync;
+        SystemUser.SystemUserPmoStatus ss = su.getPmoStatus();
+        if(ss == SystemUser.SystemUserPmoStatus.Sync)
+            pmoStatus = PmoStatus.Sync;
+        if(ss == SystemUser.SystemUserPmoStatus.NotSync)
+            pmoStatus = PmoStatus.NotSync;
+        if(ss == SystemUser.SystemUserPmoStatus.Error)
+            pmoStatus = PmoStatus.Error;
+        pmoUser.setPmoStatus(pmoStatus);
+
+        return pmoUser;
+
     }
 
     private PmoResult turnOldRecordsToPmoResult(UserValueRecord old, BloodPressureHeartBeat bloodPressureHeartBeat) {
 
         PmoResult pmoResult = new PmoResult();
+
+        pmoResult.setUserId(bloodPressureHeartBeat.getSubjectUserId());
+        // measurement_type
+        pmoResult.setMeasurementType(MeasurementPMOType.BloodPressure);
+        // record_id
+        pmoResult.setRecordId(bloodPressureHeartBeat.getSequence());
+        // result
+        pmoResult.setResult(old.getPmoResult());
+        // status
+        PmoStatus pmoStatus = PmoStatus.NotSync;
+        UserValueRecord.RecordPmoStatus ss = old.getPmoStatus();
+        if(ss == UserValueRecord.RecordPmoStatus.Sync)
+            pmoStatus = PmoStatus.Sync;
+        if(ss == UserValueRecord.RecordPmoStatus.NotSync)
+            pmoStatus = PmoStatus.NotSync;
+        if(ss == UserValueRecord.RecordPmoStatus.Error)
+            pmoStatus = PmoStatus.Error;
+        pmoResult.setPmoStatus(pmoStatus);
+        // synctime
 
         return pmoResult;
 

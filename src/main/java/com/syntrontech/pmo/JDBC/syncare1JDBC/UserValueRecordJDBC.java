@@ -14,7 +14,11 @@ public class UserValueRecordJDBC {
     private static final String GET_A_STMT = "SELECT * FROM user_value_record WHERE COLUMN_TYPE='A' AND sync_status = 'N' ORDER BY BODY_VALUE_RECORD_ID;";
     private static final String GET_BG_STMT = "SELECT * FROM user_value_record WHERE COLUMN_TYPE='BG' AND sync_status = 'N' ORDER BY BODY_VALUE_RECORD_ID;";
 
-    private static final String GET_ONE_B_STMT = "SELECT * FROM user_value_record WHERE USER_ID=? AND COLUMN_TYPE='B' AND sync_status = 'N' ORDER BY RECORD_DATE;";
+    // 血壓
+    private static final String GET_ONE_USER_B_STMT = "SELECT * FROM user_value_record WHERE USER_ID=? AND COLUMN_TYPE='B' AND sync_status = 'N' ORDER BY RECORD_DATE;";
+    // 血糖
+    private static final String GET_ONE_USER_BG_STMT = "SELECT * FROM user_value_record WHERE USER_ID=? AND COLUMN_TYPE='BG' AND sync_status = 'N' ORDER BY BODY_VALUE_RECORD_ID;";
+
     private static final String GET_ONE_STMT = "SELECT * FROM user_value_record WHERE BODY_VALUE_RECORD_ID=? ;";
 
     private static final String UPDATE = "UPDATE user_value_record SET sync_status= 'Y' WHERE BODY_VALUE_RECORD_ID=? ;";
@@ -105,7 +109,7 @@ public class UserValueRecordJDBC {
         List<UserValueRecord> userValueRecords = new ArrayList<>();
         try {
 
-            pstmt = conn.prepareStatement(GET_ONE_B_STMT);
+            pstmt = conn.prepareStatement(GET_ONE_USER_B_STMT);
 
             pstmt.setInt(1, id);
             ResultSet rs = pstmt.executeQuery();
@@ -166,6 +170,73 @@ public class UserValueRecordJDBC {
         return userValueRecords;
     }
 
+    public List<UserValueRecord> getOneBGUserValueRecord(int id) {
+
+        Connection conn = new Syncare1_GET_CONNECTION().getConn();
+        PreparedStatement pstmt = null;
+
+        List<UserValueRecord> userValueRecords = new ArrayList<>();
+        try {
+
+            pstmt = conn.prepareStatement(GET_ONE_USER_BG_STMT);
+
+            pstmt.setInt(1, id);
+            ResultSet rs = pstmt.executeQuery();
+
+            if (rs != null) {
+
+                while (rs.next()) {
+                    UserValueRecord userValueRecord = new UserValueRecord();
+                    userValueRecord.setBodyValueRecordId(rs.getInt("BODY_VALUE_RECORD_ID"));
+                    userValueRecord.setColumnType(rs.getString("COLUMN_TYPE"));
+                    userValueRecord.setLocationId(rs.getString("location_id"));
+                    userValueRecord.setLocationName(rs.getString("location_name"));
+                    userValueRecord.setRecordDate(rs.getTimestamp("RECORD_DATE"));
+                    userValueRecord.setUpdateDate(rs.getTimestamp("UPDATE_DATE"));
+
+                    Device device = new Device();
+                    device.setSerialNo(rs.getString("serial_no"));
+                    userValueRecord.setDevice(device);
+                    System.out.println("serial_no >>" + rs.getString("serial_no") + "<<");
+
+                    String pmo_status = rs.getString("pmo_status");
+                    UserValueRecord.RecordPmoStatus recordPmoStatus = pmo_status != null ? UserValueRecord.RecordPmoStatus.valueOf(pmo_status) : null;
+                    userValueRecord.setPmoStatus(recordPmoStatus);
+
+                    userValueRecord.setPmoResult(rs.getString("pmo_result"));
+
+                    String synCare2StatusString = rs.getString("syncare2_status");
+                    UserValueRecord.RecordSynCare2Status synCare2Status = synCare2StatusString != null ? UserValueRecord.RecordSynCare2Status.valueOf(synCare2StatusString) : null;
+                    userValueRecord.setSynCare2Status(synCare2Status);
+
+                    userValueRecord.setUserAccountSerial(rs.getLong("user_account_serial"));
+
+                    System.out.println("USER_ID :" + rs.getString("USER_ID"));
+
+                    System.out.println(userValueRecord);
+
+                    userValueRecords.add(userValueRecord);
+                }
+            }
+
+        } catch (SQLException e) {
+            System.out.println("MySQL操作错误");
+            e.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+
+            try {
+                pstmt.close();
+                conn.close();
+            } catch (SQLException e) {
+                System.out.println("conn or pstmt close fail" + conn + " || " + pstmt);
+                e.printStackTrace();
+            }
+
+        }
+        return userValueRecords;
+    }
     public void updateUserValueRecord(int id) {
 
         Connection conn = new Syncare1_GET_CONNECTION().getConn();
