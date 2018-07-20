@@ -127,7 +127,7 @@ public class UserValueRecordJDBC {
                     System.out.println("serial_no >>" + rs.getString("serial_no") + "<<");
 
                     String pmo_status = rs.getString("pmo_status");
-                    UserValueRecord.RecordPmoStatus recordPmoStatus = pmo_status != null ?UserValueRecord.RecordPmoStatus.valueOf(pmo_status): null;
+                    UserValueRecord.RecordPmoStatus recordPmoStatus = pmo_status != null ? UserValueRecord.RecordPmoStatus.valueOf(pmo_status): null;
                     userValueRecord.setPmoStatus(recordPmoStatus);
 
                     userValueRecord.setPmoResult(rs.getString("pmo_result"));

@@ -8,6 +8,8 @@ import com.syntrontech.pmo.JDBC.cip.*;
 import com.syntrontech.pmo.JDBC.measurement.AbnormalBloodPressureJDBC;
 import com.syntrontech.pmo.JDBC.measurement.AbnormalBloodPressureLogJDBC;
 import com.syntrontech.pmo.JDBC.measurement.BloodPressureHeartBeatJDBC;
+import com.syntrontech.pmo.JDBC.pmo.PmoResultJDBC;
+import com.syntrontech.pmo.JDBC.pmo.PmoUserJDBC;
 import com.syntrontech.pmo.JDBC.syncare1JDBC.*;
 import com.syntrontech.pmo.auth.model.Role;
 import com.syntrontech.pmo.auth.model.Unit;
@@ -20,6 +22,9 @@ import com.syntrontech.pmo.measurement.BloodPressureHeartBeat;
 import com.syntrontech.pmo.measurement.common.BloodPressureCaseStatus;
 import com.syntrontech.pmo.measurement.common.MeasurementStatusType;
 import com.syntrontech.pmo.model.common.*;
+import com.syntrontech.pmo.pmo.PmoResult;
+import com.syntrontech.pmo.pmo.PmoUser;
+import com.syntrontech.pmo.pmo.PmoStatus;
 import com.syntrontech.pmo.syncare1.model.*;
 import com.syntrontech.pmo.syncare1.model.common.Sex;
 import com.syntrontech.pmo.syncare1.model.common.YN;
@@ -56,6 +61,9 @@ public class Sync {
         AbnormalBloodPressureJDBC abnormalBloodPressureJDBC = new AbnormalBloodPressureJDBC();
         AbnormalBloodPressureLogJDBC abnormalBloodPressureLogJDBC = new AbnormalBloodPressureLogJDBC();
         UserValueRecordJDBC userValueRecordJDBC = new UserValueRecordJDBC();
+
+        PmoResultJDBC pmoResultJDBC =  new PmoResultJDBC();
+        PmoUserJDBC pmoUserJDBC = new PmoUserJDBC();
 
         PasswordListJDBC passwordListJDBC = new PasswordListJDBC();
 
@@ -115,6 +123,8 @@ public class Sync {
 
                         }
 
+                        pmoResultJDBC.insert(turnOldRecordsToPmoResult(old, bloodPressureHeartBeat));
+
                         userValueRecordJDBC.updateUserValueRecord(old.getBodyValueRecordId());
                         bloodPressureHeartBeats.add(bloodPressureHeartBeat);
                     });
@@ -126,7 +136,18 @@ public class Sync {
                     // ALBUM_TYPE	int(11) unsigned [0]	使用者mapping的相本為 -> 1;picasa, 2:無名 .....
                     // ADVERTISMENT_STATUS 好康報報對於使用者的狀態_1: 此使用者尚未收到"新廣告通知了"(包含修改),2:此使用者已經收到"新廣告通知了
 
+                    // TODO sync 136 BG
+                    // TODO PMO
+                    // TODO su update sync status
                 });
+    }
+
+    private PmoResult turnOldRecordsToPmoResult(UserValueRecord old, BloodPressureHeartBeat bloodPressureHeartBeat) {
+
+        PmoResult pmoResult = new PmoResult();
+
+        return pmoResult;
+
     }
 
     private AbnormalBloodPressureLog turnBloodPressureAbnormalToLog(AbnormalBloodPressure abnormalBloodPressure, SystemUser su) {
