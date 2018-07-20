@@ -1,9 +1,5 @@
 package com.syntrontech.pmo.JDBC.syncare1JDBC;
 
-import com.syntrontech.pmo.JDBC.Syncare1_GET_CONNECTION;
-import com.syntrontech.pmo.syncare1.model.UserRole;
-import com.syntrontech.pmo.syncare1.model.UserValueRecord;
-
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;

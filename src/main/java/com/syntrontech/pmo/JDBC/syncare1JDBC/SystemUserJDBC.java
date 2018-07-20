@@ -1,6 +1,5 @@
 package com.syntrontech.pmo.JDBC.syncare1JDBC;
 
-import com.syntrontech.pmo.JDBC.Syncare1_GET_CONNECTION;
 import com.syntrontech.pmo.syncare1.model.Area;
 import com.syntrontech.pmo.syncare1.model.SystemUser;
 import com.syntrontech.pmo.syncare1.model.common.Sex;
@@ -10,7 +9,6 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 public class SystemUserJDBC {

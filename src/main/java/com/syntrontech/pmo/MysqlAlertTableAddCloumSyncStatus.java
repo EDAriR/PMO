@@ -1,6 +1,6 @@
 package com.syntrontech.pmo;
 
-import com.syntrontech.pmo.JDBC.Syncare1_GET_CONNECTION;
+import com.syntrontech.pmo.JDBC.syncare1JDBC.Syncare1_GET_CONNECTION;
 
 import java.sql.*;
 import java.util.ArrayList;

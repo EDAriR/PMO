@@ -3,6 +3,7 @@ package com.syntrontech.pmo.JDBC;
 import com.syntrontech.pmo.JDBC.cip.CIP_GET_CONNECTION;
 import com.syntrontech.pmo.JDBC.cip.DeviceJDBC;
 import com.syntrontech.pmo.JDBC.syncare1JDBC.DeviceSyncare1JDBC;
+import com.syntrontech.pmo.JDBC.syncare1JDBC.Syncare1_GET_CONNECTION;
 import com.syntrontech.pmo.model.common.ModelStatus;
 import com.syntrontech.pmo.syncare1.model.Device;
 
@@ -39,12 +40,12 @@ public class SyncDevice {
         device.setSerialNumber(sd.getSerialNo());
         device.setUnitId(sd.getLocation());
         device.setUnitName(sd.getSyntronLocationId());
-        device.setTenantId("DEFAULT_TENANT");
+        device.setTenantId("TTSHB");
         Date date = new Date();
         device.setCreateTime(new Date());
-        device.setCreateBy("systemAdmin");
+        device.setCreateBy("TTSHB");
         device.setUpdateTime(date);
-        device.setUpdateBy("systemAdmin");
+        device.setUpdateBy("TTSHB");
         device.setStatus(ModelStatus.ENABLED);
 
         cipDeviceJDBC.insertDevice(cip_conn, device);

@@ -34,7 +34,7 @@ public class AbnormalBloodPressureJDBC {
 // tenant_id, device_mac_address, unit_name, status, rule_description
 // parent_unit_id, parent_unit_name, device_id
 
-    private static final String GET_ONE = "SELECT * FROM abnormal_blood_pressure WHERE id=? and tenant_id='DEFAULT_TENANT'" +
+    private static final String GET_ONE = "SELECT * FROM abnormal_blood_pressure WHERE id=? and tenant_id='TTSHB'" +
             " AND status='ENABLED';";
 
     public static void main(String[] args) {

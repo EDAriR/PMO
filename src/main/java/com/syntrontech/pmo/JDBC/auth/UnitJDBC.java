@@ -10,13 +10,13 @@ import java.util.Date;
 
 public class UnitJDBC {
 
-    private static final String GET_ALL_STMT = "SELECT * FROM unit WHERE tenant_id='DEFAULT_TENANT' ORDER BY sequence;";
+    private static final String GET_ALL_STMT = "SELECT * FROM unit WHERE tenant_id='TTSHB' ORDER BY sequence;";
     private static final String INSERT_STMT = "INSERT INTO unit " +
             "(sequence, id, name, parent_id, parent_name, tenant_id, meta, createtime, createby," +
             "updatetime, updateby, status) "
             + "VALUES (nextval('unit_sequence_seq'), ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);";
 
-    private static final String GET_ONE = "SELECT * FROM unit WHERE id=? and tenant_id='DEFAULT_TENANT'" +
+    private static final String GET_ONE = "SELECT * FROM unit WHERE id=? and tenant_id='TTSHB'" +
             " AND status='ENABLED';";
 // sequence,
 // id, name, parent_id,
@@ -145,7 +145,7 @@ public class UnitJDBC {
         unit.setName("JDBCTest");
         unit.setParentId("1001401");
         unit.setParentName("台東市");
-        unit.setTenantId("DEFAULT_TENANT");
+        unit.setTenantId("TTSHB");
         unit.setMeta(null);
         unit.setCreateTime(new Date());
         unit.setCreateBy("systemAdmin");

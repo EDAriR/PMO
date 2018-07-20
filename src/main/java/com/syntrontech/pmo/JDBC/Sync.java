@@ -59,8 +59,8 @@ public class Sync {
 
         PasswordListJDBC passwordListJDBC = new PasswordListJDBC();
 
-        // 取出新的role 只要user 的  DEFAULT_TENANT_ADMIN TTABO
-        Role newrole = new RoleJDBC().getRoleById("TTSHB");
+        // 取出新的role 只要user 的  DEFAULT_TENANT_ADMIN  DEFAULT_USER  TTSHB
+        Role newrole = new RoleJDBC().getRoleById("DEFAULT_USER");
 
         // 取出所有未同步量測紀錄數值 <body_value_record_id, UserValueRecordMappings>
         Map<Integer, List<UserValueRecordMapping>> userValueRecordMap = new UserValueRecordMappingJDBC()
@@ -115,6 +115,7 @@ public class Sync {
 
                         }
 
+                        userValueRecordJDBC.updateUserValueRecord(old.getBodyValueRecordId());
                         bloodPressureHeartBeats.add(bloodPressureHeartBeat);
                     });
 
@@ -314,7 +315,7 @@ public class Sync {
 
         emergencyContact.setSubjectId(su.getUserAccount());
         emergencyContact.setUserId(su.getUserAccount());
-        emergencyContact.setTenantId("DEFAULT_TENANT_ADMIN");
+        emergencyContact.setTenantId("TTSHB");
         emergencyContact.setName(su.getAlertNotifierName());
         emergencyContact.setPhone(su.getAlertNotifierMobilePhone());
         emergencyContact.setEmail(su.getAlertNotifierEmail());
@@ -328,7 +329,7 @@ public class Sync {
         // sequence, id, name, tenant_id, source, meta
         user.setId(su.getUserAccount());
         user.setName(su.getUserDisplayName());
-        user.setTenantId("TTABO");
+        user.setTenantId("TTSHB");
         user.setSource(Source.CREATE);
 
         // unit_ids, role_ids, emails, mobilephones, cards, permission_ids
@@ -350,9 +351,9 @@ public class Sync {
         // createtime, createby, updatetime, updateby, status
         user.setCreateTime(su.getCreateTime());
         // TODO
-        user.setCreateBy("TTABO");
+        user.setCreateBy("TTSHB");
         user.setUpdateTime(su.getCreateTime());
-        user.setUpdateBy("TTABO");
+        user.setUpdateBy("TTSHB");
         user.setStatus(ModelUserStatus.ENABLED);
         return user;
     }
@@ -485,15 +486,14 @@ public class Sync {
         subject.setUnitName("其他");
 
 //        tenant_id, createtime, createby, updatetime
-        // TODO
-        subject.setTenantId("TTABO");
+        subject.setTenantId("TTSHB");
 
         subject.setCreateTime(su.getCreateTime());
-        subject.setCreateBy("TTABO");
+        subject.setCreateBy("TTSHB");
         subject.setUpdateTime(su.getCreateTime());
 
 //                    updateby, status
-        subject.setUpdateBy("TTABO");
+        subject.setUpdateBy("TTSHB");
         subject.setStatus(ModelStatus.ENABLED);
         return subject;
     }

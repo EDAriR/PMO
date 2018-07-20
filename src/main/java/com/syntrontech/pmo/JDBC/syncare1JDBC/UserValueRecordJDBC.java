@@ -1,12 +1,10 @@
 package com.syntrontech.pmo.JDBC.syncare1JDBC;
 
-import com.syntrontech.pmo.JDBC.Syncare1_GET_CONNECTION;
 import com.syntrontech.pmo.syncare1.model.Device;
 import com.syntrontech.pmo.syncare1.model.UserValueRecord;
 
 import java.sql.*;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 public class UserValueRecordJDBC {

@@ -15,7 +15,7 @@ import java.util.List;
 
 public class RoleJDBC {
 
-    private static final String GET_ONE = "SELECT * FROM role WHERE id=? and tenant_id='TTABO'" +
+    private static final String GET_ONE = "SELECT * FROM role WHERE id=? and tenant_id='TTSHB'" +
             " AND status='ENABLED';";
 
 
@@ -23,7 +23,7 @@ public class RoleJDBC {
 
         RoleJDBC s = new RoleJDBC();
 
-        Role role = s.getRoleById("DEFAULT_TENANT_ADMIN");
+        Role role = s.getRoleById("DEFAULT_USER");
 
         System.out.println(role);
     }

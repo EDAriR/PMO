@@ -53,7 +53,7 @@ public class QuestionnairReplyJDBC {
 //        createtime, createby, updatetime, updateby, status
 
         questionnairReply.setUserId("systemAdmin");
-        questionnairReply.setTenantId("DEFAULT_TENANT");
+        questionnairReply.setTenantId("TTSHB");
         questionnairReply.setQuestionnairSeq((long)1);
 
         // questionnaire_title, questionnaire_question_seq, questionnaire_question_title, questionnaire_question_option_seq

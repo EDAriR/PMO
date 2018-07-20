@@ -1,6 +1,5 @@
 package com.syntrontech.pmo.JDBC.syncare1JDBC;
 
-import com.syntrontech.pmo.JDBC.Syncare1_GET_CONNECTION;
 import com.syntrontech.pmo.syncare1.model.Mapping;
 import com.syntrontech.pmo.syncare1.model.UserValueRecord;
 import com.syntrontech.pmo.syncare1.model.UserValueRecordMapping;

@@ -3,6 +3,7 @@ package com.syntrontech.pmo.JDBC;
 import com.syntrontech.pmo.JDBC.auth.UnitJDBC;
 import com.syntrontech.pmo.JDBC.cip.UnitMetaJDBC;
 import com.syntrontech.pmo.JDBC.syncare1JDBC.LocationJDBC;
+import com.syntrontech.pmo.JDBC.syncare1JDBC.Syncare1_GET_CONNECTION;
 import com.syntrontech.pmo.auth.model.Unit;
 import com.syntrontech.pmo.cip.model.UnitMeta;
 import com.syntrontech.pmo.model.common.ModelMgmtStatus;
@@ -73,9 +74,9 @@ public class SyncUnit {
         unitMeta.setMobilePhone(location.getPhone());
         Date date = new Date();
         unitMeta.setCreateTime(date); // Date
-        unitMeta.setCreateBy("systemAdmin");
+        unitMeta.setCreateBy("TTSHB");
         unitMeta.setUpdateTime(date); // Date
-        unitMeta.setUpdateBy("systemAdmin");
+        unitMeta.setUpdateBy("TTSHB");
         return unitMeta;
     }
 
@@ -132,12 +133,12 @@ public class SyncUnit {
             unit.setParentName(parentUnit.getName());
 
         }
-        unit.setTenantId("DEFAULT_TENANT");
+        unit.setTenantId("TTSHB");
         unit.setMeta(null);
         unit.setCreateTime(new Date());
-        unit.setCreateBy("systemAdmin");
+        unit.setCreateBy("TTSHB");
         unit.setUpdateTime(new Date());
-        unit.setUpdateBy("systemAdmin");
+        unit.setUpdateBy("TTSHB");
         unit.setStatus(ModelStatus.ENABLED);
 
         return unit;

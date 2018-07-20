@@ -12,7 +12,7 @@ import java.util.List;
 
 public class UserJDBC {
 
-    private static final String GET_ALL_STMT = "SELECT * FROM users WHERE tenant_id='DEFAULT_TENANT' ORDER BY sequence;";
+    private static final String GET_ALL_STMT = "SELECT * FROM users WHERE tenant_id='TTSHB' ORDER BY sequence;";
     private static final String INSERT_STMT = "INSERT INTO users " +
             "(sequence, id, name, tenant_id, source, meta," +
             "unit_ids, role_ids, emails, mobilephones, cards, permission_ids," +
@@ -21,7 +21,7 @@ public class UserJDBC {
             "?, ?, ?, ?, ?, ?," +
             "?, ?, ?, ?, ?);";
 
-    private static final String GET_ONE = "SELECT * FROM unit WHERE id=? and tenant_id='DEFAULT_TENANT'" +
+    private static final String GET_ONE = "SELECT * FROM unit WHERE id=? and tenant_id='TTSHB'" +
             " AND status='ENABLED';";
 // sequence,
 //    sequence, id, name, tenant_id, source, meta
@@ -198,7 +198,7 @@ public class UserJDBC {
         // sequence, id, name, tenant_id, source, meta
         user.setId("userJDBCTest");
         user.setName("userJDBCTest");
-        user.setTenantId("DEFAULT_TENANT");
+        user.setTenantId("TTSHB");
         user.setSource(Source.CREATE);
         user.setMeta("meta");
 

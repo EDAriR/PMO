@@ -1,4 +1,4 @@
-package com.syntrontech.pmo.JDBC;
+package com.syntrontech.pmo.JDBC.syncare1JDBC;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
