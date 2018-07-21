@@ -2,6 +2,8 @@ package com.syntrontech.pmo.JDBC.auth;
 
 import com.syntrontech.pmo.auth.model.Unit;
 import com.syntrontech.pmo.model.common.ModelStatus;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -9,6 +11,8 @@ import java.util.List;
 import java.util.Date;
 
 public class UnitJDBC {
+
+    private static Logger logger = LoggerFactory.getLogger(Auth_GET_CONNECTION.class);
 
     private static final String GET_ALL_STMT = "SELECT * FROM unit WHERE tenant_id='TTSHB' ORDER BY sequence;";
     private static final String INSERT_STMT = "INSERT INTO unit " +
@@ -40,6 +44,7 @@ public class UnitJDBC {
 
         Unit unit = s.getUnitById("xxx");
         System.out.println(unit.getId() == null);
+
     }
 
     public Unit getUnitById(String id) {
@@ -52,7 +57,7 @@ public class UnitJDBC {
             pstmt = conn.prepareStatement(GET_ONE);
 
             pstmt.setString(1, id);
-            System.out.println(pstmt);
+            logger.info(pstmt.toString());
 
             ResultSet rs = pstmt.executeQuery();
 
@@ -60,11 +65,14 @@ public class UnitJDBC {
                 while (rs.next()) {
                     unit.setId(rs.getString("id"));
                     unit.setName(rs.getString("name"));
+                    unit.setParentId(rs.getString("parent_id"));
+                    unit.setParentName(rs.getString("parent_name"));
+                    unit.setTenantId(rs.getString("tenant_id"));
                 }
             }
 
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.debug("insertUnit fail " + pstmt + "||" + conn);
         } finally {
 
             try {
@@ -72,12 +80,12 @@ public class UnitJDBC {
                     pstmt.close();
                 conn.close();
             } catch (SQLException e) {
-                System.out.println("conn or pstmt close fail" + conn + " || " + pstmt);
+                logger.info("conn or pstmt close fail" + conn + " || " + pstmt);
                 e.printStackTrace();
             }
 
         }
-
+        logger.info("getUnitById successful ==> " + unit);
         return unit;
     }
 
@@ -112,15 +120,12 @@ public class UnitJDBC {
             pstmt.setString(10, unit.getUpdateBy());
             pstmt.setString(11, unit.getStatus().toString());
 
-            System.out.println(pstmt);
+            logger.info(pstmt.toString());
 
             pstmt.executeUpdate();
-            System.out.println("create unit successful ==> " + unit);
-
-
 
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.debug("insertUnit fail " + pstmt + "||" + conn);
         } finally {
 
             try {
@@ -128,12 +133,12 @@ public class UnitJDBC {
                     pstmt.close();
                 conn.close();
             } catch (SQLException e) {
-                System.out.println("conn or pstmt close fail" + conn + " || " + pstmt);
+                logger.info("conn or pstmt close fail" + conn + " || " + pstmt);
                 e.printStackTrace();
             }
 
         }
-
+        logger.info("create unit successful ==> " + unit);
         return unit;
     }
 
@@ -186,7 +191,7 @@ public class UnitJDBC {
                     unit.setUpdateBy(rs.getString("updateby"));
                     unit.setStatus(ModelStatus.valueOf(rs.getString("status")));
 
-//                    System.out.println("unit:" + unit);
+                    logger.info("unit:" + unit);
                     units.add(unit);
                 }
             }
@@ -199,7 +204,7 @@ public class UnitJDBC {
                     pstmt.close();
                 conn.close();
             } catch (SQLException e) {
-                System.out.println("conn or pstmt close fail" + conn + " || " + pstmt);
+                logger.debug("conn or pstmt close fail" + conn + " || " + pstmt);
                 e.printStackTrace();
             }
 

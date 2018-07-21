@@ -1,6 +1,9 @@
 package com.syntrontech.pmo.JDBC.cip;
 
 import com.syntrontech.pmo.cip.model.Device;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.sql.*;
 import java.util.ArrayList;
 import java.sql.Date;
@@ -8,6 +11,8 @@ import java.util.HashMap;
 import java.util.List;
 
 public class DeviceJDBC {
+
+    private static Logger logger = LoggerFactory.getLogger(DeviceJDBC.class);
 
     private static final String GET_ALL_STMT = "SELECT * FROM device ORDER BY sequence;";
     private static final String INSERT_STMT = "INSERT INTO device " +
@@ -50,8 +55,9 @@ public class DeviceJDBC {
 
     }
 
-    public void insertDevice(Connection conn, Device device){
+    public void insertDevice(Device device){
 
+        Connection conn = new CIP_GET_CONNECTION().getConn();
         PreparedStatement pstmt =null;
 
         try {
@@ -73,10 +79,9 @@ public class DeviceJDBC {
             pstmt.setTimestamp(11, new Timestamp(device.getUpdateTime().getTime()));
             pstmt.setString(12, device.getUpdateBy());
 
-            System.out.println(pstmt);
+            logger.info(pstmt.toString());
 
             pstmt.executeUpdate();
-            System.out.println("create successful ==> " + device);
 
         } catch (SQLException e) {
             e.printStackTrace();
@@ -87,11 +92,13 @@ public class DeviceJDBC {
                     pstmt.close();
                 conn.close();
             } catch (SQLException e) {
-                System.out.println("conn or pstmt close fail" + conn + " || " + pstmt);
+                logger.info("conn or pstmt close fail" + conn + " || " + pstmt);
                 e.printStackTrace();
             }
 
         }
+        logger.info("create successful ==> " + device);
+
     }
 
     List<HashMap<String, String>> getAllDevice(Connection conn){
@@ -125,7 +132,7 @@ public class DeviceJDBC {
                     device.put("updateby" , rs.getString("updateby"));
                     device.put("status" , rs.getString("status"));
 
-//                    System.out.println("device:" + device);
+//                    logger.info("device:" + device);
                     devices.add(device);
                 }
             }
@@ -138,7 +145,7 @@ public class DeviceJDBC {
                     pstmt.close();
                 conn.close();
             } catch (SQLException e) {
-                System.out.println("conn or pstmt close fail" + conn + " || " + pstmt);
+                logger.info("conn or pstmt close fail" + conn + " || " + pstmt);
                 e.printStackTrace();
             }
 
@@ -157,7 +164,7 @@ public class DeviceJDBC {
             pstmt.setString(1, device.get("id"));
             pstmt.setString(2, device.get("name"));
             String mac_address = device.get("mac_address") != null ? device.get("mac_address") : "";
-            System.out.println("mac_address==>" + mac_address);
+            logger.info("mac_address==>" + mac_address);
             pstmt.setString(3,  mac_address);
             pstmt.setString(4, device.get("serial_number"));
             pstmt.setString(5, device.get("unit_id"));
@@ -166,20 +173,20 @@ public class DeviceJDBC {
             pstmt.setString(7, device.get("tenant_id"));
             pstmt.setString(8, device.get("status"));
             java.util.Date date = new java.util.Date();
-            System.out.println("date :" + date);
+            logger.info("date :" + date);
             pstmt.setTimestamp(9, new Timestamp(date.getTime()));
             pstmt.setString(10, device.get("createby"));
 
             java.util.Date utilDate=new java.util.Date();
             java.sql.Timestamp sqlDate=new java.sql.Timestamp(utilDate.getTime());
 
-            System.out.println(sqlDate);
+            logger.info(sqlDate.toString());
             pstmt.setTimestamp(11, sqlDate);
             pstmt.setString(12, device.get("updateby"));
 
-            System.out.println(pstmt);
+            logger.info(pstmt.toString());
             pstmt.executeUpdate();
-            System.out.println("create successful ==> " + device);
+            logger.info("create successful ==> " + device);
 
         } catch (SQLException e) {
             e.printStackTrace();
@@ -190,7 +197,7 @@ public class DeviceJDBC {
                     pstmt.close();
                 conn.close();
             } catch (SQLException e) {
-                System.out.println("conn or pstmt close fail" + conn + " || " + pstmt);
+                logger.info("conn or pstmt close fail" + conn + " || " + pstmt);
                 e.printStackTrace();
             }
 

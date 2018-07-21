@@ -30,7 +30,6 @@ public class Auth_GET_CONNECTION {
 
         } catch (SQLException e) {
             logger.debug("Connection Failed!");
-            e.printStackTrace();
         }
 
         if (conn != null)

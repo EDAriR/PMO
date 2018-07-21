@@ -100,6 +100,7 @@ public class Sync {
                     });
 
 
+                    // TODO PMO USER RESULT
                     pmoUserJDBC.insert(turnSystemUserToPmoUser(su));
                     // update systemUser sync status
                     systemUserJDBC.updateSystemUser(su.getUserId());

@@ -2,6 +2,8 @@ package com.syntrontech.pmo.JDBC.cip;
 
 import com.syntrontech.pmo.cip.model.Subject;
 import com.syntrontech.pmo.model.common.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.persistence.Column;
 import javax.persistence.EnumType;
@@ -13,6 +15,7 @@ import java.util.stream.Collectors;
 
 public class SubjectJDBC {
 
+    private static Logger logger = LoggerFactory.getLogger(SubjectJDBC.class);
 
     private static final String GET_ALL_STMT = "SELECT * FROM subject ORDER BY sequence;";
     private static final String INSERT_STMT = "INSERT INTO subject " +
@@ -132,8 +135,10 @@ public class SubjectJDBC {
                 }
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.debug("getOneSubject fail" + conn + " || " + pstmt);
         }
+
+        logger.info("getOneSubject successful ==> " + subject);
 
         return subject;
     }
@@ -212,12 +217,12 @@ public class SubjectJDBC {
                     ModelStatus status = rs.getString("status") == null ? ModelStatus.valueOf(rs.getString("status")) : null;
                     subject.setStatus(status);
 
-                    System.out.println("subject:" + subject);
+                    logger.info("subject:" + subject);
                     subjects.add(subject);
                 }
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.debug("getAllSubjects fail" + conn + " || " + pstmt);
         }
 
         return subjects;
@@ -237,8 +242,6 @@ public class SubjectJDBC {
 
         try {
             pstmt = conn.prepareStatement(INSERT_STMT);
-
-            System.out.println(pstmt);
 
             //    sequence, id, name, gender, birthday,
             pstmt.setString(1, subject.getId());
@@ -269,27 +272,25 @@ public class SubjectJDBC {
             //    tenant_id, createtime, createby, updatetime, updateby, status
             pstmt.setString(16, subject.getTenantId());
 
-            System.out.println("subject.getCreateTime() ++" + subject.getCreateTime());
-            System.out.println("new java.sql.Date(subject.getCreateTime().getTime()) ++" + new java.sql.Date(subject.getCreateTime().getTime()));
             pstmt.setTimestamp(17, new java.sql.Timestamp(subject.getCreateTime().getTime()));
             pstmt.setString(18, subject.getCreateBy());
             pstmt.setTimestamp(19, new java.sql.Timestamp(subject.getUpdateTime().getTime()));
             pstmt.setString(20, subject.getUpdateBy());
             pstmt.setString(21, subject.getStatus().toString());
 
-            System.out.println(pstmt);
+            logger.info(pstmt.toString());
 
             pstmt.executeUpdate();
-            System.out.println(pstmt);
             try (ResultSet rs = pstmt.getGeneratedKeys()) {
                 if (rs.next()) {
                     subject.setSequence(rs.getLong(1));
                 }
                 rs.close();
             }
-            System.out.println("create successful ==> " + subject);
+            logger.info("create successful ==> " + subject);
 
         } catch (SQLException e) {
+            logger.debug("create subject fail" + conn + " || " + pstmt);
             e.printStackTrace();
         }
 

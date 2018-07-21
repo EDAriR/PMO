@@ -9,6 +9,8 @@ import com.syntrontech.pmo.cip.model.UnitMeta;
 import com.syntrontech.pmo.model.common.ModelMgmtStatus;
 import com.syntrontech.pmo.model.common.ModelStatus;
 import com.syntrontech.pmo.syncare1.model.Location;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Date;
 import java.util.HashMap;
@@ -16,6 +18,8 @@ import java.util.List;
 import java.util.Map;
 
 public class SyncUnit {
+
+    private static Logger logger = LoggerFactory.getLogger(SyncUnit.class);
 
     public void syncLocationToUnit(){
 
@@ -25,9 +29,9 @@ public class SyncUnit {
 
         List<Location> locations = locationJDBC.getAllLocation(new Syncare1_GET_CONNECTION().getConn());
 
-        System.out.println(locations.size());
+        logger.info(" locations need sync" + locations.size());
         locations.forEach(l -> {
-            System.out.println(l);
+            logger.info(l.toString());
             if (l.getId().equals("") || l.getId() == null){
 
             }else{
@@ -41,7 +45,7 @@ public class SyncUnit {
             }
         });
 
-        System.out.println("sync unit : " + locations.size() + " successful");
+        logger.info("sync unit : " + locations.size() + " successful");
 
     }
 

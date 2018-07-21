@@ -4,6 +4,8 @@ import com.syntrontech.pmo.cip.model.EmergencyContact;
 import com.syntrontech.pmo.cip.model.UnitMeta;
 import com.syntrontech.pmo.model.common.ModelMgmtStatus;
 import com.syntrontech.pmo.model.common.ModelStatus;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -13,6 +15,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class EmergencyContactJDBC {
+
+    private static Logger logger = LoggerFactory.getLogger(EmergencyContactJDBC.class);
 
     private static final String GET_ALL_STMT = "select * from emergency_contacts order by sequence;";
     private static final String INSERT_STMT = "INSERT INTO emergency_contacts " +
@@ -46,13 +50,11 @@ public class EmergencyContactJDBC {
             pstmt.setString(6, emergencyContact.getEmail());
             pstmt.setString(7, emergencyContact.getStatus().toString());
 
-            System.out.println(pstmt);
+            logger.info(pstmt.toString());
             pstmt.executeUpdate();
 
-            System.out.println("create emergencyContact successful ==> " + emergencyContact);
-
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.debug("insertEmergencyContact fail" + conn + " || " + pstmt);
         } finally {
 
             try {
@@ -60,11 +62,13 @@ public class EmergencyContactJDBC {
                     pstmt.close();
                 conn.close();
             } catch (SQLException e) {
-                System.out.println("conn or pstmt close fail" + conn + " || " + pstmt);
+                logger.debug("conn or pstmt close fail" + conn + " || " + pstmt);
                 e.printStackTrace();
             }
 
         }
+        logger.info("create emergencyContact successful ==> " + emergencyContact);
+
         return emergencyContact;
     }
 
@@ -93,7 +97,7 @@ public class EmergencyContactJDBC {
                     emergencyContact.setPhone(rs.getString("phone"));
                     emergencyContact.setEmail(rs.getString("email"));
                     emergencyContact.setStatus(ModelStatus.valueOf(rs.getString("status")));
-//                    System.out.println("unit:" + unit);
+//                    logger.info("unit:" + unit);
                     emergencyContacts.add(emergencyContact);
                 }
             }
@@ -106,7 +110,7 @@ public class EmergencyContactJDBC {
                     pstmt.close();
                 conn.close();
             } catch (SQLException e) {
-                System.out.println("conn or pstmt close fail" + conn + " || " + pstmt);
+                logger.debug("conn or pstmt close fail" + conn + " || " + pstmt);
                 e.printStackTrace();
             }
 

@@ -4,6 +4,8 @@ import com.syntrontech.pmo.auth.model.User;
 import com.syntrontech.pmo.model.common.ModelStatus;
 import com.syntrontech.pmo.model.common.ModelUserStatus;
 import com.syntrontech.pmo.model.common.Source;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -11,6 +13,8 @@ import java.util.Date;
 import java.util.List;
 
 public class UserJDBC {
+
+    private static Logger logger = LoggerFactory.getLogger(Auth_GET_CONNECTION.class);
 
     private static final String GET_ALL_STMT = "SELECT * FROM users WHERE tenant_id='TTSHB' ORDER BY sequence;";
     private static final String INSERT_STMT = "INSERT INTO users " +
@@ -44,7 +48,7 @@ public class UserJDBC {
         s.insertUser(s.getTestUser());
 
 //        User user = s.getUserById("xxx");
-//        System.out.println(user.getId() == null);
+//        logger.info(user.getId() == null);
     }
 
     public User getUserById(String id) {
@@ -57,7 +61,8 @@ public class UserJDBC {
             pstmt = conn.prepareStatement(GET_ONE);
 
             pstmt.setString(1, id);
-            System.out.println(pstmt);
+
+            logger.info(pstmt.toString());
 
             ResultSet rs = pstmt.executeQuery();
 
@@ -101,11 +106,13 @@ public class UserJDBC {
 
                     ModelUserStatus modelUserStatus = rs.getString("status") != null ? ModelUserStatus.valueOf(rs.getString("status")) : null;
                     user.setStatus(modelUserStatus);
+                    
+                    
                 }
             }
 
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.debug("getUserById fail =>" + conn + " || " + pstmt + "||" + user);
         } finally {
 
             try {
@@ -113,12 +120,12 @@ public class UserJDBC {
                     pstmt.close();
                 conn.close();
             } catch (SQLException e) {
-                System.out.println("conn or pstmt close fail" + conn + " || " + pstmt);
+                logger.debug("conn or pstmt close fail" + conn + " || " + pstmt);
                 e.printStackTrace();
             }
 
         }
-
+        logger.info("get user by id successful =>" + user);
         return user;
     }
 
@@ -169,12 +176,12 @@ public class UserJDBC {
             pstmt.setString(15, user.getUpdateBy());
             pstmt.setString(16, user.getStatus().toString());
 
-            System.out.println(pstmt);
-
+            logger.info(pstmt.toString());
             pstmt.executeUpdate();
-            System.out.println("create unit successful ==> " + user);
 
         } catch (SQLException e) {
+            logger.debug("getUserById fail =>" + conn + " || " + pstmt + "||" + user);
+
             e.printStackTrace();
         } finally {
 
@@ -183,12 +190,12 @@ public class UserJDBC {
                     pstmt.close();
                 conn.close();
             } catch (SQLException e) {
-                System.out.println("conn or pstmt close fail" + conn + " || " + pstmt);
+                logger.info("conn or pstmt close fail" + conn + " || " + pstmt);
                 e.printStackTrace();
             }
 
         }
-
+        logger.info("create user successful ==> " + user);
         return user;
     }
 
@@ -209,13 +216,13 @@ public class UserJDBC {
         user.setRoleIds(roleIds);
         user.setEmails(null);
 
-        String[] mobilePhones = {"6666"};
+        String[] mobilePhones = {};
         user.setMobilePhones(mobilePhones);
 
-        String[] cards = {"123456"};
+        String[] cards = {};
         user.setCards(cards);
 
-        String[] permissionIds = {"123456"};
+        String[] permissionIds = {};
         // TODO
         user.setPermissionIds(permissionIds);
 
@@ -295,7 +302,7 @@ public class UserJDBC {
                     pstmt.close();
                 conn.close();
             } catch (SQLException e) {
-                System.out.println("conn or pstmt close fail" + conn + " || " + pstmt);
+                logger.info("conn or pstmt close fail" + conn + " || " + pstmt);
                 e.printStackTrace();
             }
 

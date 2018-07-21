@@ -2,6 +2,8 @@ package com.syntrontech.pmo.JDBC.cip;
 
 import com.syntrontech.pmo.cip.model.UnitMeta;
 import com.syntrontech.pmo.model.common.ModelMgmtStatus;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -13,6 +15,8 @@ import java.util.stream.Collectors;
 import static java.util.stream.Collectors.toSet;
 
 public class UnitMetaJDBC {
+
+    private static Logger logger = LoggerFactory.getLogger(UnitMetaJDBC.class);
 
     private static final String GET_ALL_STMT = "select * from unit_meta WHERE tenant_id='DEFAULT_TENANT' AND unit_status='ENABLED' order by sequence;";
     private static final String INSERT_STMT = "INSERT INTO unit_meta " +
@@ -77,7 +81,7 @@ public class UnitMetaJDBC {
             pstmt = conn.prepareStatement(GET_ONE);
 
             pstmt.setString(1, id);
-            System.out.println(pstmt);
+            logger.info(pstmt.toString());
 
             ResultSet rs = pstmt.executeQuery();
 
@@ -97,7 +101,7 @@ public class UnitMetaJDBC {
                     pstmt.close();
                 conn.close();
             } catch (SQLException e) {
-                System.out.println("conn or pstmt close fail" + conn + " || " + pstmt);
+                logger.info("conn or pstmt close fail" + conn + " || " + pstmt);
                 e.printStackTrace();
             }
         }
@@ -109,7 +113,7 @@ public class UnitMetaJDBC {
 
         UnitMeta old = getUnitMetaById(unitMeta.getUnitId());
         if (old != null){
-            System.out.println(old);
+            logger.info("UnitMeta = " + old);
             if (old.getUnitId() != null && !old.getUnitId().equals(""))
                 return old;
         }
@@ -142,13 +146,12 @@ public class UnitMetaJDBC {
             pstmt.setTimestamp(15, new java.sql.Timestamp(unitMeta.getUpdateTime().getTime()));
             pstmt.setString(16, unitMeta.getUpdateBy());
 
-            System.out.println(pstmt);
+            logger.info(pstmt.toString());
 
             pstmt.executeUpdate();
-            System.out.println("create unitMeta successful ==> " + unitMeta);
 
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.debug("insertUnitMeta fail" + conn + " || " + pstmt);
         } finally {
 
             try {
@@ -156,11 +159,12 @@ public class UnitMetaJDBC {
                     pstmt.close();
                 conn.close();
             } catch (SQLException e) {
-                System.out.println("conn or pstmt close fail" + conn + " || " + pstmt);
+                logger.debug("conn or pstmt close fail" + conn + " || " + pstmt);
                 e.printStackTrace();
             }
 
         }
+        logger.info("create unitMeta successful ==> " + unitMeta);
         return unitMeta;
     }
 
@@ -232,7 +236,6 @@ public class UnitMetaJDBC {
                     unitMeta.setUpdateTime(rs.getTimestamp("updatetime"));
                     unitMeta.setUpdateBy(rs.getString("updateby"));
 
-//                    System.out.println("unit:" + unit);
                     units.add(unitMeta);
                 }
             }
@@ -245,7 +248,7 @@ public class UnitMetaJDBC {
                     pstmt.close();
                 conn.close();
             } catch (SQLException e) {
-                System.out.println("conn or pstmt close fail" + conn + " || " + pstmt);
+                logger.debug("conn or pstmt close fail" + conn + " || " + pstmt);
                 e.printStackTrace();
             }
 

@@ -5,12 +5,16 @@ import com.syntrontech.pmo.auth.model.PasswordList;
 import com.syntrontech.pmo.auth.model.Role;
 import com.syntrontech.pmo.auth.model.User;
 import com.syntrontech.pmo.model.common.ModelStatus;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.sql.*;
 import java.util.Date;
 import java.util.List;
 
 public class PasswordListJDBC {
+
+    private static Logger logger = LoggerFactory.getLogger(Auth_GET_CONNECTION.class);
 
     private static final String INSERT_STMT = "INSERT INTO password_list " +
             "(sequence, password, user_id, password_updatetime) "
@@ -27,11 +31,8 @@ public class PasswordListJDBC {
 //        List<PasswordList> ss = s.getAllPasswordLists();
         Date end_time = new Date(new java.util.Date().getTime());
 
-//        System.out.println("star_time:" + star_time.toInstant());
-//        System.out.println("end_time:" + end_time.toInstant());
-//        System.out.println("ss size:" + ss.size());
 
-//        s.insertPasswordList(s.getTestPasswordList());
+        s.insertPassword(new UserJDBC().getTestUser(), "1qaz2wsx");
 
         PasswordList passwordList = s.getPasswordListById("systemAdmin");
 
@@ -70,7 +71,7 @@ public class PasswordListJDBC {
             }
 
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.debug("getPasswordListById fail " + pstmt + "||" + conn);
         } finally {
 
             try {
@@ -78,7 +79,7 @@ public class PasswordListJDBC {
                     pstmt.close();
                 conn.close();
             } catch (SQLException e) {
-                System.out.println("conn or pstmt close fail" + conn + " || " + pstmt);
+                logger.debug("conn or pstmt close fail" + conn + " || " + pstmt);
                 e.printStackTrace();
             }
 
@@ -106,9 +107,8 @@ public class PasswordListJDBC {
             pstmt.setString(2, passwordList.getUserId());
             pstmt.setTimestamp(3, new Timestamp(passwordList.getPasswordUpdateTime().getTime()));
 
-            System.out.println(pstmt);
+            logger.info(pstmt.toString());
             pstmt.executeUpdate();
-            System.out.println("create successful ==> " + pstmt);
 
             try (ResultSet rs = pstmt.getGeneratedKeys()) {
                 if (rs.next()) {
@@ -118,7 +118,8 @@ public class PasswordListJDBC {
             }
 
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.debug("insertPassword fail " + pstmt + "||" + conn);
+
         } finally {
 
             try {
@@ -126,12 +127,12 @@ public class PasswordListJDBC {
                     pstmt.close();
                 conn.close();
             } catch (SQLException e) {
-                System.out.println("conn or pstmt close fail" + conn + " || " + pstmt);
+                logger.debug("conn or pstmt close fail" + conn + " || " + pstmt);
                 e.printStackTrace();
             }
 
         }
-
+        logger.info("create successful ==> " + pstmt);
         return passwordList;
     }
 
