@@ -5,10 +5,7 @@ import com.syntrontech.pmo.JDBC.auth.RoleJDBC;
 import com.syntrontech.pmo.JDBC.auth.UnitJDBC;
 import com.syntrontech.pmo.JDBC.auth.UserJDBC;
 import com.syntrontech.pmo.JDBC.cip.*;
-import com.syntrontech.pmo.JDBC.measurement.AbnormalBloodPressureJDBC;
-import com.syntrontech.pmo.JDBC.measurement.AbnormalBloodPressureLogJDBC;
-import com.syntrontech.pmo.JDBC.measurement.BloodGlucoseJDBC;
-import com.syntrontech.pmo.JDBC.measurement.BloodPressureHeartBeatJDBC;
+import com.syntrontech.pmo.JDBC.measurement.*;
 import com.syntrontech.pmo.JDBC.pmo.PmoResultJDBC;
 import com.syntrontech.pmo.JDBC.pmo.PmoUserJDBC;
 import com.syntrontech.pmo.JDBC.syncare1JDBC.*;
@@ -17,10 +14,7 @@ import com.syntrontech.pmo.auth.model.Unit;
 import com.syntrontech.pmo.auth.model.User;
 import com.syntrontech.pmo.cip.model.EmergencyContact;
 import com.syntrontech.pmo.cip.model.Subject;
-import com.syntrontech.pmo.measurement.AbnormalBloodPressure;
-import com.syntrontech.pmo.measurement.AbnormalBloodPressureLog;
-import com.syntrontech.pmo.measurement.BloodGlucose;
-import com.syntrontech.pmo.measurement.BloodPressureHeartBeat;
+import com.syntrontech.pmo.measurement.*;
 import com.syntrontech.pmo.measurement.common.BloodPressureCaseStatus;
 import com.syntrontech.pmo.measurement.common.GlucoseType;
 import com.syntrontech.pmo.measurement.common.MeasurementStatusType;
@@ -98,7 +92,13 @@ public class Sync {
                     // 同步新的血糖
                     syncBloodGlucose(su, userValueRecordMap, subject, userValueRecordJDBC);
 
-                    // TODO BodyInfo
+                    // BodyInfo
+                    BodyInfoJDBC bodyInfoJDBC = new BodyInfoJDBC();
+                    List<UserValueRecord> userBodyInfoValueRecords = userValueRecordJDBC.getOneUserAValueRecord(su.getUserId());
+                    userBodyInfoValueRecords.forEach(record -> {
+                        BodyInfo bodyInfo = bodyInfoJDBC.insert(turnValueRecordToBodyInfo(record, subject, userValueRecordMap));
+                    });
+
 
                     pmoUserJDBC.insert(turnSystemUserToPmoUser(su));
                     // update systemUser sync status
@@ -111,16 +111,66 @@ public class Sync {
                 });
     }
 
+    private BodyInfo turnValueRecordToBodyInfo(UserValueRecord record, Subject subject, Map<Integer, List<UserValueRecordMapping>> userValueRecordMap) {
+
+        List<UserValueRecordMapping> values = userValueRecordMap.get(record.getBodyValueRecordId());
+        if(values.size() == 0)
+            return null;
+
+        Map<Integer, List<UserValueRecordMapping>> value = values.stream().collect(Collectors.groupingBy(v -> v.getMapping().getTypeId()));
+
+        BodyInfo bodyInfo = new BodyInfo();
+
+        // 2身高 3體重 4 BMI
+        bodyInfo.setHeight(Double.valueOf(value.get(3).get(0).getRecordValue()));
+        bodyInfo.setWeight(Double.valueOf(value.get(4).get(0).getRecordValue()));
+        bodyInfo.setBmi(Double.valueOf(value.get(5).get(0).getRecordValue()));
+
+
+        // recordtime, latitude, longitude
+        bodyInfo.setRecordTime(record.getRecordDate());
+        bodyInfo.setLatitude("0");
+        bodyInfo.setLongitude("0");
+
+
+        // status, createtime, createby, tenant_id, device_mac_address
+        // private MeasurementStatusType status;
+        bodyInfo.setStatus(MeasurementStatusType.EXISTED);
+        bodyInfo.setCreateTime(record.getUpdateDate());
+        bodyInfo.setCreateBy("TTSB");
+        bodyInfo.setTenantId("TTSB");
+
+        // subject_seq, subject_id, subject_name, subject_gender, subject_age, subject_user_id, subject_user_name,
+        bodyInfo.setSubjectSeq(subject.getSequence());
+        bodyInfo.setSubjectId(subject.getId());
+        bodyInfo.setSubjectName(subject.getName());
+        bodyInfo.setSubjectGender(subject.getGender());
+        bodyInfo.setSubjectAge(CalendarUtil.getAgeFromBirthDate(subject.getBirthday(), record.getRecordDate()));
+        bodyInfo.setSubjectUserId(subject.getUserId());
+        bodyInfo.setSubjectUserName(subject.getName());
+
+
+        // rule_seq, rule_description, unit_id, unit_name, parent_unit_id, parent_unit_name, device_id
+        UnitJDBC unitJDBC = new UnitJDBC();
+        Unit unit = unitJDBC.getUnitById(subject.getUnitId());
+        bodyInfo.setUnitId(unit.getId());
+        bodyInfo.setUnitName(unit.getName());
+        bodyInfo.setParentUnitId(unit.getParentId());
+        bodyInfo.setParentUnitName(unit.getParentName());
+
+        return bodyInfo; 
+    }
+
     private void syncBloodGlucose(SystemUser su, Map<Integer, List<UserValueRecordMapping>> userValueRecordMap, Subject subject, UserValueRecordJDBC userValueRecordJDBC) {
 
-        // TODO sync 136 BG 取出使用者所有血糖
+        // sync 136 BG 取出使用者所有血糖
         BloodGlucoseJDBC bloodGlucoseJDBC = new BloodGlucoseJDBC();
         PmoResultJDBC pmoResultJDBC = new PmoResultJDBC();
 
         List<UserValueRecord> userBGValueRecords = userValueRecordJDBC.getOneBGUserValueRecord(su.getUserId());
         userBGValueRecords.forEach(bg -> {
             BloodGlucose bloodGlucose = bloodGlucoseJDBC.insert(turnValueRecordToBloodGlucose(bg, subject, userValueRecordMap));
-            // TODO PMO_result
+            // PMO_result
             pmoResultJDBC.insert(turnOldRecordsToPmoResult(bg, bloodGlucose.getSubjectId(), bloodGlucose.getSequence(), MeasurementPMOType.BloodGlucose));
 
         });

@@ -18,74 +18,74 @@ import javax.persistence.Table;
 
 @Table
 @Entity(name = "body_info")
-public class BodyInfo implements Measurement{
-	
-	@Id
-	@GeneratedValue(strategy=GenerationType.IDENTITY)
-	private Long sequence;
-	
-	@Column(name = "height")
-	private Double height;
-	
-	@Column(name = "weight", nullable = false)
-	private Double weight;
-	
-	@Column(name = "bmi")
-	private Double bmi;
-	
-	@Column(name = "bfp")
-	private Double bfp;
-	
-	@Column(name = "recordtime", nullable = false)
-	private Date recordTime;
-	
-	@Column(name = "latitude")
-	private String latitude;
-	
-	@Column(name = "longitude")
-	private String longitude;
-	
-	@Column(name = "status", nullable = false)
-	@Enumerated(EnumType.STRING)
-	private MeasurementStatusType status;
-	
-	@Column(name = "createtime", nullable = false)
-	private Date createTime;
-	
+public class BodyInfo implements Measurement {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long sequence;
+
+    @Column(name = "height")
+    private Double height;
+
+    @Column(name = "weight", nullable = false)
+    private Double weight;
+
+    @Column(name = "bmi")
+    private Double bmi;
+
+    @Column(name = "bfp")
+    private Double bfp;
+
+    @Column(name = "recordtime", nullable = false)
+    private Date recordTime;
+
+    @Column(name = "latitude")
+    private String latitude;
+
+    @Column(name = "longitude")
+    private String longitude;
+
+    @Column(name = "status", nullable = false)
+    @Enumerated(EnumType.STRING)
+    private MeasurementStatusType status;
+
+    @Column(name = "createtime", nullable = false)
+    private Date createTime;
+
     @Column(name = "createby", nullable = false)
     private String createBy;
-    
+
     @Column(name = "tenant_id", nullable = false)
     private String tenantId;
-    
+
     @Column(name = "device_mac_address")
     private String deviceMacAddress;
-    
+
     @Column(name = "subject_seq", nullable = false)
     private Long subjectSeq;
-    
+
     @Column(name = "subject_id", nullable = false)
     private String subjectId;
-    
-    @Column(name="subject_name")
+
+    @Column(name = "subject_name")
     private String subjectName;
-    
+
     @Column(name = "subject_age", nullable = false)
     private Integer subjectAge;
-    
+
     @Column(name = "subject_gender", nullable = false)
     @Enumerated(EnumType.STRING)
-	private GenderType subjectGender;
-    
+    private GenderType subjectGender;
+
     @Column(name = "subject_user_id", nullable = false)
     private String subjectUserId;
-    
+
     @Column(name = "subject_user_name", nullable = false)
     private String subjectUserName;
-	
+
     @Column(name = "rule_seq")
     private Long ruleSeq;
-    
+
     @Column(name = "rule_description")
     private String ruleDescription;
 
@@ -94,233 +94,244 @@ public class BodyInfo implements Measurement{
 
     @Column(name = "unit_name")
     private String unitName;
-    
+
     @Column(name = "parent_unit_id")
     private String parentUnitId;
 
     @Column(name = "parent_unit_name")
     private String parentUnitName;
-    
+
     @Column(name = "device_id")
     private String deviceId;
-    
-	public Long getSequence() {
-		return sequence;
-	}
 
-	public void setSequence(Long sequence) {
-		this.sequence = sequence;
-	}
+    @Override
+    public String toString() {
+        return "BodyInfo:{" +
+                "height=" + height + ", " +
+                "weight=" + weight+ ", " +
+                "unitId=" + unitId + ", " +
+                "subjectId=" + subjectId + ", " +
+                "tenantId=" + tenantId + ", " +
+                "}";
+    }
 
-	public Double getHeight() {
-		return height;
-	}
+    public Long getSequence() {
+        return sequence;
+    }
 
-	public void setHeight(Double height) {
-		this.height = height;
-	}
+    public void setSequence(Long sequence) {
+        this.sequence = sequence;
+    }
 
-	public Double getWeight() {
-		return weight;
-	}
+    public Double getHeight() {
+        return height;
+    }
 
-	public void setWeight(Double weight) {
-		this.weight = weight;
-	}
+    public void setHeight(Double height) {
+        this.height = height;
+    }
 
-	public Double getBmi() {
-		return bmi;
-	}
+    public Double getWeight() {
+        return weight;
+    }
 
-	public void setBmi(Double bmi) {
-		this.bmi = bmi;
-	}
+    public void setWeight(Double weight) {
+        this.weight = weight;
+    }
 
-	public Double getBfp() {
-		return bfp;
-	}
+    public Double getBmi() {
+        return bmi;
+    }
 
-	public void setBfp(Double bfp) {
-		this.bfp = bfp;
-	}
+    public void setBmi(Double bmi) {
+        this.bmi = bmi;
+    }
 
-	public Date getRecordTime() {
-		return recordTime;
-	}
+    public Double getBfp() {
+        return bfp;
+    }
 
-	public void setRecordTime(Date recordTime) {
-		this.recordTime = recordTime;
-	}
+    public void setBfp(Double bfp) {
+        this.bfp = bfp;
+    }
 
-	public String getLatitude() {
-		return latitude;
-	}
+    public Date getRecordTime() {
+        return recordTime;
+    }
 
-	public void setLatitude(String latitude) {
-		this.latitude = latitude;
-	}
+    public void setRecordTime(Date recordTime) {
+        this.recordTime = recordTime;
+    }
 
-	public String getLongitude() {
-		return longitude;
-	}
+    public String getLatitude() {
+        return latitude;
+    }
 
-	public void setLongitude(String longitude) {
-		this.longitude = longitude;
-	}
+    public void setLatitude(String latitude) {
+        this.latitude = latitude;
+    }
 
-	public MeasurementStatusType getStatus() {
-		return status;
-	}
+    public String getLongitude() {
+        return longitude;
+    }
 
-	public void setStatus(MeasurementStatusType status) {
-		this.status = status;
-	}
+    public void setLongitude(String longitude) {
+        this.longitude = longitude;
+    }
 
-	public Date getCreateTime() {
-		return createTime;
-	}
+    public MeasurementStatusType getStatus() {
+        return status;
+    }
 
-	public void setCreateTime(Date createTime) {
-		this.createTime = createTime;
-	}
+    public void setStatus(MeasurementStatusType status) {
+        this.status = status;
+    }
 
-	public String getCreateBy() {
-		return createBy;
-	}
+    public Date getCreateTime() {
+        return createTime;
+    }
 
-	public void setCreateBy(String createBy) {
-		this.createBy = createBy;
-	}
+    public void setCreateTime(Date createTime) {
+        this.createTime = createTime;
+    }
 
-	public String getTenantId() {
-		return tenantId;
-	}
+    public String getCreateBy() {
+        return createBy;
+    }
 
-	public void setTenantId(String tenantId) {
-		this.tenantId = tenantId;
-	}
+    public void setCreateBy(String createBy) {
+        this.createBy = createBy;
+    }
 
-	public String getDeviceMacAddress() {
-		return deviceMacAddress;
-	}
+    public String getTenantId() {
+        return tenantId;
+    }
 
-	public void setDeviceMacAddress(String deviceMacAddress) {
-		this.deviceMacAddress = deviceMacAddress;
-	}
+    public void setTenantId(String tenantId) {
+        this.tenantId = tenantId;
+    }
 
-	public Long getSubjectSeq() {
-		return subjectSeq;
-	}
+    public String getDeviceMacAddress() {
+        return deviceMacAddress;
+    }
 
-	public void setSubjectSeq(Long subjectSeq) {
-		this.subjectSeq = subjectSeq;
-	}
+    public void setDeviceMacAddress(String deviceMacAddress) {
+        this.deviceMacAddress = deviceMacAddress;
+    }
 
-	public String getSubjectId() {
-		return subjectId;
-	}
+    public Long getSubjectSeq() {
+        return subjectSeq;
+    }
 
-	public void setSubjectId(String subjectId) {
-		this.subjectId = subjectId;
-	}
+    public void setSubjectSeq(Long subjectSeq) {
+        this.subjectSeq = subjectSeq;
+    }
 
-	public String getSubjectName() {
-		return subjectName;
-	}
+    public String getSubjectId() {
+        return subjectId;
+    }
 
-	public void setSubjectName(String subjectName) {
-		this.subjectName = subjectName;
-	}
+    public void setSubjectId(String subjectId) {
+        this.subjectId = subjectId;
+    }
 
-	public Integer getSubjectAge() {
-		return subjectAge;
-	}
+    public String getSubjectName() {
+        return subjectName;
+    }
 
-	public void setSubjectAge(Integer subjectAge) {
-		this.subjectAge = subjectAge;
-	}
+    public void setSubjectName(String subjectName) {
+        this.subjectName = subjectName;
+    }
 
-	public GenderType getSubjectGender() {
-		return subjectGender;
-	}
+    public Integer getSubjectAge() {
+        return subjectAge;
+    }
 
-	public void setSubjectGender(GenderType subjectGender) {
-		this.subjectGender = subjectGender;
-	}
+    public void setSubjectAge(Integer subjectAge) {
+        this.subjectAge = subjectAge;
+    }
 
-	public String getSubjectUserId() {
-		return subjectUserId;
-	}
+    public GenderType getSubjectGender() {
+        return subjectGender;
+    }
 
-	public void setSubjectUserId(String subjectUserId) {
-		this.subjectUserId = subjectUserId;
-	}
-	
-	public String getSubjectUserName() {
-		return subjectUserName;
-	}
+    public void setSubjectGender(GenderType subjectGender) {
+        this.subjectGender = subjectGender;
+    }
 
-	public void setSubjectUserName(String subjectUserName) {
-		this.subjectUserName = subjectUserName;
-	}
+    public String getSubjectUserId() {
+        return subjectUserId;
+    }
 
-	public Long getRuleSeq() {
-		return ruleSeq;
-	}
+    public void setSubjectUserId(String subjectUserId) {
+        this.subjectUserId = subjectUserId;
+    }
 
-	public void setRuleSeq(Long ruleSeq) {
-		this.ruleSeq = ruleSeq;
-	}
+    public String getSubjectUserName() {
+        return subjectUserName;
+    }
 
-	public String getRuleDescription() {
-		return ruleDescription;
-	}
+    public void setSubjectUserName(String subjectUserName) {
+        this.subjectUserName = subjectUserName;
+    }
 
-	public void setRuleDescription(String ruleDescription) {
-		this.ruleDescription = ruleDescription;
-	}
+    public Long getRuleSeq() {
+        return ruleSeq;
+    }
 
-	public String getUnitId() {
-		return unitId;
-	}
+    public void setRuleSeq(Long ruleSeq) {
+        this.ruleSeq = ruleSeq;
+    }
 
-	public void setUnitId(String unitId) {
-		this.unitId = unitId;
-	}
-	
-	public String getUnitName() {
-		return unitName;
-	}
+    public String getRuleDescription() {
+        return ruleDescription;
+    }
 
-	public void setUnitName(String unitName) {
-		this.unitName = unitName;
-	}
+    public void setRuleDescription(String ruleDescription) {
+        this.ruleDescription = ruleDescription;
+    }
 
-	public String getParentUnitId() {
-		return parentUnitId;
-	}
+    public String getUnitId() {
+        return unitId;
+    }
 
-	public void setParentUnitId(String parantUnitId) {
-		this.parentUnitId = parantUnitId;
-	}
+    public void setUnitId(String unitId) {
+        this.unitId = unitId;
+    }
 
-	public String getParentUnitName() {
-		return parentUnitName;
-	}
+    public String getUnitName() {
+        return unitName;
+    }
 
-	public void setParentUnitName(String parentUnitName) {
-		this.parentUnitName = parentUnitName;
-	}
+    public void setUnitName(String unitName) {
+        this.unitName = unitName;
+    }
 
-	public String getDeviceId() {
-		return deviceId;
-	}
+    public String getParentUnitId() {
+        return parentUnitId;
+    }
 
-	public void setDeviceId(String deviceId) {
-		this.deviceId = deviceId;
-	}
+    public void setParentUnitId(String parantUnitId) {
+        this.parentUnitId = parantUnitId;
+    }
 
-	public TO<BodyInfo> convertToTO(TO<BodyInfo> to){
-		return to.convertFrom(this);
-	}
+    public String getParentUnitName() {
+        return parentUnitName;
+    }
+
+    public void setParentUnitName(String parentUnitName) {
+        this.parentUnitName = parentUnitName;
+    }
+
+    public String getDeviceId() {
+        return deviceId;
+    }
+
+    public void setDeviceId(String deviceId) {
+        this.deviceId = deviceId;
+    }
+
+    public TO<BodyInfo> convertToTO(TO<BodyInfo> to) {
+        return to.convertFrom(this);
+    }
 }

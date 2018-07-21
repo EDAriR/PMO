@@ -29,7 +29,7 @@ public class AbnormalBloodPressureJDBC {
             + "VALUES (nextval('abnormal_blood_pressure_sequence_seq'), ?, ?, ?, ?, " +
             "?, ?, ?, ?, ?, ?, " +
             "?, ?, ?, ?, ?, " +
-            "?, ?, ?, ?, ?" +
+            "?, ?, ?, ?, ?, " +
             "?, ?, ?);";
 
 // blood_pressure_seq, subject_seq, subject_id, subject_name, subject_gender

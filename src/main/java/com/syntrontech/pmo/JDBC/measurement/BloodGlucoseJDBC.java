@@ -217,6 +217,8 @@ public class BloodGlucoseJDBC {
                 }
             }
         } catch (SQLException e){
+            logger.debug("get all fail" + conn + " || " + pstmt);
+
             e.printStackTrace();
         } finally {
 
@@ -225,7 +227,7 @@ public class BloodGlucoseJDBC {
                     pstmt.close();
                 conn.close();
             } catch (SQLException e) {
-                System.out.println("conn or pstmt close fail" + conn + " || " + pstmt);
+                logger.debug("conn or pstmt close fail" + conn + " || " + pstmt);
                 e.printStackTrace();
             }
 
