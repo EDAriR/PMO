@@ -100,7 +100,7 @@ public class Sync {
                     });
 
 
-                    // TODO PMO USER RESULT
+                    // PMO USER RESULT
                     pmoUserJDBC.insert(turnSystemUserToPmoUser(su));
                     // update systemUser sync status
                     systemUserJDBC.updateSystemUser(su.getUserId());
@@ -122,10 +122,10 @@ public class Sync {
 
         BodyInfo bodyInfo = new BodyInfo();
 
-        // 2身高 3體重 4 BMI
-        bodyInfo.setHeight(Double.valueOf(value.get(3).get(0).getRecordValue()));
-        bodyInfo.setWeight(Double.valueOf(value.get(4).get(0).getRecordValue()));
-        bodyInfo.setBmi(Double.valueOf(value.get(5).get(0).getRecordValue()));
+        // 3身高 4體重 5 BMI
+        bodyInfo.setHeight(getRecordValue(value, 3));
+        bodyInfo.setWeight(getRecordValue(value, 4));
+        bodyInfo.setBmi(getRecordValue(value, 5));
 
 
         // recordtime, latitude, longitude
@@ -161,6 +161,18 @@ public class Sync {
 
         return bodyInfo; 
     }
+
+    private Double getRecordValue(Map<Integer, List<UserValueRecordMapping>> value, int type) {
+
+        List<UserValueRecordMapping> record = value.get(type);
+
+        if(record != null || record.size() > 0 ){
+            return Double.valueOf(record.get(0).getRecordValue());
+        }
+
+        return null;
+    }
+
 
     private void syncBloodGlucose(SystemUser su, Map<Integer, List<UserValueRecordMapping>> userValueRecordMap, Subject subject, UserValueRecordJDBC userValueRecordJDBC) {
 

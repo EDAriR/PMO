@@ -8,10 +8,7 @@ import com.syntrontech.pmo.pmo.PmoUser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
-import java.sql.Timestamp;
+import java.sql.*;
 import java.util.Date;
 
 public class PmoUserJDBC {
@@ -20,23 +17,37 @@ public class PmoUserJDBC {
 
     private static final String GET_ALL_STMT = "SELECT * FROM pmo_user WHERE tenant_id='TTSHB' ORDER BY sequence;";
     private static final String INSERT_STMT = "INSERT INTO pmo_user " +
-            "(sequence, user_id, pmoPassword, pmoStatus, synctime, tenant_id) "
+            "(sequence, user_id, pmo_password, status, synctime, tenant_id) "
             + "VALUES (nextval('pmo_user_sequence_seq'), ?, ?, ?, ?, ?);";
 
-    private static final String GET_ONE = "SELECT * FROM pmo_user WHERE id=? and tenant_id='TTSHB'" +
+    private static final String GET_ONE = "SELECT * FROM pmo_user WHERE user_id=? and tenant_id='TTSHB'" +
             " AND status='ENABLED';";
 
     public static void main(String[] args) {
 
+
+        PmoUserJDBC pmoUserJDBC = new PmoUserJDBC();
+
+        PmoUser pmoUser = pmoUserJDBC.insert(getTestPmoUser());
+
+        System.out.println(pmoUser);
+
+        PmoUser pmoUser2 = pmoUserJDBC.getPmoUserById("TTSHB");
+
+        System.out.println(pmoUser2);
+
     }
+
+
 
     public PmoUser insert(PmoUser pmoUser){
 
         Connection conn = new PMO_GET_CONNECTION().getConn();
 
         PmoUser old = getPmoUserById(pmoUser.getUserId());
+
         if (old != null){
-            logger.info("UnitMeta = " + old);
+            logger.info("getPmoUserById PmoUser = " + old);
             if (old.getUserId() != null && !old.getUserId().equals(""))
                 return old;
         }
@@ -46,12 +57,11 @@ public class PmoUserJDBC {
         try {
             pstmt = conn.prepareStatement(INSERT_STMT);
 
-            // sequence, unit_id, unit_name, unit_parent_id,
             pstmt.setString(1, pmoUser.getUserId());
             pstmt.setString(2, pmoUser.getPmoPassword());
             pstmt.setString(3, pmoUser.getPmoStatus().toString());
-            // unit_parent_name, unit_status, tenant_id, category,
             pstmt.setTimestamp(4, new Timestamp(pmoUser.getSynctime().getTime()));
+            pstmt.setString(5, pmoUser.getTenantId());
 
             logger.info(pstmt.toString());
 
@@ -74,6 +84,69 @@ public class PmoUserJDBC {
         logger.info("create unitMeta successful ==> " + pmoUser);
 
         return pmoUser;
+    }
+
+    private PmoUser getPmoUserById(String userId) {
+
+
+        Connection conn = new PMO_GET_CONNECTION().getConn();
+        PreparedStatement pstmt = null;
+        PmoUser pmoUser = new PmoUser();
+
+        try {
+            pstmt = conn.prepareStatement(GET_ONE);
+
+            pstmt.setString(1, userId);
+            logger.info(pstmt.toString());
+
+            ResultSet rs = pstmt.executeQuery();
+
+            if (rs != null) {
+                while (rs.next()) {
+
+                    // user_id, pmoPassword, pmoStatus, synctime, tenant_id
+                    pmoUser.setUserId(rs.getString("user_id"));
+                    pmoUser.setPmoPassword(rs.getString("pmo_password"));
+
+                    PmoStatus status =  rs.getString("status") != null ? PmoStatus.valueOf(rs.getString("status")): null;
+                    pmoUser.setPmoStatus(status);
+                    pmoUser.setSynctime(rs.getTimestamp("synctime"));
+                    pmoUser.setTenantId(rs.getString("tenant_id"));
+                }
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+
+            try {
+                if (pstmt != null)
+                    pstmt.close();
+                conn.close();
+            } catch (SQLException e) {
+                logger.debug("conn or pstmt close fail" + conn + " || " + pstmt);
+                e.printStackTrace();
+            }
+        }
+        logger.info("getPmoUserById successful ==> " + pmoUser);
+
+        return pmoUser;
+
+    }
+
+    public static PmoUser getTestPmoUser() {
+
+        PmoUser testPmoUser = new PmoUser();
+
+        // user_id, pmoPassword, pmoStatus, synctime, tenant_id
+        testPmoUser.setUserId("TTSHB");
+        testPmoUser.setPmoPassword(null);
+
+        testPmoUser.setPmoStatus(PmoStatus.NotSync);
+        testPmoUser.setSynctime(new Date());
+        testPmoUser.setTenantId("TTSHB");
+
+        return testPmoUser;
     }
 
 }

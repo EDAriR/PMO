@@ -26,9 +26,9 @@ public class MEASUREMENT_GET_CONNECTION {
             conn = DriverManager.getConnection(DB_PATH, DB_USER, DB_PASSWORD);
 
         }catch (ClassNotFoundException e) {
-            logger.debug("JDBC not found");
+            logger.debug("JDBC ClassNotFoundException");
         } catch (SQLException e) {
-            logger.debug("Connection Failed!");
+            logger.debug("MEASUREMENT_GET_CONNECTION Failed!");
 
             e.printStackTrace();
 

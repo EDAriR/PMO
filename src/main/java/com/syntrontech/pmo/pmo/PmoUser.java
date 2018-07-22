@@ -15,6 +15,8 @@ public class PmoUser {
     private PmoStatus pmoStatus;
     // synctime
     private Date synctime;
+    // tenant_id
+    private String tenantId;
 
     public Long getSequence() {
         return sequence;
@@ -55,4 +57,25 @@ public class PmoUser {
     public void setSynctime(Date synctime) {
         this.synctime = synctime;
     }
+
+    public String getTenantId() {
+        return tenantId;
+    }
+
+    public void setTenantId(String tenantId) {
+        this.tenantId = tenantId;
+    }
+
+    @Override
+    public String toString() {
+        return "PmoUser:[" +
+                "sequence=" + sequence + ", " +
+                "userId=" + userId + ", " +
+                "pmoPassword=" + pmoPassword+ ", " +
+                "pmoStatus=" + pmoStatus + ", " +
+                "synctime=" + synctime + ", " +
+                "tenantId=" + tenantId + ", " +
+                "]";
+    }
+
 }

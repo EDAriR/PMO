@@ -19,6 +19,9 @@ public class PmoResult {
     private PmoStatus pmoStatus;
     // synctime
     private Date synctime;
+    // tenant_id
+    private String tenantId;
+
 
     public String getResult() {
         return result;
@@ -74,5 +77,13 @@ public class PmoResult {
 
     public void setSequence(Long sequence) {
         this.sequence = sequence;
+    }
+
+    public String getTenantId() {
+        return tenantId;
+    }
+
+    public void setTenantId(String tenantId) {
+        this.tenantId = tenantId;
     }
 }

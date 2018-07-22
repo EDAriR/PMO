@@ -30,7 +30,7 @@ public class CIP_GET_CONNECTION {
 
             e.printStackTrace();
         } catch (SQLException e) {
-            logger.debug("Connection Failed!");
+            logger.debug("CIP_GET_CONNECTION Failed!");
         }
 
         if (conn != null)
