@@ -22,6 +22,16 @@ public class PmoResult {
     // tenant_id
     private String tenantId;
 
+    @Override
+    public String toString() {
+        return "PmoResult:[" +
+                "userId=" + userId + ", " +
+                "measurementType=" + measurementType + ", " +
+                "recordId=" + recordId + ", " +
+                "result=" + result + ", " +
+                "tenantId=" + tenantId + ", " +
+                "]";
+    }
 
     public String getResult() {
         return result;

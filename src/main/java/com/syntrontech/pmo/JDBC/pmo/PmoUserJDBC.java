@@ -28,11 +28,13 @@ public class PmoUserJDBC {
 
         PmoUserJDBC pmoUserJDBC = new PmoUserJDBC();
 
-        PmoUser pmoUser = pmoUserJDBC.insert(getTestPmoUser());
+        PmoUser pmoUser = pmoUserJDBC.insert(pmoUserJDBC.getTestPmoUser());
 
         System.out.println(pmoUser);
 
-        PmoUser pmoUser2 = pmoUserJDBC.getPmoUserById("TTSHB");
+        PmoUser pmoUser2 = pmoUserJDBC.getPmoUserById(pmoUser.getUserId());
+
+        System.out.println("getPmoUserById");
 
         System.out.println(pmoUser2);
 
@@ -81,7 +83,7 @@ public class PmoUserJDBC {
             }
 
         }
-        logger.info("create unitMeta successful ==> " + pmoUser);
+        logger.info("create pmoUser successful ==> " + pmoUser);
 
         return pmoUser;
     }
@@ -134,7 +136,7 @@ public class PmoUserJDBC {
 
     }
 
-    public static PmoUser getTestPmoUser() {
+    public PmoUser getTestPmoUser() {
 
         PmoUser testPmoUser = new PmoUser();
 
