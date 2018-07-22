@@ -24,7 +24,46 @@ public enum ServiceName implements GetUrl{
         public String geturl() {
             return "http://localhost:8080/aaa/forSystem/sync/user";
         }
+    },
+
+
+    BodyInfo{
+        @Override
+        public String geturl() {
+            return "http://localhost:8084/measurement/sync/BodyInfo";
+        }
+    },
+    BloodPressureHeartBeat{
+        @Override
+        public String geturl() {
+            return "http://localhost:8084/measurement/sync/BloodPressureHeartBeat";
+        }
+    },
+    BloodGlucose{
+        @Override
+        public String geturl() {
+            return "http://localhost:8084/measurement/sync/BloodGlucose";
+        }
+    },
+    Biochemistry{
+        @Override
+        public String geturl() {
+            return "http://localhost:8084/measurement/sync/Biochemistry";
+        }
+    },
+    AbnormalBloodPressure{
+        @Override
+        public String geturl() {
+            return "http://localhost:8084/measurement/sync/AbnormalBloodPressure";
+        }
+    },
+    AbnormalBloodPressureLog{
+        @Override
+        public String geturl() {
+            return "http://localhost:8084/measurement/sync/AbnormalBloodPressureLog";
+        }
     }
+
 }
 
 @FunctionalInterface

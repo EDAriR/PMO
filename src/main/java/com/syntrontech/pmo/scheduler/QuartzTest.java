@@ -17,7 +17,7 @@ public class QuartzTest {
         Scheduler scheduler = schedulerFactory.getScheduler();
 
         // 通过 JobBuilder 创建 JobDetail 对象实例
-        JobDetail jobDetail = JobBuilder.newJob(HelloJob.class)
+        JobDetail jobDetail = JobBuilder.newJob(SyncJob.class)
                 .withIdentity("helloJob", Scheduler.DEFAULT_GROUP)
                 .build();
 

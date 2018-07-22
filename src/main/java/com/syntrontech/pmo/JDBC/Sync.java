@@ -97,7 +97,12 @@ public class Sync {
                     List<UserValueRecord> userBodyInfoValueRecords = userValueRecordJDBC.getOneUserAValueRecord(su.getUserId());
                     userBodyInfoValueRecords.forEach(record -> {
                         BodyInfo bodyInfo = bodyInfoJDBC.insert(turnValueRecordToBodyInfo(record, subject, userValueRecordMap));
+                        // TODO update mapping
+                        userValueRecordJDBC.updateUserValueRecord(record.getBodyValueRecordId());
                     });
+
+                    // TODO Biochemistry
+                    BiochemistryJDBC biochemistryJDBC = new BiochemistryJDBC();
 
 
                     // PMO USER RESULT
@@ -183,6 +188,8 @@ public class Sync {
         List<UserValueRecord> userBGValueRecords = userValueRecordJDBC.getOneBGUserValueRecord(su.getUserId());
         userBGValueRecords.forEach(bg -> {
             BloodGlucose bloodGlucose = bloodGlucoseJDBC.insert(turnValueRecordToBloodGlucose(bg, subject, userValueRecordMap));
+            userValueRecordJDBC.updateUserValueRecord(bg.getBodyValueRecordId());
+
             // PMO_result
             pmoResultJDBC.insert(turnOldRecordsToPmoResult(bg, bloodGlucose.getSubjectId(), bloodGlucose.getSequence(), MeasurementPMOType.BloodGlucose));
 
@@ -280,7 +287,6 @@ public class Sync {
 
             pmoResultJDBC.insert(turnOldRecordsToPmoResult(old, bloodPressureHeartBeat.getSubjectId(), bloodPressureHeartBeat.getSequence(), MeasurementPMOType.BloodPressure ));
 
-            userValueRecordJDBC.updateUserValueRecord(old.getBodyValueRecordId());
             bloodPressureHeartBeats.add(bloodPressureHeartBeat);
 
             return null;

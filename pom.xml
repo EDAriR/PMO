@@ -67,26 +67,26 @@
         <!-- jpa end -->
 
         <!-- redis start -->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-data-redis</artifactId>
-        </dependency>
+        <!--<dependency>-->
+            <!--<groupId>org.springframework.boot</groupId>-->
+            <!--<artifactId>spring-boot-starter-data-redis</artifactId>-->
+        <!--</dependency>-->
         <!-- redis end -->
 
         <!-- syntrontech registry start -->
-        <dependency>
-            <groupId>com.syntrontech</groupId>
-            <artifactId>service-registry</artifactId>
-            <version>1.0.0-RC</version>
-        </dependency>
+        <!--<dependency>-->
+            <!--<groupId>com.syntrontech</groupId>-->
+            <!--<artifactId>service-registry</artifactId>-->
+            <!--<version>1.0.0-RC</version>-->
+        <!--</dependency>-->
         <!--  syntrontech registry end -->
 
         <!-- syntrontech redis-orm start -->
-        <dependency>
-            <groupId>com.syntrontech</groupId>
-            <artifactId>redis-orm</artifactId>
-            <version>1.2.1-GA</version>
-        </dependency>
+        <!--<dependency>-->
+            <!--<groupId>com.syntrontech</groupId>-->
+            <!--<artifactId>redis-orm</artifactId>-->
+            <!--<version>1.2.1-GA</version>-->
+        <!--</dependency>-->
         <!-- syntrontech redis-orm end -->
 
         <!-- syntrontech auto-development-tool start -->
@@ -150,26 +150,26 @@
             <artifactId>quartz-jobs</artifactId>
             <version>${quartz.version}</version>
         </dependency>
-        <dependency>
-            <groupId>com.squareup.retrofit</groupId>
-            <artifactId>retrofit</artifactId>
-            <version>1.9.0</version>
-        </dependency>
-        <dependency>
-            <groupId>com.squareup.retrofit</groupId>
-            <artifactId>converter-jackson</artifactId>
-            <version>1.9.0</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>com.fasterxml.jackson.core</groupId>
-                    <artifactId>jackson-annotations</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>com.fasterxml.jackson.core</groupId>
-                    <artifactId>jackson-core</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
+        <!--<dependency>-->
+            <!--<groupId>com.squareup.retrofit</groupId>-->
+            <!--<artifactId>retrofit</artifactId>-->
+            <!--<version>1.9.0</version>-->
+        <!--</dependency>-->
+        <!--<dependency>-->
+            <!--<groupId>com.squareup.retrofit</groupId>-->
+            <!--<artifactId>converter-jackson</artifactId>-->
+            <!--<version>1.9.0</version>-->
+            <!--<exclusions>-->
+                <!--<exclusion>-->
+                    <!--<groupId>com.fasterxml.jackson.core</groupId>-->
+                    <!--<artifactId>jackson-annotations</artifactId>-->
+                <!--</exclusion>-->
+                <!--<exclusion>-->
+                    <!--<groupId>com.fasterxml.jackson.core</groupId>-->
+                    <!--<artifactId>jackson-core</artifactId>-->
+                <!--</exclusion>-->
+            <!--</exclusions>-->
+        <!--</dependency>-->
 
     </dependencies>
     <build>
