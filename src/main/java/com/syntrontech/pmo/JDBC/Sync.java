@@ -105,11 +105,10 @@ public class Sync {
                     BiochemistryJDBC biochemistryJDBC = new BiochemistryJDBC();
                     List<UserValueRecord> userBiochemistryJRecords = userValueRecordJDBC.getOneUserOtherValueRecord(su.getUserId());
                     userBiochemistryJRecords.forEach(record -> {
-                        BodyInfo bodyInfo = biochemistryJDBC.insert(turnValueRecordToBiochemistry(record, subject, userValueRecordMap));
+                        Biochemistry biochemistry = biochemistryJDBC.insert(turnValueRecordToBiochemistry(record, subject, userValueRecordMap));
                         // TODO update mapping
                         userValueRecordJDBC.updateUserValueRecord(record.getBodyValueRecordId());
                     });
-
 
                     // PMO USER RESULT
                     pmoUserJDBC.insert(turnSystemUserToPmoUser(su));
@@ -129,16 +128,63 @@ public class Sync {
         if(values.size() == 0)
             return null;
 
+        UserValueRecordMapping value = values.get(0);
+
+
         BiochemistryJDBC biochemistryJDBC = new BiochemistryJDBC();
 
         Biochemistry biochemistry = new Biochemistry();
 
-        biochemistry.setValue(rs.getString("value"));
+        biochemistry.setValue(value.getRecordValue());
         biochemistry.setGroupId(biochemistryJDBC.getGroupId());
-        biochemistry.setMappingsSeq(rs.getLong("biochemistry_mappings_seq"));
 
-        String mappingStr = rs.getString("biochemistry_mappings_project");
-        BiochemistryMappingsProject pro = mappingStr != null ?  BiochemistryMappingsProject.valueOf(mappingStr) : null;
+        // HbA1C 新 1 舊 13
+        // Triglyceride 新 2 舊 15
+        // Total_Cholesterol 新 3 舊 14
+        // HDL 新 4 舊 16
+        // LDL 新 5 舊 17
+        // GOT 新 6 舊 18
+        // GPT 新 7 舊 19
+        // Creatinine/RF 新 8 舊 20
+        int mappingTypeId = value.getMapping().getTypeId();
+        long mappingsSeq = 0L;
+
+        BiochemistryMappingsProject pro = null;
+        switch (mappingTypeId){
+            case 13:
+                pro = BiochemistryMappingsProject.HbA1C;
+                mappingsSeq = 1L;
+                break;
+            case 15:
+                pro = BiochemistryMappingsProject.Triglyceride;
+                mappingsSeq = 2L;
+                break;
+            case 14:
+                mappingsSeq = 3L;
+                pro = BiochemistryMappingsProject.Total_Cholesterol;
+                break;
+            case 16:
+                mappingsSeq = 4L;
+                pro = BiochemistryMappingsProject.HDL_Cholesterol;
+                break;
+            case 17:
+                mappingsSeq = 5L;
+                pro = BiochemistryMappingsProject.LDL_Cholesterol;
+                break;
+            case 18:
+                mappingsSeq = 6L;
+                pro = BiochemistryMappingsProject.GOT;
+                break;
+            case 19:
+                mappingsSeq = 7L;
+                pro = BiochemistryMappingsProject.GPT;
+                break;
+            case 20:
+                mappingsSeq = 8L;
+                pro = BiochemistryMappingsProject.Creatinine;
+                break;
+        }
+        biochemistry.setMappingsSeq(mappingsSeq);
         biochemistry.setMappingsProject(pro);
 
         // recordtime, latitude, longitude
@@ -232,7 +278,6 @@ public class Sync {
         if(record != null || record.size() > 0 ){
             return Double.valueOf(record.get(0).getRecordValue());
         }
-
         return null;
     }
 
