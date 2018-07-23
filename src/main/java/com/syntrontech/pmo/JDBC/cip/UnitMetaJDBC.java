@@ -16,9 +16,9 @@ import static java.util.stream.Collectors.toSet;
 
 public class UnitMetaJDBC {
 
-    private static Logger logger = LoggerFactory.getLogger(UnitMetaJDBC.class);
+//    private static Logger logger = LoggerFactory.getLogger(UnitMetaJDBC.class);
 
-    private static final String GET_ALL_STMT = "select * from unit_meta WHERE tenant_id='DEFAULT_TENANT' AND unit_status='ENABLED' order by sequence;";
+    private static final String GET_ALL_STMT = "select * from unit_meta WHERE tenant_id='TTSHB' AND unit_status='ENABLED' order by sequence;";
     private static final String INSERT_STMT = "INSERT INTO unit_meta " +
             "(sequence, unit_id, unit_name, unit_parent_id, " +
             "unit_parent_name, unit_status, tenant_id, category, " +
@@ -34,40 +34,28 @@ public class UnitMetaJDBC {
 //        comment, createtime, createby, updatetime
 //        updateby
 
-    private static final String GET_ONE = "SELECT * FROM unit_meta WHERE unit_id=? and tenant_id='DEFAULT_TENANT' AND unit_status='ENABLED';";
+    private static final String GET_ONE = "SELECT * FROM unit_meta WHERE unit_id=? and tenant_id='TTSHB' AND unit_status='ENABLED';";
 
     public static void main(String[] args) {
 
         UnitMetaJDBC s = new UnitMetaJDBC();
 
-        Date star_time = new Date(new java.util.Date().getTime());
-        List<UnitMeta> ss = s.getAllUnitMetas();
-        Date end_time = new Date(new java.util.Date().getTime());
-        Map<String, List<UnitMeta>> map = ss.stream()
-                .collect(Collectors.groupingBy(UnitMeta::getCategory));
+//        Date star_time = new Date(new java.util.Date().getTime());
+//        List<UnitMeta> ss = s.getAllUnitMetas();
+//        Date end_time = new Date(new java.util.Date().getTime());
+//        Map<String, List<UnitMeta>> map = ss.stream()
+//                .collect(Collectors.groupingBy(UnitMeta::getCategory));
 
 
-        System.out.println("star_time:" + star_time.toInstant());
-        System.out.println("end_time:" + end_time.toInstant());
-        System.out.println("ss size:" + ss.size());
+//        System.out.println("star_time:" + star_time.toInstant());
+//        System.out.println("end_time:" + end_time.toInstant());
+//        System.out.println("ss size:" + ss.size());
 
-        s.insertUnitMeta(s.getTestUnitMeta());
+        UnitMeta umu = s.insertUnitMeta(s.getTestUnitMeta());
 
-        UnitMeta unit = s.getUnitMetaById("1001401");
-
-        for (String key:map.keySet()) {
-            System.out.println(key + " : " + map.get(key)
-                    .stream()
-                    .map(um -> um.getUnitParentName())
-                    .collect(toSet()));
-        }
-
-        for (String key:map.keySet()) {
-            System.out.println(key + " : " + map.get(key)
-                    .stream()
-                    .map(um -> um.getUnitParentId())
-                    .collect(toSet()));
-        }
+        System.out.println(umu);
+        UnitMeta unit = s.getUnitMetaById(umu.getUnitId());
+        System.out.println(unit);
 
     }
 
@@ -81,7 +69,8 @@ public class UnitMetaJDBC {
             pstmt = conn.prepareStatement(GET_ONE);
 
             pstmt.setString(1, id);
-            logger.info(pstmt.toString());
+//            logger.info(pstmt.toString());
+            System.out.println(Calendar.getInstance().getTime() + "  UnitMetaJDBC:" + pstmt.toString());
 
             ResultSet rs = pstmt.executeQuery();
 
@@ -93,6 +82,8 @@ public class UnitMetaJDBC {
             }
 
         } catch (SQLException e) {
+            System.out.println(Calendar.getInstance().getTime() + "  UnitMetaJDBC:" + "getOneSubject fail " + conn + " || " + pstmt);
+
             e.printStackTrace();
         } finally {
 
@@ -101,8 +92,8 @@ public class UnitMetaJDBC {
                     pstmt.close();
                 conn.close();
             } catch (SQLException e) {
-                logger.info("conn or pstmt close fail" + conn + " || " + pstmt);
-                e.printStackTrace();
+//                logger.info("conn or pstmt close fail" + conn + " || " + pstmt);
+                System.out.println(Calendar.getInstance().getTime() + "  UnitMetaJDBC:" + "conn or pstmt close fail" + conn + " || " + pstmt);
             }
         }
 
@@ -113,7 +104,8 @@ public class UnitMetaJDBC {
 
         UnitMeta old = getUnitMetaById(unitMeta.getUnitId());
         if (old != null){
-            logger.info("UnitMeta = " + old);
+//            logger.info("UnitMeta = " + old);
+            System.out.println(Calendar.getInstance().getTime() + "  UnitMetaJDBC:" + "UnitMeta = " + old);
             if (old.getUnitId() != null && !old.getUnitId().equals(""))
                 return old;
         }
@@ -146,12 +138,14 @@ public class UnitMetaJDBC {
             pstmt.setTimestamp(15, new java.sql.Timestamp(unitMeta.getUpdateTime().getTime()));
             pstmt.setString(16, unitMeta.getUpdateBy());
 
-            logger.info(pstmt.toString());
+//            logger.info(pstmt.toString());
+            System.out.println(Calendar.getInstance().getTime() + "  UnitMetaJDBC:" + pstmt.toString());
 
             pstmt.executeUpdate();
 
         } catch (SQLException e) {
-            logger.debug("insertUnitMeta fail" + conn + " || " + pstmt);
+//            logger.debug("insertUnitMeta fail" + conn + " || " + pstmt);
+            System.out.println(Calendar.getInstance().getTime() + "  UnitMetaJDBC:" + "insertUnitMeta fail" + conn + " || " + pstmt);
         } finally {
 
             try {
@@ -159,12 +153,14 @@ public class UnitMetaJDBC {
                     pstmt.close();
                 conn.close();
             } catch (SQLException e) {
-                logger.debug("conn or pstmt close fail" + conn + " || " + pstmt);
+//                logger.debug("conn or pstmt close fail" + conn + " || " + pstmt);
+                System.out.println(Calendar.getInstance().getTime() + "  UnitMetaJDBC:" + "conn or pstmt close fail" + conn + " || " + pstmt);
                 e.printStackTrace();
             }
 
         }
-        logger.info("create unitMeta successful ==> " + unitMeta);
+//        logger.info("create unitMeta successful ==> " + unitMeta);
+        System.out.println(Calendar.getInstance().getTime() + "  UnitMetaJDBC:" + "create unitMeta successful ==> " + unitMeta);
         return unitMeta;
     }
 
@@ -177,23 +173,23 @@ public class UnitMetaJDBC {
 //        comment, createtime, createby, updatetime
 //        updateby
 
-        unitMeta.setUnitId("00001" + Math.random());
+        unitMeta.setUnitId("000016666");
         unitMeta.setUnitName("JDBCTest");
         unitMeta.setUnitParentId("1001401");
         unitMeta.setUnitParentName("台東市");
         unitMeta.setUnitStatus(ModelMgmtStatus.ENABLED); // ModelMgmtStatus
-        unitMeta.setTenantId("DEFAULT_TENANT");
+        unitMeta.setTenantId("TTSHB");
         unitMeta.setCategory("台東市");
-        unitMeta.setContact("systemAdmin");
+        unitMeta.setContact("TTSHB");
         unitMeta.setAddress("=---=三");
         unitMeta.setHomePhone("66666");
         unitMeta.setMobilePhone("6666");
         unitMeta.setComment("");
         Date date = new Date();
         unitMeta.setCreateTime(date); // Date
-        unitMeta.setCreateBy("systemAdmin");
+        unitMeta.setCreateBy("TTSHB");
         unitMeta.setUpdateTime(date); // Date
-        unitMeta.setUpdateBy("systemAdmin");
+        unitMeta.setUpdateBy("TTSHB");
 
         return unitMeta;
     }
@@ -248,7 +244,8 @@ public class UnitMetaJDBC {
                     pstmt.close();
                 conn.close();
             } catch (SQLException e) {
-                logger.debug("conn or pstmt close fail" + conn + " || " + pstmt);
+//                logger.debug("conn or pstmt close fail" + conn + " || " + pstmt);
+                System.out.println(Calendar.getInstance().getTime() + "  UnitMetaJDBC:" + "conn or pstmt close fail" + conn + " || " + pstmt);
                 e.printStackTrace();
             }
 

@@ -15,7 +15,7 @@ import java.util.stream.Collectors;
 
 public class SubjectJDBC {
 
-    private static Logger logger = LoggerFactory.getLogger(SubjectJDBC.class);
+//    private static Logger logger = LoggerFactory.getLogger(SubjectJDBC.class);
 
     private static final String GET_ALL_STMT = "SELECT * FROM subject ORDER BY sequence;";
     private static final String INSERT_STMT = "INSERT INTO subject " +
@@ -30,30 +30,28 @@ public class SubjectJDBC {
 //    personal_history, family_history, smoke, drink, chewing_areca, user_id, unit_id, unit_name
 //    tenant_id, createtime, createby, updatetime, updateby, status
 
-    private static final String GET_ONE = "SELECT * FROM subject WHERE id=? AND user_id=? AND tenant_id='DEFAULT_TENANT' AND status='ENABLED';";
+    private static final String GET_ONE = "SELECT * FROM subject WHERE id=? AND user_id=? AND tenant_id='TTSHB' AND status='ENABLED';";
 
     public static void main(String[] args) {
 
 
         SubjectJDBC s = new SubjectJDBC();
-        Date star_time = new Date();
-        List<Subject> ss = s.getAllSubjects();
-        Date end_time = new Date();
+//        Date star_time = new Date();
+//        List<Subject> ss = s.getAllSubjects();
+//        Date end_time = new Date();
 
-        System.out.println("star_time:" + star_time.toInstant());
-        System.out.println("end_time:" + end_time.toInstant());
-        System.out.println("ss size:" + ss.size());
+//        System.out.println("star_time:" + star_time.toInstant());
+//        System.out.println("end_time:" + end_time.toInstant());
+//        System.out.println("ss size:" + ss.size());
 
         Subject subject = s.getSubject();
-        s.insertSubject(subject);
+        Subject sb = s.insertSubject(subject);
 
-        System.out.println("unit_id");
-        System.out.println("unit_id");
-        System.out.println("unit_id");
-        System.out.println("unit_id");
+        System.out.println(sb);
 
-//        ss.forEach(sb -> System.out.println(sb.getUnitId()));
-//        s.insertSubject(conn, subject);
+        Subject ssb = s.getOneSubject(sb.getId(), sb.getUserId());
+
+        System.out.println(ssb);
 
     }
 
@@ -80,7 +78,7 @@ public class SubjectJDBC {
                     subject.setSequence(rs.getLong("sequence"));
                     subject.setId(rs.getString("id"));
                     subject.setName(rs.getString("name"));
-                    GenderType gender = rs.getString("gender") == null ? GenderType.valueOf(rs.getString("gender")) : null;
+                    GenderType gender = rs.getString("gender") != null ? GenderType.valueOf(rs.getString("gender")) : null;
                     subject.setGender(gender);
 
 //                    birthday, home_phone, address, ethnicity
@@ -88,7 +86,7 @@ public class SubjectJDBC {
                     subject.setHomePhone(rs.getString("home_phone"));
                     subject.setAddress(rs.getString("address"));
 
-                    EthnicityType ethnicityType = rs.getString("gender") == null ? EthnicityType.valueOf(rs.getString("gender")) : null;
+                    EthnicityType ethnicityType = rs.getString("gender") != null ? EthnicityType.valueOf(rs.getString("gender")) : null;
                     subject.setEthnicity(ethnicityType);
 
 //                    personal_history, family_history, smoke, drink
@@ -106,14 +104,14 @@ public class SubjectJDBC {
                             .collect(Collectors.toList());
                     subject.setFamilyHistory(family_history);
 
-                    SmokeType smoke = rs.getString("smoke") == null ? SmokeType.valueOf(rs.getString("smoke")) : null;
+                    SmokeType smoke = rs.getString("smoke") != null ? SmokeType.valueOf(rs.getString("smoke")) : null;
                     subject.setSmoke(smoke);
 
-                    DrinkType drink = rs.getString("drink") == null ? DrinkType.valueOf(rs.getString("drink")) : null;
+                    DrinkType drink = rs.getString("drink") != null ? DrinkType.valueOf(rs.getString("drink")) : null;
                     subject.setDrink(drink);
 
 //                    chewing_areca, user_id, unit_id, unit_name
-                    ChewingArecaType chewingAreca = rs.getString("chewing_areca") == null ?
+                    ChewingArecaType chewingAreca = rs.getString("chewing_areca") != null ?
                             ChewingArecaType.valueOf(rs.getString("chewing_areca")) : null;
                     subject.setChewingAreca(chewingAreca);
 
@@ -129,16 +127,18 @@ public class SubjectJDBC {
 
 //                    updateby, status
                     subject.setUpdateBy(rs.getString("updateby"));
-                    ModelStatus status = rs.getString("status") == null ? ModelStatus.valueOf(rs.getString("status")) : null;
+                    ModelStatus status = rs.getString("status") != null ? ModelStatus.valueOf(rs.getString("status")) : null;
                     subject.setStatus(status);
 
                 }
             }
         } catch (SQLException e) {
-            logger.debug("getOneSubject fail" + conn + " || " + pstmt);
+//            logger.debug("getOneSubject fail " + conn + " || " + pstmt);
+            System.out.println(Calendar.getInstance().getTime() + "  SubjectJDBC:" + "getOneSubject fail " + conn + " || " + pstmt);
         }
 
-        logger.info("getOneSubject successful ==> " + subject);
+//        logger.info("getOneSubject successful ==> " + subject);
+        System.out.println(Calendar.getInstance().getTime() + "  SubjectJDBC:" + "getOneSubject successful ==> " + subject);
 
         return subject;
     }
@@ -217,12 +217,13 @@ public class SubjectJDBC {
                     ModelStatus status = rs.getString("status") == null ? ModelStatus.valueOf(rs.getString("status")) : null;
                     subject.setStatus(status);
 
-                    logger.info("subject:" + subject);
+//                    logger.info("subject:" + subject);
                     subjects.add(subject);
                 }
             }
         } catch (SQLException e) {
-            logger.debug("getAllSubjects fail" + conn + " || " + pstmt);
+//            logger.debug("getAllSubjects fail" + conn + " || " + pstmt);
+            System.out.println(Calendar.getInstance().getTime() + "  SubjectJDBC:" + "getAllSubjects fail" + conn + " || " + pstmt);
         }
 
         return subjects;
@@ -278,7 +279,8 @@ public class SubjectJDBC {
             pstmt.setString(20, subject.getUpdateBy());
             pstmt.setString(21, subject.getStatus().toString());
 
-            logger.info(pstmt.toString());
+//            logger.info(pstmt.toString());
+            System.out.println(Calendar.getInstance().getTime() + "  SubjectJDBC:" + pstmt.toString());
 
             pstmt.executeUpdate();
             try (ResultSet rs = pstmt.getGeneratedKeys()) {
@@ -287,10 +289,12 @@ public class SubjectJDBC {
                 }
                 rs.close();
             }
-            logger.info("create successful ==> " + subject);
+//            logger.info("create successful ==> " + subject);
+            System.out.println(Calendar.getInstance().getTime() + "  SubjectJDBC:" + "create successful ==> " + subject);
 
         } catch (SQLException e) {
-            logger.debug("create subject fail" + conn + " || " + pstmt);
+//            logger.debug("create subject fail" + conn + " || " + pstmt);
+            System.out.println(Calendar.getInstance().getTime() + "  SubjectJDBC:" + "create subject fail" + conn + " || " + pstmt);
             e.printStackTrace();
         }
 
@@ -302,7 +306,7 @@ public class SubjectJDBC {
         Subject subject = new Subject();
 
 //        sequence, id, name, gender
-        subject.setId("SubjectJDBCTest");
+        subject.setId("userJDBCTest");
         subject.setName("SubjectJDBCTest");
         subject.setGender(GenderType.FEMALE);
 
@@ -322,18 +326,18 @@ public class SubjectJDBC {
 //        chewing_areca, user_id, unit_id, unit_name
         subject.setChewingAreca(ChewingArecaType.OFTEN);
 
-        subject.setUserId("systemAdmin");
-        subject.setUnitId("unit_id");
-        subject.setUnitName("unit_name");
+        subject.setUserId("userJDBCTest");
+        subject.setUnitId("JDBCTest66");
+        subject.setUnitName("JDBCTest");
 
 //        tenant_id, createtime, createby, updatetime
-        subject.setTenantId("tenant_id");
+        subject.setTenantId("TTSHB");
         subject.setCreateTime(new Date());
-        subject.setCreateBy("systemAdmin");
+        subject.setCreateBy("userJDBCTest");
         subject.setUpdateTime(new Date());
 
 //                    updateby, status
-        subject.setUpdateBy("systemAdmin");
+        subject.setUpdateBy("userJDBCTest");
         subject.setStatus(ModelStatus.ENABLED);
         return subject;
     }

@@ -102,6 +102,19 @@ public class Subject {
 	@Enumerated(EnumType.STRING)
 	private ModelStatus status;
 
+	@Override
+	public String toString() {
+		return "Subject:[" +
+				"id=" + id + ", " +
+				"userId=" + userId + ", " +
+				"unitId=" + unitId + ", " +
+				"tenantId=" + tenantId + ", " +
+				"createTime=" + createTime + ", " +
+				"createBy=" + createBy + ", " +
+				"status=" + status + " " +
+				"]";
+	}
+
 	public Long getSequence() {
 		return sequence;
 	}

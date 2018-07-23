@@ -1,18 +1,20 @@
 package com.syntrontech.pmo.JDBC.cip;
 
 import com.syntrontech.pmo.cip.model.Device;
+import com.syntrontech.pmo.model.common.ModelStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.sql.*;
 import java.util.ArrayList;
 import java.sql.Date;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 
 public class DeviceJDBC {
 
-    private static Logger logger = LoggerFactory.getLogger(DeviceJDBC.class);
+//    private static Logger logger = LoggerFactory.getLogger(DeviceJDBC.class);
 
     private static final String GET_ALL_STMT = "SELECT * FROM device ORDER BY sequence;";
     private static final String INSERT_STMT = "INSERT INTO device " +
@@ -20,6 +22,8 @@ public class DeviceJDBC {
             "unit_name, tenant_id, status, createtime, createby, updatetime, updateby) "
 
             + "VALUES (nextval('device_sequence_seq'), ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);";
+
+    private static final String GET_ONE = "SELECT * FROM device WHERE id=? and tenant_id='TTSHB' AND status='ENABLED';";
 
     public static void main(String[] args) {
 
@@ -35,27 +39,81 @@ public class DeviceJDBC {
 //        System.out.println("end_time:" + end_time.toInstant());
         System.out.println("ss size:" + ss.size());
 
-        HashMap<String, String> device = new HashMap<>();
+        Device d = s.insertDevice(s.getTestDevice());
 
-        device.put("id" ,"id");
-        device.put("name" , "systemAdmin");
-        device.put("mac_address" , "mac_address");
+        System.out.println(d);
 
-        device.put("serial_number" , "serial_number");
-        device.put("unit_id" , "100140102310");
-        device.put("unit_name" , "其他");
-        device.put("tenant_id" , "DEFAULT_TENANT");
-        device.put("createtime" ,  String.valueOf(new Date(new java.util.Date().getTime()).getTime()));
-        device.put("createby" , "systemAdmin");
-        device.put("updatetime" , String.valueOf(new Date(new java.util.Date().getTime()).getTime()));
-        device.put("updateby" , "systemAdmin");
-        device.put("status" , "ENABLED");
-        System.out.println(device);
-        s.insertDevice(conn, device);
+        Device dev = s.getOne(d.getId());
+
+        System.out.println(dev);
 
     }
 
-    public void insertDevice(Device device){
+    private Device getTestDevice(){
+
+        Device device = new Device();
+        device.setId("87878");
+        device.setName("4687");
+        device.setSerialNumber("8877");
+        device.setUnitId("JDBCTest66");
+        device.setUnitName("JDBCTest66");
+        device.setTenantId("TTSHB");
+        java.util.Date date = new java.util.Date();
+        device.setCreateTime(new java.util.Date());
+        device.setCreateBy("TTSHB");
+        device.setUpdateTime(date);
+        device.setUpdateBy("TTSHB");
+        device.setStatus(ModelStatus.ENABLED);
+        return device;
+    }
+
+    public Device getOne(String id){
+
+        Connection conn = new CIP_GET_CONNECTION().getConn();
+        PreparedStatement pstmt =null;
+
+        Device device = new Device();
+        try {
+            pstmt = conn.prepareStatement(GET_ONE);
+
+            pstmt.setString(1, id);
+//            logger.info(pstmt.toString());
+            System.out.println(Calendar.getInstance().getTime() + "  UnitMetaJDBC:" + pstmt.toString());
+
+            ResultSet rs = pstmt.executeQuery();
+
+            if (rs != null) {
+                while (rs.next()) {
+                    device.setId(rs.getString("id"));
+                    device.setSerialNumber(rs.getString("serial_number"));
+                    device.setMacAddress(rs.getString("mac_address"));
+                    device.setTenantId(rs.getString("tenant_id"));
+                    device.setUnitId(rs.getString("unit_id"));
+                    device.setUnitName(rs.getString("unit_name"));
+                    device.setCreateBy(rs.getString("createby"));
+                }
+            }
+
+        } catch (SQLException e) {
+            System.out.println(Calendar.getInstance().getTime() + "  UnitMetaJDBC:" + "getOneSubject fail " + conn + " || " + pstmt);
+
+            e.printStackTrace();
+        } finally {
+
+            try {
+                if (pstmt != null)
+                    pstmt.close();
+                conn.close();
+            } catch (SQLException e) {
+//                logger.info("conn or pstmt close fail" + conn + " || " + pstmt);
+                System.out.println(Calendar.getInstance().getTime() + "  UnitMetaJDBC:" + "conn or pstmt close fail" + conn + " || " + pstmt);
+            }
+        }
+
+        return device;
+    }
+
+    public Device insertDevice(Device device){
 
         Connection conn = new CIP_GET_CONNECTION().getConn();
         PreparedStatement pstmt =null;
@@ -65,7 +123,7 @@ public class DeviceJDBC {
 
             pstmt.setString(1, device.getId());
             pstmt.setString(2, device.getName());
-            String mac_address = device.getMacAddress() != null ? device.getMacAddress() : "";
+            String mac_address = device.getMacAddress() != null ? device.getMacAddress() : null;
             pstmt.setString(3, mac_address);
             pstmt.setString(4, device.getSerialNumber());
             pstmt.setString(5, device.getUnitId());
@@ -79,7 +137,8 @@ public class DeviceJDBC {
             pstmt.setTimestamp(11, new Timestamp(device.getUpdateTime().getTime()));
             pstmt.setString(12, device.getUpdateBy());
 
-            logger.info(pstmt.toString());
+//            logger.info(pstmt.toString());
+            System.out.println(Calendar.getInstance().getTime() + "  DeviceJDBC:" + pstmt.toString());
 
             pstmt.executeUpdate();
 
@@ -92,13 +151,15 @@ public class DeviceJDBC {
                     pstmt.close();
                 conn.close();
             } catch (SQLException e) {
-                logger.info("conn or pstmt close fail" + conn + " || " + pstmt);
+//                logger.info("conn or pstmt close fail" + conn + " || " + pstmt);
+                System.out.println(Calendar.getInstance().getTime() + "  DeviceJDBC:" + "conn or pstmt close fail" + conn + " || " + pstmt);
                 e.printStackTrace();
             }
 
         }
-        logger.info("create successful ==> " + device);
-
+//        logger.info("create successful ==> " + device);
+        System.out.println(Calendar.getInstance().getTime() + "  DeviceJDBC:" + "create successful ==> " + device);
+        return device;
     }
 
     List<HashMap<String, String>> getAllDevice(Connection conn){
@@ -145,7 +206,7 @@ public class DeviceJDBC {
                     pstmt.close();
                 conn.close();
             } catch (SQLException e) {
-                logger.info("conn or pstmt close fail" + conn + " || " + pstmt);
+                System.out.println(Calendar.getInstance().getTime() + "  DeviceJDBC:" + "conn or pstmt close fail" + conn + " || " + pstmt);
                 e.printStackTrace();
             }
 
@@ -153,57 +214,5 @@ public class DeviceJDBC {
 
         return devices;
     }
-
-    public void insertDevice(Connection conn, HashMap<String, String> device){
-
-        PreparedStatement pstmt = null;
-
-        try {
-            pstmt = conn.prepareStatement(INSERT_STMT);
-
-            pstmt.setString(1, device.get("id"));
-            pstmt.setString(2, device.get("name"));
-            String mac_address = device.get("mac_address") != null ? device.get("mac_address") : "";
-            logger.info("mac_address==>" + mac_address);
-            pstmt.setString(3,  mac_address);
-            pstmt.setString(4, device.get("serial_number"));
-            pstmt.setString(5, device.get("unit_id"));
-
-            pstmt.setString(6, device.get("unit_name"));
-            pstmt.setString(7, device.get("tenant_id"));
-            pstmt.setString(8, device.get("status"));
-            java.util.Date date = new java.util.Date();
-            logger.info("date :" + date);
-            pstmt.setTimestamp(9, new Timestamp(date.getTime()));
-            pstmt.setString(10, device.get("createby"));
-
-            java.util.Date utilDate=new java.util.Date();
-            java.sql.Timestamp sqlDate=new java.sql.Timestamp(utilDate.getTime());
-
-            logger.info(sqlDate.toString());
-            pstmt.setTimestamp(11, sqlDate);
-            pstmt.setString(12, device.get("updateby"));
-
-            logger.info(pstmt.toString());
-            pstmt.executeUpdate();
-            logger.info("create successful ==> " + device);
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-        } finally {
-
-            try {
-                if(pstmt != null)
-                    pstmt.close();
-                conn.close();
-            } catch (SQLException e) {
-                logger.info("conn or pstmt close fail" + conn + " || " + pstmt);
-                e.printStackTrace();
-            }
-
-        }
-    }
-
-
 
 }

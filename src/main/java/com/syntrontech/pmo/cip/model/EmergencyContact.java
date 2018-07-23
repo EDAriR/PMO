@@ -40,6 +40,16 @@ public class EmergencyContact {
 	@Column(name = "status", nullable = false)
 	private ModelStatus status;
 
+	@Override
+	public String toString() {
+		return "EmergencyContact:[" +
+				"subjectId=" + subjectId + ", " +
+				"tenantId=" + tenantId + ", " +
+				"userId=" + userId + ", " +
+				"name=" + name + " " +
+				"]";
+	}
+
 	public Long getSequence() {
 		return sequence;
 	}

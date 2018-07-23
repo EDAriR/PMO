@@ -6,10 +6,12 @@ import org.slf4j.LoggerFactory;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.util.Calendar;
 
 public class CIP_GET_CONNECTION {
 
-    private static Logger logger = LoggerFactory.getLogger(CIP_GET_CONNECTION.class);
+//    private static Logger logger = LoggerFactory.getLogger(CIP_GET_CONNECTION.class);
+
     private static final String DRIVER_PATH = "org.postgresql.Driver";
     private static final String DB_PATH = "jdbc:postgresql://127.0.0.1:5432/cipdb";
     private static final String DB_USER = "postgres";
@@ -26,11 +28,13 @@ public class CIP_GET_CONNECTION {
 
         }catch (ClassNotFoundException e) {
 
-            logger.debug("JDBC not found");
+//            logger.debug("JDBC not found");
+            System.out.println(Calendar.getInstance().getTime() + "  CIP_GET_CONNECTION:" + "JDBC not found");
 
             e.printStackTrace();
         } catch (SQLException e) {
-            logger.debug("CIP_GET_CONNECTION Failed!");
+//            logger.debug("CIP_GET_CONNECTION Failed!");
+            System.out.println(Calendar.getInstance().getTime() + "  CIP_GET_CONNECTION:" + "CIP_GET_CONNECTION Failed!");
         }
 
         if (conn != null)

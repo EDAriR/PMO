@@ -41,7 +41,7 @@ public class SyncDevice {
         String serialNo = sd.getSerialNo();
         device.setId(serialNo);
         device.setName(sd.getName());
-        device.setSerialNumber(sd.getSerialNo());
+        device.setSerialNumber(serialNo);
         device.setUnitId(sd.getLocation());
         device.setUnitName(sd.getSyntronLocationId());
         device.setTenantId("TTSHB");

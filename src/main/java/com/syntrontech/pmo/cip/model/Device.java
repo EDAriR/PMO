@@ -60,6 +60,17 @@ public class Device {
 	@Enumerated(EnumType.STRING)
 	private ModelStatus status;
 
+	@Override
+	public String toString() {
+		return "Device:[" +
+				"id=" + id + ", " +
+				"serialNumber=" + serialNumber + ", " +
+				"unitId=" + unitId + ", " +
+				"createBy=" + createBy + ", " +
+				"tenantId=" + tenantId + " " +
+				"]";
+	}
+
 	public Long getSequence() {
 		return sequence;
 	}

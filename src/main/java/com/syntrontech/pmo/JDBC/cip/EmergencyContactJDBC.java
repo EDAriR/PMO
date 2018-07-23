@@ -12,11 +12,12 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 public class EmergencyContactJDBC {
 
-    private static Logger logger = LoggerFactory.getLogger(EmergencyContactJDBC.class);
+//    private static Logger logger = LoggerFactory.getLogger(EmergencyContactJDBC.class);
 
     private static final String GET_ALL_STMT = "select * from emergency_contacts order by sequence;";
     private static final String INSERT_STMT = "INSERT INTO emergency_contacts " +
@@ -24,13 +25,15 @@ public class EmergencyContactJDBC {
             + "VALUES (nextval('emergency_contacts_sequence_seq'), ?, ?, ?, ?, ?, ?, ?);";
     // sequence, subject_id, user_id, tenant_id, name, phone, email, status
 
-    private static final String GET_ONE = "SELECT * FROM emergency_contacts WHERE name=? and tenant_id='DEFAULT_TENANT' AND status='ENABLED';";
+    private static final String GET_ONE = "SELECT * FROM emergency_contacts WHERE name=? and tenant_id='TTSHB' AND status='ENABLED';";
 
     public static void main(String[] args) {
 
         EmergencyContactJDBC s = new EmergencyContactJDBC();
 
-        List<EmergencyContact> ss = s.getAllEmergencyContacts();
+//        List<EmergencyContact> ss = s.getAllEmergencyContacts();
+        EmergencyContact emt = s.insertEmergencyContact(s.getTestEmergencyContact());
+        System.out.println(emt);
     }
 
     public EmergencyContact insertEmergencyContact(EmergencyContact emergencyContact){
@@ -50,11 +53,13 @@ public class EmergencyContactJDBC {
             pstmt.setString(6, emergencyContact.getEmail());
             pstmt.setString(7, emergencyContact.getStatus().toString());
 
-            logger.info(pstmt.toString());
+//            logger.info(pstmt.toString());
+            System.out.println(Calendar.getInstance().getTime() + "  EmergencyContactJDBC:" + pstmt.toString());
             pstmt.executeUpdate();
 
         } catch (SQLException e) {
-            logger.debug("insertEmergencyContact fail" + conn + " || " + pstmt);
+//            logger.debug("insertEmergencyContact fail" + conn + " || " + pstmt);
+            System.out.println(Calendar.getInstance().getTime() + "  EmergencyContactJDBC:" + "insertEmergencyContact fail" + conn + " || " + pstmt);
         } finally {
 
             try {
@@ -62,12 +67,14 @@ public class EmergencyContactJDBC {
                     pstmt.close();
                 conn.close();
             } catch (SQLException e) {
-                logger.debug("conn or pstmt close fail" + conn + " || " + pstmt);
+//                logger.debug("conn or pstmt close fail" + conn + " || " + pstmt);
+                System.out.println(Calendar.getInstance().getTime() + "  EmergencyContactJDBC:" + "conn or pstmt close fail" + conn + " || " + pstmt);
                 e.printStackTrace();
             }
 
         }
-        logger.info("create emergencyContact successful ==> " + emergencyContact);
+//        logger.info("create emergencyContact successful ==> " + emergencyContact);
+        System.out.println(Calendar.getInstance().getTime() + "  EmergencyContactJDBC:" + "create emergencyContact successful ==> " + emergencyContact);
 
         return emergencyContact;
     }
@@ -110,11 +117,27 @@ public class EmergencyContactJDBC {
                     pstmt.close();
                 conn.close();
             } catch (SQLException e) {
-                logger.debug("conn or pstmt close fail" + conn + " || " + pstmt);
+//                logger.debug("conn or pstmt close fail" + conn + " || " + pstmt);
+                System.out.println(Calendar.getInstance().getTime() + "  EmergencyContactJDBC:" + "conn or pstmt close fail" + conn + " || " + pstmt);
                 e.printStackTrace();
             }
 
         }
         return emergencyContacts;
+    }
+
+    private EmergencyContact getTestEmergencyContact(){
+
+        EmergencyContact emergencyContact = new EmergencyContact();
+
+        emergencyContact.setSubjectId("userJDBCTest");
+        emergencyContact.setUserId("userJDBCTest");
+        emergencyContact.setTenantId("TTSHB");
+        emergencyContact.setName("userJDBCTest");
+        emergencyContact.setPhone("666");
+        emergencyContact.setEmail("666");
+        emergencyContact.setStatus(ModelStatus.ENABLED);
+
+        return emergencyContact;
     }
 }
