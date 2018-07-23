@@ -84,6 +84,12 @@ public enum ServiceName implements GetUrl{
         public String geturl() {
             return "http://localhost:8083/cip/sync/unitMeta";
         }
+    },
+    EmergencyContact{
+        @Override
+        public String geturl() {
+            return "http://localhost:8083/cip/sync/emergencyContact";
+        }
     }
 
 }
