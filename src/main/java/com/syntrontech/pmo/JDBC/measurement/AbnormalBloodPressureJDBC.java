@@ -16,17 +16,17 @@ import java.util.List;
 
 public class AbnormalBloodPressureJDBC {
 
-    private static Logger logger = LoggerFactory.getLogger(AbnormalBloodPressureJDBC.class);
+//    private static Logger logger = LoggerFactory.getLogger(AbnormalBloodPressureJDBC.class);
 
     private static final String GET_ALL_STMT = "SELECT * FROM abnormal_blood_pressure ORDER BY sequence;";
     private static final String INSERT_STMT = "INSERT INTO abnormal_blood_pressure " +
-            "(sequence, subject_seq, subject_id, subject_name, subject_gender," +
+            "(sequence, blood_pressure_seq, subject_seq, subject_id, subject_name, subject_gender," +
             " subject_age, subject_user_id, subject_user_name, systolic_pressure, diastolic_pressure, heart_rate," +
             "recordtime, createby, case_status, last_change_case_status_time, unit_id, " +
             "tenant_id, device_mac_address, unit_name, status, rule_description," +
             "parent_unit_id, parent_unit_name, device_id)"
 
-            + "VALUES (nextval('abnormal_blood_pressure_sequence_seq'), ?, ?, ?, ?, " +
+            + "VALUES (nextval('abnormal_blood_pressure_sequence_seq'), ?, ?, ?, ?, ?," +
             "?, ?, ?, ?, ?, ?, " +
             "?, ?, ?, ?, ?, " +
             "?, ?, ?, ?, ?, " +
@@ -50,6 +50,8 @@ public class AbnormalBloodPressureJDBC {
         List<AbnormalBloodPressure> ss = abnormalBloodPressureJDBC.getAllAbnormalBloodPressure();
 
         System.out.println("ss size:" + ss.size());
+
+        System.out.println(abnormalBloodPressureJDBC.insertAbnormalBloodPressure(ss.get(0)));
     }
 
 
@@ -90,11 +92,11 @@ public class AbnormalBloodPressureJDBC {
             pstmt.setString(20, abnormalBloodPressure.getRuleDescription());
 
             // parent_unit_id, parent_unit_name, device_id
-            pstmt.setString(20, abnormalBloodPressure.getParentUnitId());
-            pstmt.setString(20, abnormalBloodPressure.getParentUnitName());
-            pstmt.setString(20, abnormalBloodPressure.getDeviceId());
+            pstmt.setString(21, abnormalBloodPressure.getParentUnitId());
+            pstmt.setString(22, abnormalBloodPressure.getParentUnitName());
+            pstmt.setString(23, abnormalBloodPressure.getDeviceId());
 
-            logger.info("sql => " + pstmt);
+            System.out.println("sql => " + pstmt);
             pstmt.executeUpdate();
 
             try (ResultSet rs = pstmt.getGeneratedKeys()) {
@@ -104,10 +106,10 @@ public class AbnormalBloodPressureJDBC {
                 rs.close();
             }
 
-            logger.info("create AbnormalBloodPressure successful => " + abnormalBloodPressure);
+//            logger.info("create AbnormalBloodPressure successful => " + abnormalBloodPressure);
 
         } catch (SQLException e) {
-            logger.debug("create AbnormalBloodPressure fail =>" + abnormalBloodPressure);
+//            logger.debug("create AbnormalBloodPressure fail =>" + abnormalBloodPressure);
             e.printStackTrace();
         } finally {
 
@@ -116,7 +118,7 @@ public class AbnormalBloodPressureJDBC {
                     pstmt.close();
                 conn.close();
             } catch (SQLException e) {
-                logger.debug("conn or pstmt close fail" + conn + " || " + pstmt);
+//                logger.debug("conn or pstmt close fail" + conn + " || " + pstmt);
                 e.printStackTrace();
             }
 

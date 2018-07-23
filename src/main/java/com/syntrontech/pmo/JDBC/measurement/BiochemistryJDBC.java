@@ -10,16 +10,19 @@ import org.slf4j.LoggerFactory;
 
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentMap;
 
 public class BiochemistryJDBC {
 
-    private static Logger logger = LoggerFactory.getLogger(BiochemistryJDBC.class);
+//    private static Logger logger = LoggerFactory.getLogger(BiochemistryJDBC.class);
 
     private static final String FIND_MAX_GROUPID = "SELECT MAX(group_id) FROM biochemistry";
 
     private static final String GET_ALL_STMT = "SELECT * FROM biochemistry ORDER BY sequence;";
-    private static final String INSERT_STMT = "INSERT INTO blood_glucose " +
+    private static final String INSERT_STMT = "INSERT INTO biochemistry " +
             "(sequence, value, group_id, biochemistry_mappings_seq, biochemistry_mappings_project, " +
             "recordtime, latitude, longitude," +
             " status, createtime, createby, tenant_id, device_mac_address, " +
@@ -66,11 +69,11 @@ public class BiochemistryJDBC {
                 }
             }
 
-            logger.info("sql => " + pstmt);
+            System.out.println("sql => " + pstmt);
             pstmt.executeUpdate();
 
         } catch (SQLException e) {
-            logger.debug("create getGroupId fail =>" + e.getMessage());
+//            logger.debug("create getGroupId fail =>" + e.getMessage());
 
             e.printStackTrace();
         } finally {
@@ -80,14 +83,12 @@ public class BiochemistryJDBC {
                     pstmt.close();
                 conn.close();
             } catch (SQLException e) {
-                logger.debug("conn or pstmt close fail" + conn + " || " + pstmt);
+//                logger.debug("conn or pstmt close fail" + conn + " || " + pstmt);
 
                 e.printStackTrace();
             }
 
         }
-
-
         return groupId + 1 ;
     }
 
@@ -104,7 +105,7 @@ public class BiochemistryJDBC {
             pstmt.setString(1, biochemistry.getValue());
             pstmt.setLong(2, biochemistry.getGroupId());
             pstmt.setLong(3, biochemistry.getMappingsSeq());
-            pstmt.setString(4, biochemistry.getMappingsProject().toString());
+            pstmt.setString(4, biochemistry.getMappingsProject().getProject());
 
             // recordtime, latitude, longitude
             pstmt.setTimestamp(5, new Timestamp(biochemistry.getRecordTime().getTime()));
@@ -137,9 +138,9 @@ public class BiochemistryJDBC {
             pstmt.setString(26, biochemistry.getDeviceId());
 
 
-            logger.info("sql => " + pstmt);
+            System.out.println("sql => " + pstmt);
             pstmt.executeUpdate();
-            logger.info("create biochemistry successful => " + biochemistry);
+//            logger.info("create biochemistry successful => " + biochemistry);
 
 
             try (ResultSet rs = pstmt.getGeneratedKeys()) {
@@ -150,7 +151,7 @@ public class BiochemistryJDBC {
             }
 
         } catch (SQLException e) {
-            logger.debug("create biochemistry fail =>" + biochemistry);
+//            logger.debug("create biochemistry fail =>" + biochemistry);
 
             e.printStackTrace();
         } finally {
@@ -160,7 +161,7 @@ public class BiochemistryJDBC {
                     pstmt.close();
                 conn.close();
             } catch (SQLException e) {
-                logger.debug("conn or pstmt close fail" + conn + " || " + pstmt);
+//                logger.debug("conn or pstmt close fail" + conn + " || " + pstmt);
 
                 e.printStackTrace();
             }
@@ -196,7 +197,17 @@ public class BiochemistryJDBC {
                     biochemistry.setMappingsSeq(rs.getLong("biochemistry_mappings_seq"));
 
                     String mappingStr = rs.getString("biochemistry_mappings_project");
-                    BiochemistryMappingsProject pro = mappingStr != null ?  BiochemistryMappingsProject.valueOf(mappingStr) : null;
+                    System.out.println(mappingStr);
+
+                    Map<String, BiochemistryMappingsProject> projects = new HashMap<>();
+                    System.out.println("???????????????");
+                    for(BiochemistryMappingsProject bmp:BiochemistryMappingsProject.values()){
+                        projects.put(bmp.getProject(), bmp);
+                    }
+                    System.out.println(projects);
+                    System.out.println("???????????????");
+
+                    BiochemistryMappingsProject pro = mappingStr != null ?  projects.get(mappingStr) : null;
                     biochemistry.setMappingsProject(pro);
 
                     // recordtime, latitude, longitude
@@ -234,7 +245,7 @@ public class BiochemistryJDBC {
                 }
             }
         } catch (SQLException e){
-            logger.debug("get all fail" + conn + " || " + pstmt);
+//            logger.debug("get all fail" + conn + " || " + pstmt);
 
             e.printStackTrace();
         } finally {
@@ -244,7 +255,7 @@ public class BiochemistryJDBC {
                     pstmt.close();
                 conn.close();
             } catch (SQLException e) {
-                logger.debug("conn or pstmt close fail" + conn + " || " + pstmt);
+//                logger.debug("conn or pstmt close fail" + conn + " || " + pstmt);
                 e.printStackTrace();
             }
 

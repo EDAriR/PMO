@@ -15,7 +15,7 @@ import java.util.List;
 
 public class BodyInfoJDBC {
 
-    private static Logger logger = LoggerFactory.getLogger(BodyInfoJDBC.class);
+//    private static Logger logger = LoggerFactory.getLogger(BodyInfoJDBC.class);
 
     private static final String GET_ALL_STMT = "SELECT * FROM body_info ORDER BY sequence;";
     private static final String INSERT_STMT = "INSERT INTO body_info " +
@@ -88,9 +88,9 @@ public BodyInfo insert(BodyInfo bodyInfo){
         pstmt.setString(26, bodyInfo.getDeviceId());
 
 
-        logger.info("sql => " + pstmt);
+//        logger.info("sql => " + pstmt);
         pstmt.executeUpdate();
-        logger.info("create bodyInfo successful => " + bodyInfo);
+//        logger.info("create bodyInfo successful => " + bodyInfo);
 
 
         try (ResultSet rs = pstmt.getGeneratedKeys()) {
@@ -101,7 +101,7 @@ public BodyInfo insert(BodyInfo bodyInfo){
         }
 
     } catch (SQLException e) {
-        logger.debug("create bodyInfo fail =>" + bodyInfo);
+//        logger.debug("create bodyInfo fail =>" + bodyInfo);
 
         e.printStackTrace();
     } finally {
@@ -111,7 +111,7 @@ public BodyInfo insert(BodyInfo bodyInfo){
                 pstmt.close();
             conn.close();
         } catch (SQLException e) {
-            logger.debug("conn or pstmt close fail" + conn + " || " + pstmt);
+//            logger.debug("conn or pstmt close fail" + conn + " || " + pstmt);
 
             e.printStackTrace();
         }
@@ -192,7 +192,7 @@ public BodyInfo insert(BodyInfo bodyInfo){
                     pstmt.close();
                 conn.close();
             } catch (SQLException e) {
-                logger.debug("conn or pstmt close fail" + conn + " || " + pstmt);
+//                logger.debug("conn or pstmt close fail" + conn + " || " + pstmt);
                 e.printStackTrace();
             }
 

@@ -9,7 +9,7 @@ import java.sql.SQLException;
 
 public class MEASUREMENT_GET_CONNECTION {
 
-    private static Logger logger = LoggerFactory.getLogger(MEASUREMENT_GET_CONNECTION.class);
+//    private static Logger logger = LoggerFactory.getLogger(MEASUREMENT_GET_CONNECTION.class);
 
     private static final String DRIVER_PATH = "org.postgresql.Driver";
     private static final String DB_PATH = "jdbc:postgresql://127.0.0.1:5432/measurementdb";
@@ -26,9 +26,9 @@ public class MEASUREMENT_GET_CONNECTION {
             conn = DriverManager.getConnection(DB_PATH, DB_USER, DB_PASSWORD);
 
         }catch (ClassNotFoundException e) {
-            logger.debug("JDBC ClassNotFoundException");
+//            logger.debug("JDBC ClassNotFoundException");
         } catch (SQLException e) {
-            logger.debug("MEASUREMENT_GET_CONNECTION Failed!");
+//            logger.debug("MEASUREMENT_GET_CONNECTION Failed!");
 
             e.printStackTrace();
 

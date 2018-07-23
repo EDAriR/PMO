@@ -15,7 +15,7 @@ import java.util.List;
 
 public class BloodPressureHeartBeatJDBC {
 
-    private static Logger logger = LoggerFactory.getLogger(BloodPressureHeartBeatJDBC.class);
+//    private static Logger logger = LoggerFactory.getLogger(BloodPressureHeartBeatJDBC.class);
 
     private static final String GET_ALL_STMT = "SELECT * FROM blood_pressure_heartbeat ORDER BY sequence;";
     private static final String INSERT_STMT = "INSERT INTO blood_pressure_heartbeat " +
@@ -40,13 +40,13 @@ public class BloodPressureHeartBeatJDBC {
 
     public static void main(String[] args) {
 
-        BloodPressureHeartBeatJDBC abnormalBloodPressureJDBC = new BloodPressureHeartBeatJDBC();
+        BloodPressureHeartBeatJDBC bloodPressureHeartBeatJDBC = new BloodPressureHeartBeatJDBC();
 
-        List<BloodPressureHeartBeat> ss = abnormalBloodPressureJDBC.getAllBloodPressureHeartBeat();
+        List<BloodPressureHeartBeat> ss = bloodPressureHeartBeatJDBC.getAllBloodPressureHeartBeat();
 
         System.out.println("ss size:" + ss.size());
 
-        System.out.println(abnormalBloodPressureJDBC.insertBloodPressureHeartBeat(abnormalBloodPressureJDBC.getTestBloodPressureHeartBeat()));
+        System.out.println(bloodPressureHeartBeatJDBC.insertBloodPressureHeartBeat(bloodPressureHeartBeatJDBC.getTestBloodPressureHeartBeat()));
 
     }
 
@@ -85,17 +85,25 @@ public class BloodPressureHeartBeatJDBC {
             pstmt.setString(18, bloodPressureHeartBeat.getSubjectUserName());
 
             // rule_seq, rule_description, unit_id, unit_name, parent_unit_id, parent_unit_name, device_id
-            pstmt.setLong(19, bloodPressureHeartBeat.getRuleSeq());
-            pstmt.setString(20, bloodPressureHeartBeat.getRuleDescription());
+            if(bloodPressureHeartBeat.getRuleSeq() != null){
+                pstmt.setLong(19, bloodPressureHeartBeat.getRuleSeq());
+            }else {
+                pstmt.setNull(19, Types.BIGINT);
+            }
+            if(bloodPressureHeartBeat.getRuleDescription() != null){
+                pstmt.setString(20, bloodPressureHeartBeat.getRuleDescription());
+            }else {
+                pstmt.setNull(20, Types.VARCHAR);
+            }
             pstmt.setString(21, bloodPressureHeartBeat.getUnitId());
             pstmt.setString(22, bloodPressureHeartBeat.getUnitName());
             pstmt.setString(23, bloodPressureHeartBeat.getParentUnitId());
             pstmt.setString(24, bloodPressureHeartBeat.getParentUnitName());
             pstmt.setString(25, bloodPressureHeartBeat.getDeviceId());
 
-            logger.info("sql => " + pstmt);
+//            logger.info("sql => " + pstmt);
             pstmt.executeUpdate();
-            logger.info("create bloodPressureHeartBeat successful => " + bloodPressureHeartBeat);
+//            logger.info("create bloodPressureHeartBeat successful => " + bloodPressureHeartBeat);
 
 
             try (ResultSet rs = pstmt.getGeneratedKeys()) {
@@ -106,7 +114,7 @@ public class BloodPressureHeartBeatJDBC {
             }
 
         } catch (SQLException e) {
-            logger.debug("create bloodPressureHeartBeat fail =>" + bloodPressureHeartBeat);
+//            logger.debug("create bloodPressureHeartBeat fail =>" + bloodPressureHeartBeat);
             e.printStackTrace();
         } finally {
 
@@ -115,7 +123,7 @@ public class BloodPressureHeartBeatJDBC {
                     pstmt.close();
                 conn.close();
             } catch (SQLException e) {
-                logger.debug("conn or pstmt close fail" + conn + " || " + pstmt);
+//                logger.debug("conn or pstmt close fail" + conn + " || " + pstmt);
                 e.printStackTrace();
             }
 
@@ -195,7 +203,7 @@ public class BloodPressureHeartBeatJDBC {
                     pstmt.close();
                 conn.close();
             } catch (SQLException e) {
-                logger.debug("conn or pstmt close fail" + conn + " || " + pstmt);
+//                logger.debug("conn or pstmt close fail" + conn + " || " + pstmt);
                 e.printStackTrace();
             }
 
@@ -224,17 +232,17 @@ public class BloodPressureHeartBeatJDBC {
         // private MeasurementStatusType status;
         bloodPressureHeartBeat.setStatus(MeasurementStatusType.EXISTED);
         bloodPressureHeartBeat.setCreateTime(new Date());
-        bloodPressureHeartBeat.setCreateBy("systemAdmin");
-        bloodPressureHeartBeat.setTenantId("DEFAULT_TENANT");
+        bloodPressureHeartBeat.setCreateBy("TTSHB");
+        bloodPressureHeartBeat.setTenantId("TTSHB");
 
         // subject_seq, subject_id, subject_name, subject_gender, subject_age, subject_user_id, subject_user_name,
         bloodPressureHeartBeat.setSubjectSeq((long)1);
-        bloodPressureHeartBeat.setSubjectId("systemAdmin");
-        bloodPressureHeartBeat.setSubjectName("systemAdmin");
+        bloodPressureHeartBeat.setSubjectId("userJDBCTest");
+        bloodPressureHeartBeat.setSubjectName("userJDBCTest");
         bloodPressureHeartBeat.setSubjectGender(GenderType.MALE);
         bloodPressureHeartBeat.setSubjectAge(0);
-        bloodPressureHeartBeat.setSubjectUserId("systemAdmin");
-        bloodPressureHeartBeat.setSubjectUserName("systemAdmin");
+        bloodPressureHeartBeat.setSubjectUserId("userJDBCTest");
+        bloodPressureHeartBeat.setSubjectUserName("userJDBCTest");
 
         // rule_seq, rule_description, unit_id, unit_name, parent_unit_id, parent_unit_name, device_id
         bloodPressureHeartBeat.setUnitId("100140102310");

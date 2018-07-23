@@ -14,7 +14,7 @@ import java.util.List;
 
 public class BloodGlucoseJDBC {
 
-    private static Logger logger = LoggerFactory.getLogger(BloodGlucoseJDBC.class);
+//    private static Logger logger = LoggerFactory.getLogger(BloodGlucoseJDBC.class);
 
     private static final String GET_ALL_STMT = "SELECT * FROM blood_glucose ORDER BY sequence;";
     private static final String INSERT_STMT = "INSERT INTO blood_glucose " +
@@ -32,9 +32,9 @@ public class BloodGlucoseJDBC {
 //        BloodGlucose
         BloodGlucoseJDBC bloodGlucoseJDBC = new BloodGlucoseJDBC();
 
-        List<BloodGlucose> bloodGlucoses = bloodGlucoseJDBC.getALl();
+//        List<BloodGlucose> bloodGlucoses = bloodGlucoseJDBC.getALl();
 
-        System.out.println(bloodGlucoses.size());
+//        System.out.println(bloodGlucoses.size());
 
         bloodGlucoseJDBC.insert(bloodGlucoseJDBC.getTestBloodGlucose());
     }
@@ -56,23 +56,23 @@ public class BloodGlucoseJDBC {
         // private MeasurementStatusType status;
         testBloodGlucose.setStatus(MeasurementStatusType.EXISTED);
         testBloodGlucose.setCreateTime(new Date());
-        testBloodGlucose.setCreateBy("systemAdmin");
-        testBloodGlucose.setTenantId("DEFAULT_TENANT");
+        testBloodGlucose.setCreateBy("userJDBCTest");
+        testBloodGlucose.setTenantId("TTSHB");
 
         // subject_seq, subject_id, subject_name, subject_gender, subject_age, subject_user_id, subject_user_name,
-        testBloodGlucose.setSubjectSeq((long)1);
-        testBloodGlucose.setSubjectId("systemAdmin");
-        testBloodGlucose.setSubjectName("systemAdmin");
+        testBloodGlucose.setSubjectSeq((long)25);
+        testBloodGlucose.setSubjectId("userJDBCTest");
+        testBloodGlucose.setSubjectName("userJDBCTest");
         testBloodGlucose.setSubjectGender(GenderType.MALE);
         testBloodGlucose.setSubjectAge(0);
-        testBloodGlucose.setSubjectUserId("systemAdmin");
-        testBloodGlucose.setSubjectUserName("systemAdmin");
+        testBloodGlucose.setSubjectUserId("userJDBCTest");
+        testBloodGlucose.setSubjectUserName("userJDBCTest");
 
         // rule_seq, rule_description, unit_id, unit_name, parent_unit_id, parent_unit_name, device_id
         testBloodGlucose.setUnitId("100140102310");
-        testBloodGlucose.setUnitName("");
+        testBloodGlucose.setUnitName("其他");
         testBloodGlucose.setParentUnitId("1001401");
-        testBloodGlucose.setParentUnitName("");
+        testBloodGlucose.setParentUnitName("台東市");
 
         return testBloodGlucose;
     }
@@ -90,12 +90,12 @@ public class BloodGlucoseJDBC {
             pstmt.setString(2, bloodGlucose.getGlucoseType().toString());
 
             // recordtime, latitude, longitude
-            pstmt.setTimestamp(4, new Timestamp(bloodGlucose.getRecordTime().getTime()));
-            pstmt.setString(5, bloodGlucose.getLatitude());
-            pstmt.setString(6, bloodGlucose.getLongitude());
+            pstmt.setTimestamp(3, new Timestamp(bloodGlucose.getRecordTime().getTime()));
+            pstmt.setString(4, bloodGlucose.getLatitude());
+            pstmt.setString(5, bloodGlucose.getLongitude());
 
             // status, createtime, createby, tenant_id, device_mac_address
-            pstmt.setString(7, bloodGlucose.getStatus().toString());
+            pstmt.setString(6, bloodGlucose.getStatus().toString());
             pstmt.setTimestamp(7, new Timestamp(bloodGlucose.getCreateTime().getTime()));
             pstmt.setString(8, bloodGlucose.getCreateBy());
             pstmt.setString(9, bloodGlucose.getTenantId());
@@ -111,18 +111,26 @@ public class BloodGlucoseJDBC {
             pstmt.setString(17, bloodGlucose.getSubjectUserName());
 
             // rule_seq, rule_description, unit_id, unit_name, parent_unit_id, parent_unit_name, device_id
-            pstmt.setLong(18, bloodGlucose.getRuleSeq());
-            pstmt.setString(19, bloodGlucose.getRuleDescription());
+            if(bloodGlucose.getRuleSeq() != null){
+                pstmt.setLong(18, bloodGlucose.getRuleSeq());
+            }else {
+                pstmt.setNull(18, Types.BIGINT);
+            }
+            if(bloodGlucose.getRuleDescription() != null){
+                pstmt.setString(19, bloodGlucose.getRuleDescription());
+            }else {
+                pstmt.setNull(19, Types.VARCHAR);
+            }
+
             pstmt.setString(20, bloodGlucose.getUnitId());
             pstmt.setString(21, bloodGlucose.getUnitName());
             pstmt.setString(22, bloodGlucose.getParentUnitId());
             pstmt.setString(23, bloodGlucose.getParentUnitName());
             pstmt.setString(24, bloodGlucose.getDeviceId());
 
-
-            logger.info("sql => " + pstmt);
+            System.out.println("sql => " + pstmt);
             pstmt.executeUpdate();
-            logger.info("create bloodGlucose successful => " + bloodGlucose);
+//            logger.info("create bloodGlucose successful => " + bloodGlucose);
 
 
             try (ResultSet rs = pstmt.getGeneratedKeys()) {
@@ -133,7 +141,7 @@ public class BloodGlucoseJDBC {
             }
 
         } catch (SQLException e) {
-            logger.debug("create bloodGlucose fail =>" + bloodGlucose);
+//            logger.debug("create bloodGlucose fail =>" + bloodGlucose);
 
             e.printStackTrace();
         } finally {
@@ -143,13 +151,13 @@ public class BloodGlucoseJDBC {
                     pstmt.close();
                 conn.close();
             } catch (SQLException e) {
-                logger.debug("conn or pstmt close fail" + conn + " || " + pstmt);
+//                logger.debug("conn or pstmt close fail" + conn + " || " + pstmt);
 
                 e.printStackTrace();
             }
 
         }
-
+        System.out.println(bloodGlucose);
         return bloodGlucose;
     }
 
@@ -217,7 +225,7 @@ public class BloodGlucoseJDBC {
                 }
             }
         } catch (SQLException e){
-            logger.debug("get all fail" + conn + " || " + pstmt);
+//            logger.debug("get all fail" + conn + " || " + pstmt);
 
             e.printStackTrace();
         } finally {
@@ -227,7 +235,7 @@ public class BloodGlucoseJDBC {
                     pstmt.close();
                 conn.close();
             } catch (SQLException e) {
-                logger.debug("conn or pstmt close fail" + conn + " || " + pstmt);
+//                logger.debug("conn or pstmt close fail" + conn + " || " + pstmt);
                 e.printStackTrace();
             }
 

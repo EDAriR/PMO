@@ -11,7 +11,7 @@ import java.util.List;
 
 public class AbnormalBloodPressureLogJDBC {
 
-    private static Logger logger = LoggerFactory.getLogger(AbnormalBloodPressureLogJDBC.class);
+//    private static Logger logger = LoggerFactory.getLogger(AbnormalBloodPressureLogJDBC.class);
 
     private static final String GET_ALL_STMT = "SELECT * FROM abnormal_blood_pressure ORDER BY sequence;";
     private static final String INSERT_STMT = "INSERT INTO abnormal_blood_pressure " +
@@ -32,6 +32,8 @@ public class AbnormalBloodPressureLogJDBC {
         List<AbnormalBloodPressureLog> ss = abnormalBloodPressureLogJDBC.getAllAbnormalBloodPressureLog();
 
         System.out.println("ss size:" + ss.size());
+
+        abnormalBloodPressureLogJDBC.insertAbnormalBloodPressure(ss.get(0));
     }
 
     public void insertAbnormalBloodPressure(AbnormalBloodPressureLog abnormalBloodPressureLog){
@@ -54,12 +56,12 @@ public class AbnormalBloodPressureLogJDBC {
             pstmt.setTimestamp(8, new Timestamp(abnormalBloodPressureLog.getChangeCaseStatusTime().getTime()));
             pstmt.setString(9, abnormalBloodPressureLog.getTenantId());
 
-            logger.info("sql => " + pstmt);
+            System.out.println("sql => " + pstmt);
             pstmt.executeUpdate();
-            logger.info("create AbnormalBloodPressureLog successful => " + abnormalBloodPressureLog);
+//            logger.info("create AbnormalBloodPressureLog successful => " + abnormalBloodPressureLog);
 
         } catch (SQLException e) {
-            logger.debug("create AbnormalBloodPressureLog fail =>" + abnormalBloodPressureLog);
+//            logger.debug("create AbnormalBloodPressureLog fail =>" + abnormalBloodPressureLog);
 
             e.printStackTrace();
         } finally {
@@ -69,7 +71,7 @@ public class AbnormalBloodPressureLogJDBC {
                     pstmt.close();
                 conn.close();
             } catch (SQLException e) {
-                logger.debug("conn or pstmt close fail" + conn + " || " + pstmt);
+//                logger.debug("conn or pstmt close fail" + conn + " || " + pstmt);
                 e.printStackTrace();
             }
         }
