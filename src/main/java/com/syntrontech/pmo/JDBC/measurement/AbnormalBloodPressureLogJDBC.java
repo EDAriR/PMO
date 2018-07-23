@@ -7,6 +7,8 @@ import org.slf4j.LoggerFactory;
 
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 public class AbnormalBloodPressureLogJDBC {
@@ -36,7 +38,27 @@ public class AbnormalBloodPressureLogJDBC {
         abnormalBloodPressureLogJDBC.insertAbnormalBloodPressure(ss.get(0));
     }
 
-    public void insertAbnormalBloodPressure(AbnormalBloodPressureLog abnormalBloodPressureLog){
+    AbnormalBloodPressureLog getTestAbnormalBloodPressureLog(){
+
+        AbnormalBloodPressureLog abnormalBloodPressureLog = new AbnormalBloodPressureLog();
+
+        // abnormal_blood_pressure_squence, case_status, subject_id, subject_name
+        abnormalBloodPressureLog.setAbnormalBloodPressureSquence(33L);
+        abnormalBloodPressureLog.setCaseStatus(BloodPressureCaseStatus.DIAGNOSIS_NORMAL);
+        abnormalBloodPressureLog.setSubjectId("userJDBCTest");
+        abnormalBloodPressureLog.setSubjectName("userJDBCTest");
+
+        // case_creator_user_id, case_creator_user_name, case_description, recordtime, tenant_id
+        abnormalBloodPressureLog.setCaseCreatorUserId("userJDBCTest");
+        abnormalBloodPressureLog.setCaseCreatorUserName("userJDBCTest");
+        abnormalBloodPressureLog.setCaseDescription(null);
+        abnormalBloodPressureLog.setChangeCaseStatusTime(new Date());
+        abnormalBloodPressureLog.setTenantId("TTSHB");
+
+        return abnormalBloodPressureLog;
+    }
+
+    public AbnormalBloodPressureLog insertAbnormalBloodPressure(AbnormalBloodPressureLog abnormalBloodPressureLog){
 
         Connection conn = new MEASUREMENT_GET_CONNECTION().getConn();
         PreparedStatement pstmt = null;
@@ -56,7 +78,7 @@ public class AbnormalBloodPressureLogJDBC {
             pstmt.setTimestamp(8, new Timestamp(abnormalBloodPressureLog.getChangeCaseStatusTime().getTime()));
             pstmt.setString(9, abnormalBloodPressureLog.getTenantId());
 
-            System.out.println("sql => " + pstmt);
+            System.out.println(Calendar.getInstance() + " sql => " + pstmt);
             pstmt.executeUpdate();
 //            logger.info("create AbnormalBloodPressureLog successful => " + abnormalBloodPressureLog);
 
@@ -75,6 +97,7 @@ public class AbnormalBloodPressureLogJDBC {
                 e.printStackTrace();
             }
         }
+        return abnormalBloodPressureLog;
     }
 
     public List<AbnormalBloodPressureLog> getAllAbnormalBloodPressureLog() {
@@ -114,6 +137,7 @@ public class AbnormalBloodPressureLogJDBC {
                 }
             }
         } catch (SQLException e){
+            System.out.println(Calendar.getInstance() + " " + e.getMessage());
             e.printStackTrace();
         } finally {
 

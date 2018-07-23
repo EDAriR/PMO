@@ -1,43 +1,31 @@
 package com.syntrontech.pmo.JDBC.syncare1JDBC;
 
-import com.syntrontech.pmo.syncare1.model.Location;
+import com.syntrontech.pmo.syncare1.model.SynCareQuestionnaireAnswersItem;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
-public class LocationJDBC {
+public class SynCareQuestionnaireAnswersItemJDBC {
 
-    private static final String GET_ALL_STMT = "SELECT * FROM location WHERE sync_status = 'N' ORDER BY id;";
-    private static final String UPDATE = "UPDATE location SET sync_status= 'Y' WHERE id=? ;";
+    private static final String GET_ALL_STMT = "SELECT * FROM syncare_questionnaire_answers_item WHERE sync_status = 'N' ORDER BY id;";
+    private static final String UPDATE = "UPDATE syncare_questionnaire_answers_item SET sync_status= 'Y' WHERE id=? ;";
 
+    public static void main(String[] args) {
+        SynCareQuestionnaireAnswersItemJDBC itemJDBC = new SynCareQuestionnaireAnswersItemJDBC();
 
-    public static void main(String[] args) throws SQLException {
+        List<SynCareQuestionnaireAnswersItem> items = itemJDBC.getAll();
 
-        LocationJDBC s = new LocationJDBC();
-        Connection conn = new Syncare1_GET_CONNECTION().getConn();
-
-        Date star_time = new Date();
-        List<Location> ss = s.getAllLocation();
-        Date end_time = new Date();
-
-        System.out.println("star_time:" + star_time.toInstant());
-        System.out.println("end_time:" + end_time.toInstant());
-        System.out.println("ss size:" + ss.size());
-
-        ss.forEach(sss -> s.updateLocation(sss.getId()));
-
+        items.forEach(item -> itemJDBC.update(item.getId()));
     }
 
-    public List<Location> getAllLocation() {
+    public List<SynCareQuestionnaireAnswersItem> getAll() {
 
         Connection conn = new Syncare1_GET_CONNECTION().getConn();
-
-        List<Location> locations = new ArrayList<>();
+        List<SynCareQuestionnaireAnswersItem> items = new ArrayList<>();
 
         PreparedStatement pstmt = null;
         ResultSet rs;
@@ -50,17 +38,15 @@ public class LocationJDBC {
             if (rs != null) {
                 while (rs.next()) {
 
-                    Location location = new Location();
+                    SynCareQuestionnaireAnswersItem item = new SynCareQuestionnaireAnswersItem();
 
-                    location.setId(rs.getString("id"));
-                    location.setName(rs.getString("name"));
-                    location.setCity(rs.getString("city"));
-                    location.setAddress(rs.getString("address"));
-                    location.setContact(rs.getString("contact"));
-                    location.setPhone(rs.getString("phone"));
+                    item.setId(rs.getInt("id"));
+                    item.setLabel(rs.getString("label"));
+                    item.setValue(rs.getString("value"));
+                    item.setQuestionnaireQuestions(rs.getInt("questionnaire_questions_id"));
 
 //                    System.out.println("LocationJDBC ==>" + location);
-                    locations.add(location);
+                    items.add(item);
                 }
             }
 
@@ -80,20 +66,19 @@ public class LocationJDBC {
             }
 
         }
-        return locations;
+        return items;
     }
 
-    public void updateLocation(String id) {
+    public void update(int id) {
 
         Connection conn = new Syncare1_GET_CONNECTION().getConn();
-
         PreparedStatement pstmt = null;
 
         try {
 
             pstmt = conn.prepareStatement(UPDATE);
 
-            pstmt.setString(1, id);
+            pstmt.setInt(1, id);
             pstmt.executeUpdate();
 
             System.out.println("update " + id + " successful ==============");

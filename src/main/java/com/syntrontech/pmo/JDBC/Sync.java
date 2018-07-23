@@ -39,7 +39,7 @@ public class Sync {
         // 測試流程 ==> 新建TTSHB  TENANT 給 default user 權限後測試
         Sync sync = new Sync();
 
-        // TODO syncare_questionnair_answer
+        // TODO syncare_questionnaire_answers
 
 //        new SyncUnit().syncLocationToUnit();
 //        new SyncDevice().syncDevice();

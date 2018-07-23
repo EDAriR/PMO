@@ -25,9 +25,8 @@ public class SynCareQuestionnaireAnswersItem {
 	@Column(name="value")
 	private String value;
 	
-	@ManyToOne
 	@JoinColumn(name="questionnaire_questions_id")
-	private SynCareQuestionnaireQuestions questionnaireQuestions;
+	private int questionnaireQuestions;
 
 	public int getId() {
 		return id;
@@ -41,7 +40,7 @@ public class SynCareQuestionnaireAnswersItem {
 		return value;
 	}
 
-	public SynCareQuestionnaireQuestions getQuestionnaireQuestions() {
+	public int getQuestionnaireQuestions() {
 		return questionnaireQuestions;
 	}
 
@@ -58,7 +57,7 @@ public class SynCareQuestionnaireAnswersItem {
 	}
 
 	public void setQuestionnaireQuestions(
-			SynCareQuestionnaireQuestions questionnaireQuestions) {
+			int questionnaireQuestions) {
 		this.questionnaireQuestions = questionnaireQuestions;
 	}
 

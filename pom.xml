@@ -17,7 +17,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <java.version>1.8</java.version>
         <maven.compiler.plugin.version>3.1</maven.compiler.plugin.version>
-        <quartz.version>2.2.1</quartz.version>
+        <quartz.version>2.3.0</quartz.version>
     </properties>
 
     <dependencies>
@@ -49,11 +49,12 @@
         </dependency>
         <!-- jetty end -->
 
-        <dependency>
-            <groupId>commons-httpclient</groupId>
-            <artifactId>commons-httpclient</artifactId>
-            <version>3.1</version>
-        </dependency>
+        <!--<dependency>-->
+            <!--<groupId>commons-httpclient</groupId>-->
+            <!--<artifactId>commons-httpclient</artifactId>-->
+            <!--<version>3.1</version>-->
+        <!--</dependency>-->
+
 
         <!-- jpa start -->
         <dependency>
@@ -150,26 +151,7 @@
             <artifactId>quartz-jobs</artifactId>
             <version>${quartz.version}</version>
         </dependency>
-        <!--<dependency>-->
-            <!--<groupId>com.squareup.retrofit</groupId>-->
-            <!--<artifactId>retrofit</artifactId>-->
-            <!--<version>1.9.0</version>-->
-        <!--</dependency>-->
-        <!--<dependency>-->
-            <!--<groupId>com.squareup.retrofit</groupId>-->
-            <!--<artifactId>converter-jackson</artifactId>-->
-            <!--<version>1.9.0</version>-->
-            <!--<exclusions>-->
-                <!--<exclusion>-->
-                    <!--<groupId>com.fasterxml.jackson.core</groupId>-->
-                    <!--<artifactId>jackson-annotations</artifactId>-->
-                <!--</exclusion>-->
-                <!--<exclusion>-->
-                    <!--<groupId>com.fasterxml.jackson.core</groupId>-->
-                    <!--<artifactId>jackson-core</artifactId>-->
-                <!--</exclusion>-->
-            <!--</exclusions>-->
-        <!--</dependency>-->
+
 
     </dependencies>
     <build>

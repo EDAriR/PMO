@@ -24,13 +24,11 @@ public class SynCareQuestionnaireAnswers implements Serializable{
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	private int id;
 	
-	@ManyToOne
 	@JoinColumn(name="user_id")
-	private SystemUser user;
+	private String user;
 	
-	@ManyToOne
 	@JoinColumn(name="questionnaire_id")
-	private SynCareQuestionnaire questionnaire;
+	private String questionnaire;
 	
 	@Column(name="questionnaire_title")
 	private String questionnaireTitle;
@@ -55,11 +53,11 @@ public class SynCareQuestionnaireAnswers implements Serializable{
 		return id;
 	}
 
-	public SystemUser getUser() {
+	public String getUser() {
 		return user;
 	}
 
-	public SynCareQuestionnaire getQuestionnaire() {
+	public String getQuestionnaire() {
 		return questionnaire;
 	}
 
@@ -91,11 +89,11 @@ public class SynCareQuestionnaireAnswers implements Serializable{
 		this.id = id;
 	}
 
-	public void setUser(SystemUser user) {
+	public void setUser(String user) {
 		this.user = user;
 	}
 
-	public void setQuestionnaire(SynCareQuestionnaire questionnaireId) {
+	public void setQuestionnaire(String questionnaireId) {
 		this.questionnaire = questionnaireId;
 	}
 
@@ -149,7 +147,7 @@ public class SynCareQuestionnaireAnswers implements Serializable{
 	@Override
 	public String toString() {
 		return "SynCareQuestionnaireAnswers [id=" + id + ", user=" + user
-				+ ", questionnaireId=" + questionnaire.getId()
+				+ ", questionnaireId=" + questionnaire
 				+ ", questionnaireTitle=" + questionnaireTitle
 				+ ", questionnaireQuestionsId=" + questionnaireQuestionsId
 				+ ", questionnaireQuestionsTitle="

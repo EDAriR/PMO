@@ -7,11 +7,9 @@ import com.syntrontech.pmo.model.common.GenderType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class AbnormalBloodPressureJDBC {
@@ -51,7 +49,52 @@ public class AbnormalBloodPressureJDBC {
 
         System.out.println("ss size:" + ss.size());
 
-        System.out.println(abnormalBloodPressureJDBC.insertAbnormalBloodPressure(ss.get(0)));
+        System.out.println(abnormalBloodPressureJDBC.insertAbnormalBloodPressure(abnormalBloodPressureJDBC.getTestAbnormalBloodPressure()));
+    }
+
+    AbnormalBloodPressure getTestAbnormalBloodPressure(){
+
+        AbnormalBloodPressure abnormalBloodPressure = new AbnormalBloodPressure();
+
+        // blood_pressure_seq, subject_seq, subject_id, subject_name, subject_gender
+        abnormalBloodPressure.setBloodPressureSeq(58L);
+        abnormalBloodPressure.setSubjectSeq(1L);
+        abnormalBloodPressure.setSubjectId("userJDBCTest");
+        abnormalBloodPressure.setSubjectName("userJDBCTest");
+
+        abnormalBloodPressure.setSubjectGender(GenderType.MALE);
+
+        // subject_age, subject_user_id, subject_user_name, systolic_pressure, diastolic_pressure, heart_rate
+        abnormalBloodPressure.setSubjectAge(0);
+        abnormalBloodPressure.setSubjectUserId("userJDBCTest");
+        abnormalBloodPressure.setSubjectUserName("userJDBCTest");
+        abnormalBloodPressure.setSystolicPressure(100);
+        abnormalBloodPressure.setDiastolicPressure(100);
+        abnormalBloodPressure.setHeartRate(100);
+
+        // recordtime, createby, case_status, last_change_case_status_time, unit_id
+        abnormalBloodPressure.setRecordtime(new Date());
+        abnormalBloodPressure.setCreateBy("userJDBCTest");
+        abnormalBloodPressure.setCaseStatus(BloodPressureCaseStatus.NOT_YET);
+        abnormalBloodPressure.setLastChangeCaseStatusTime(new Date());
+        abnormalBloodPressure.setUnitId("100140102310");
+
+        // tenant_id, device_mac_address, unit_name, status, rule_description
+        abnormalBloodPressure.setTenantId("TTSHB");
+        abnormalBloodPressure.setDeviceMacAddress("70:8b:cd:9c:36:c4");
+        abnormalBloodPressure.setUnitName("");
+
+
+        // private MeasurementStatusType status;
+        abnormalBloodPressure.setStatus(MeasurementStatusType.EXISTED);
+        abnormalBloodPressure.setRuleDescription(null);
+
+        // parent_unit_id, parent_unit_name, device_id
+        abnormalBloodPressure.setParentUnitId("1001401");
+        abnormalBloodPressure.setParentUnitName("台東市");
+        abnormalBloodPressure.setDeviceId("87878");
+
+        return abnormalBloodPressure;
     }
 
 
@@ -86,10 +129,21 @@ public class AbnormalBloodPressureJDBC {
 
             // tenant_id, device_mac_address, unit_name, status, rule_description
             pstmt.setString(16, abnormalBloodPressure.getTenantId());
-            pstmt.setString(17, abnormalBloodPressure.getDeviceMacAddress());
+
+            String macAddress = abnormalBloodPressure.getDeviceMacAddress();
+            if(macAddress != null)
+                pstmt.setString(17, abnormalBloodPressure.getDeviceMacAddress());
+            else
+                pstmt.setNull(17, Types.VARCHAR);
+
             pstmt.setString(18, abnormalBloodPressure.getUnitName());
             pstmt.setString(19, abnormalBloodPressure.getStatus().toString());
-            pstmt.setString(20, abnormalBloodPressure.getRuleDescription());
+
+            String ruleDescription = abnormalBloodPressure.getRuleDescription();
+            if(ruleDescription != null)
+                pstmt.setString(20, abnormalBloodPressure.getRuleDescription());
+            else
+                pstmt.setNull(20, Types.VARCHAR);
 
             // parent_unit_id, parent_unit_name, device_id
             pstmt.setString(21, abnormalBloodPressure.getParentUnitId());

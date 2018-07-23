@@ -88,6 +88,9 @@ logging:
   level:
     ROOT: INFO
     com.syntrontech.cip: TRACE
+    org.quartz.core.QuartzSchedulerThread: WARN
+    org.quartz.utils.UpdateChecker: WARN
+
     
 #push service url
 push-service:

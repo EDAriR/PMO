@@ -19,7 +19,7 @@ import java.util.Map;
 
 public class SyncUnit {
 
-    private static Logger logger = LoggerFactory.getLogger(SyncUnit.class);
+//    private static Logger logger = LoggerFactory.getLogger(SyncUnit.class);
 
     public void syncLocationToUnit(){
 
@@ -27,11 +27,13 @@ public class SyncUnit {
         UnitJDBC unitJDBC = new UnitJDBC();
         UnitMetaJDBC unitMetaJDBC = new UnitMetaJDBC();
 
-        List<Location> locations = locationJDBC.getAllLocation(new Syncare1_GET_CONNECTION().getConn());
+        List<Location> locations = locationJDBC.getAllLocation();
 
-        logger.info(" locations need sync" + locations.size());
+//        logger.info(" locations need sync" + locations.size());
+        System.out.println(" locations need sync" + locations.size());
         locations.forEach(l -> {
-            logger.info(l.toString());
+//            logger.info(l.toString());
+            System.out.println(l.toString());
             if (l.getId().equals("") || l.getId() == null){
 
             }else{
@@ -41,11 +43,12 @@ public class SyncUnit {
                 if(unitMetaJDBC.getUnitMetaById(l.getId()).getUnitId() == null)
                     unitMetaJDBC.insertUnitMeta(convertLocationToUnitMeta(l));
 
-                locationJDBC.updateLocation(new Syncare1_GET_CONNECTION().getConn(), l.getId());
+                locationJDBC.updateLocation(l.getId());
             }
         });
 
-        logger.info("sync unit : " + locations.size() + " successful");
+//        logger.info("sync unit : " + locations.size() + " successful");
+        System.out.println("sync unit : " + locations.size() + " successful");
 
     }
 
