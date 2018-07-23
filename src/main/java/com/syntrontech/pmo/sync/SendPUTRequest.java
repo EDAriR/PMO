@@ -1,4 +1,4 @@
-package com.syntrontech.pmo;
+package com.syntrontech.pmo.sync;
 
 
 import javax.ws.rs.client.Client;
@@ -12,11 +12,7 @@ public class SendPUTRequest {
 
 //    private static Logger logger = LoggerFactory.getLogger(SendPUTRequest.class);
 
-    public static void main(String[] args) throws IOException {
 
-        SendPUTRequest sendPUTRequestApp = new SendPUTRequest();
-        sendPUTRequestApp.sendSyncRequest();
-    }
 
     public void sendSyncRequest(){
         for (ServiceName name:ServiceName.values()) {
@@ -26,7 +22,7 @@ public class SendPUTRequest {
     }
 
 
-    private String doPut2(String url) {
+    protected String doPut2(String url) {
 
         Client client = ClientBuilder.newClient();
         String entity = null;

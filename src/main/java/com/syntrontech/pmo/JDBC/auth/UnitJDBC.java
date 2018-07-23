@@ -161,9 +161,9 @@ public class UnitJDBC {
         unit.setTenantId("TTSHB");
         unit.setMeta(null);
         unit.setCreateTime(new Date());
-        unit.setCreateBy("systemAdmin");
+        unit.setCreateBy("TTSHB");
         unit.setUpdateTime(new Date());
-        unit.setUpdateBy("systemAdmin");
+        unit.setUpdateBy("TTSHB");
         unit.setStatus(ModelStatus.ENABLED);
 
         return unit;

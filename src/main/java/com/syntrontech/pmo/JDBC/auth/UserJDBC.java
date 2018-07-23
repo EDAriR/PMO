@@ -24,6 +24,10 @@ public class UserJDBC {
             "?, ?, ?, ?, ?, ?," +
             "?, ?, ?, ?, ?);";
 
+    private static final String INSERT_ACCOUNT_STMT = "INSERT INTO account_list " +
+            "(account, user_id, map_to_users_field)" +
+            "VALUES (?, ?, ?);";
+
     private static final String GET_ONE = "SELECT * FROM unit WHERE id=? and tenant_id='TTSHB'" +
             " AND status='ENABLED';";
 // sequence,
@@ -192,7 +196,14 @@ public class UserJDBC {
             pstmt.setString(16, user.getStatus().toString());
 
 //            logger.info(pstmt.toString());
-            System.out.println(Calendar.getInstance().getTime() + "  UserJDBC:" +pstmt.toString());
+            System.out.println(Calendar.getInstance().getTime() + "  UserJDBC INSERT:" +pstmt.toString());
+            pstmt.executeUpdate();
+
+            pstmt = conn.prepareStatement(INSERT_ACCOUNT_STMT);
+            pstmt.setString(1, user.getId());
+            pstmt.setString(2, user.getId());
+            pstmt.setString(3, "ID");
+            System.out.println(Calendar.getInstance().getTime() + "  UserJDBC INSERT ACCOUNT:" +pstmt.toString());
             pstmt.executeUpdate();
 
         } catch (SQLException e) {
@@ -246,9 +257,10 @@ public class UserJDBC {
         user.setPermissionIds(permissionIds);
 
         // createtime, createby, updatetime, updateby, status
-        user.setCreateTime(new Date());
+        Date date = new Date();
+        user.setCreateTime(date);
         user.setCreateBy("systemAdmin");
-        user.setUpdateTime(new Date());
+        user.setUpdateTime(date);
         user.setUpdateBy("systemAdmin");
         user.setStatus(ModelUserStatus.ENABLED);
         return user;

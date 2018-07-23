@@ -1,19 +1,19 @@
-package com.syntrontech.pmo;
+package com.syntrontech.pmo.sync;
 
 public enum ServiceName implements GetUrl{
     // Auth
-    Role {
-        @Override
-        public String geturl() {
-            return "http://localhost:8080/aaa/forSystem/sync/role";
-        }
-    },
-    Tenant {
-        @Override
-        public String geturl() {
-            return "http://localhost:8080/aaa/forSystem/sync/tenant";
-        }
-    },
+//    Role {
+//        @Override
+//        public String geturl() {
+//            return "http://localhost:8080/aaa/forSystem/sync/role";
+//        }
+//    },
+//    Tenant {
+//        @Override
+//        public String geturl() {
+//            return "http://localhost:8080/aaa/forSystem/sync/tenant";
+//        }
+//    },
     Unit {
         @Override
         public String geturl() {
