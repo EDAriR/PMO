@@ -103,6 +103,12 @@ public class Sync {
 
                     // TODO Biochemistry
                     BiochemistryJDBC biochemistryJDBC = new BiochemistryJDBC();
+                    List<UserValueRecord> userBiochemistryJRecords = userValueRecordJDBC.getOneUserOtherValueRecord(su.getUserId());
+                    userBiochemistryJRecords.forEach(record -> {
+                        BodyInfo bodyInfo = biochemistryJDBC.insert(turnValueRecordToBiochemistry(record, subject, userValueRecordMap));
+                        // TODO update mapping
+                        userValueRecordJDBC.updateUserValueRecord(record.getBodyValueRecordId());
+                    });
 
 
                     // PMO USER RESULT
@@ -115,6 +121,58 @@ public class Sync {
                     // ADVERTISMENT_STATUS 好康報報對於使用者的狀態_1: 此使用者尚未收到"新廣告通知了"(包含修改),2:此使用者已經收到"新廣告通知了
 
                 });
+    }
+
+    private Biochemistry turnValueRecordToBiochemistry(UserValueRecord record, Subject subject, Map<Integer, List<UserValueRecordMapping>> userValueRecordMap) {
+
+        List<UserValueRecordMapping> values = userValueRecordMap.get(record.getBodyValueRecordId());
+        if(values.size() == 0)
+            return null;
+
+        BiochemistryJDBC biochemistryJDBC = new BiochemistryJDBC();
+
+        Biochemistry biochemistry = new Biochemistry();
+
+        biochemistry.setValue(rs.getString("value"));
+        biochemistry.setGroupId(biochemistryJDBC.getGroupId());
+        biochemistry.setMappingsSeq(rs.getLong("biochemistry_mappings_seq"));
+
+        String mappingStr = rs.getString("biochemistry_mappings_project");
+        BiochemistryMappingsProject pro = mappingStr != null ?  BiochemistryMappingsProject.valueOf(mappingStr) : null;
+        biochemistry.setMappingsProject(pro);
+
+        // recordtime, latitude, longitude
+        biochemistry.setRecordTime(record.getRecordDate());
+        biochemistry.setLatitude("0");
+        biochemistry.setLongitude("0");
+
+        // status, createtime, createby, tenant_id, device_mac_address
+        // private MeasurementStatusType status;
+        biochemistry.setStatus(MeasurementStatusType.EXISTED);
+        biochemistry.setCreateTime(record.getUpdateDate());
+        biochemistry.setCreateBy("TTSB");
+        biochemistry.setTenantId("TTSB");
+
+        // subject_seq, subject_id, subject_name, subject_gender, subject_age, subject_user_id, subject_user_name,
+        biochemistry.setSubjectSeq(subject.getSequence());
+        biochemistry.setSubjectId(subject.getId());
+        biochemistry.setSubjectName(subject.getName());
+        biochemistry.setSubjectGender(subject.getGender());
+        biochemistry.setSubjectAge(CalendarUtil.getAgeFromBirthDate(subject.getBirthday(), record.getRecordDate()));
+        biochemistry.setSubjectUserId(subject.getUserId());
+        biochemistry.setSubjectUserName(subject.getName());
+
+
+        // rule_seq, rule_description, unit_id, unit_name, parent_unit_id, parent_unit_name, device_id
+        UnitJDBC unitJDBC = new UnitJDBC();
+        Unit unit = unitJDBC.getUnitById(subject.getUnitId());
+        biochemistry.setUnitId(unit.getId());
+        biochemistry.setUnitName(unit.getName());
+        biochemistry.setParentUnitId(unit.getParentId());
+        biochemistry.setParentUnitName(unit.getParentName());
+
+        return biochemistry;
+
     }
 
     private BodyInfo turnValueRecordToBodyInfo(UserValueRecord record, Subject subject, Map<Integer, List<UserValueRecordMapping>> userValueRecordMap) {

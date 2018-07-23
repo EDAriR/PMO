@@ -92,7 +92,6 @@ public class BiochemistryJDBC {
     }
 
 
-
     public Biochemistry insert(Biochemistry biochemistry){
 
         Connection conn = new MEASUREMENT_GET_CONNECTION().getConn();
@@ -167,7 +166,6 @@ public class BiochemistryJDBC {
             }
 
         }
-
         return biochemistry;
     }
 
@@ -205,7 +203,6 @@ public class BiochemistryJDBC {
                     biochemistry.setRecordTime(rs.getTimestamp("recordtime"));
                     biochemistry.setLatitude(rs.getString("latitude"));
                     biochemistry.setLongitude(rs.getString("longitude"));
-
 
                     // status, createtime, createby, tenant_id, device_mac_address
                     // private MeasurementStatusType status;

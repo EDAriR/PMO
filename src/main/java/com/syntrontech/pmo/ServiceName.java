@@ -1,6 +1,7 @@
 package com.syntrontech.pmo;
 
 public enum ServiceName implements GetUrl{
+    // Auth
     Role {
         @Override
         public String geturl() {
@@ -27,6 +28,7 @@ public enum ServiceName implements GetUrl{
     },
 
 
+    // Measurement
     BodyInfo{
         @Override
         public String geturl() {
@@ -61,6 +63,26 @@ public enum ServiceName implements GetUrl{
         @Override
         public String geturl() {
             return "http://localhost:8084/measurement/sync/AbnormalBloodPressureLog";
+        }
+    },
+
+    // cip
+    Device{
+        @Override
+        public String geturl() {
+            return "http://localhost:8083/cip/sync/device";
+        }
+    },
+    Subject{
+        @Override
+        public String geturl() {
+            return "http://localhost:8083/cip/sync/subject";
+        }
+    },
+    UnitMeta{
+        @Override
+        public String geturl() {
+            return "http://localhost:8083/cip/sync/unitMeta";
         }
     }
 

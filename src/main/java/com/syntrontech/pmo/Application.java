@@ -53,13 +53,16 @@ public class Application {
 
         // 通过 JobBuilder 创建 JobDetail 对象实例
         JobDetail jobDetail = JobBuilder.newJob(SyncJob.class)
-                .withIdentity("helloJob", Scheduler.DEFAULT_GROUP)
+                .withIdentity("SyncJob", Scheduler.DEFAULT_GROUP)
                 .build();
 
         // 通过 TriggerBuilder 创建 Trigger 对象实例，设置每 5 秒调度一次任务
+        //      每月1號凌晨1點執行一次：0 0 1 1 * ?
+        // stFactory.setCronExpression("0 0 0 1 * ?");
+        // stFactory.setCronExpression("0 * * * * ?");
         Trigger trigger = TriggerBuilder.newTrigger()
                 .withIdentity("helloTrigger", Scheduler.DEFAULT_GROUP)
-                .withSchedule(CronScheduleBuilder.cronSchedule(new CronExpression("0/5 * * * * ?")))
+                .withSchedule(CronScheduleBuilder.cronSchedule(new CronExpression("0 * * * ? *")))
                 .build();
 
         // 排定任务
@@ -69,8 +72,7 @@ public class Application {
         scheduler.start();
         //
         Thread.sleep(20L * 1000L);
-        //  关闭调度器
-        scheduler.shutdown(true);
+//        scheduler.shutdown(true);
 
 
 //        new SpringApplicationBuilder()
