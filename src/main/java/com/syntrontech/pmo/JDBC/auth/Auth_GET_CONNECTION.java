@@ -6,10 +6,11 @@ import org.slf4j.LoggerFactory;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.util.Calendar;
 
 public class Auth_GET_CONNECTION {
 
-    private static Logger logger = LoggerFactory.getLogger(Auth_GET_CONNECTION.class);
+//    private static Logger logger = LoggerFactory.getLogger(Auth_GET_CONNECTION.class);
 
     private static final String DRIVER_PATH = "org.postgresql.Driver";
     private static final String DB_PATH = "jdbc:postgresql://127.0.0.1:5432/authdb";
@@ -26,10 +27,12 @@ public class Auth_GET_CONNECTION {
             conn = DriverManager.getConnection(DB_PATH, DB_USER, DB_PASSWORD);
 
         }catch (ClassNotFoundException e) {
-            logger.debug("JDBC ClassNotFoundException");
+//            logger.debug("JDBC ClassNotFoundException");
+            System.out.println(Calendar.getInstance().getTime() + "  UserJDBC:" +"JDBC ClassNotFoundException");
 
         } catch (SQLException e) {
-            logger.debug("Auth_GET_CONNECTION Failed!");
+//            logger.debug("Auth_GET_CONNECTION Failed!");
+            System.out.println(Calendar.getInstance().getTime() + "  UserJDBC:" + "Auth_GET_CONNECTION Failed!");
         }
 
         if (conn != null)

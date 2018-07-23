@@ -8,13 +8,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.sql.*;
-import java.util.ArrayList;
+import java.util.*;
 import java.util.Date;
-import java.util.List;
 
 public class UserJDBC {
 
-    private static Logger logger = LoggerFactory.getLogger(Auth_GET_CONNECTION.class);
+//    private static Logger logger = LoggerFactory.getLogger(Auth_GET_CONNECTION.class);
 
     private static final String GET_ALL_STMT = "SELECT * FROM users WHERE tenant_id='TTSHB' ORDER BY sequence;";
     private static final String INSERT_STMT = "INSERT INTO users " +
@@ -45,8 +44,8 @@ public class UserJDBC {
         System.out.println("ss size:" + ss.size());
 
         System.out.println(ss);
-        s.insertUser(s.getTestUser());
-
+        User user = s.insertUser(s.getTestUser());
+        System.out.println(user);
 //        User user = s.getUserById("xxx");
 //        logger.info(user.getId() == null);
     }
@@ -62,7 +61,8 @@ public class UserJDBC {
 
             pstmt.setString(1, id);
 
-            logger.info(pstmt.toString());
+//            logger.info(pstmt.toString());
+            System.out.println(Calendar.getInstance().getTime() + "  UserJDBC:" + pstmt.toString());
 
             ResultSet rs = pstmt.executeQuery();
 
@@ -112,7 +112,8 @@ public class UserJDBC {
             }
 
         } catch (SQLException e) {
-            logger.debug("getUserById fail =>" + conn + " || " + pstmt + "||" + user);
+//            logger.debug("getUserById fail =>" + conn + " || " + pstmt + "||" + user);
+            System.out.println(Calendar.getInstance().getTime() + "  UserJDBC:" + "getUserById fail =>" + conn + " || " + pstmt + "||" + user);
         } finally {
 
             try {
@@ -120,12 +121,14 @@ public class UserJDBC {
                     pstmt.close();
                 conn.close();
             } catch (SQLException e) {
-                logger.debug("conn or pstmt close fail" + conn + " || " + pstmt);
+//                logger.debug("conn or pstmt close fail" + conn + " || " + pstmt);
+                System.out.println(Calendar.getInstance().getTime() + "  UserJDBC:" +"conn or pstmt close fail" + conn + " || " + pstmt);
                 e.printStackTrace();
             }
 
         }
-        logger.info("get user by id successful =>" + user);
+//        logger.info("get user by id successful =>" + user);
+        System.out.println(Calendar.getInstance().getTime() + "  UserJDBC:" +"get user by id successful =>" + user);
         return user;
     }
 
@@ -152,22 +155,34 @@ public class UserJDBC {
             pstmt.setString(5, user.getMeta());
 
             // unit_ids, role_ids, emails, mobilephones, cards, permission_ids
-            Array unit_ids = conn.createArrayOf("varchar", user.getUnitIds());
+            String[] unitIds = {};
+            unitIds = user.getUnitIds() != null ? user.getUnitIds(): unitIds;
+            Array unit_ids = conn.createArrayOf("varchar", unitIds);
             pstmt.setArray(6, unit_ids);
 
-            Array role_ids = conn.createArrayOf("varchar", user.getRoleIds());
+            String[] roleIds = {};
+            roleIds = user.getRoleIds() != null ? user.getRoleIds(): roleIds;
+            Array role_ids = conn.createArrayOf("varchar", roleIds);
             pstmt.setArray(7, role_ids);
 
-            Array emails = conn.createArrayOf("varchar", user.getEmails());
-            pstmt.setArray(8, emails);
+            String[] emails = {};
+            emails = user.getEmails() != null ? user.getEmails(): emails;
+            Array emailsArray = conn.createArrayOf("varchar", emails);
+            pstmt.setArray(8, emailsArray);
 
-            Array mobilephones = conn.createArrayOf("varchar", user.getMobilePhones());
-            pstmt.setArray(9, mobilephones);
+            String[] mobilePhones = {};
+            mobilePhones = user.getMobilePhones() != null ? user.getMobilePhones(): mobilePhones;
+            Array mobilephonesArray = conn.createArrayOf("varchar", mobilePhones);
+            pstmt.setArray(9, mobilephonesArray);
 
-            Array cards = conn.createArrayOf("varchar", user.getCards());
-            pstmt.setArray(10, cards);
+            String[] cards = {};
+            cards = user.getCards() != null ? user.getCards(): cards;
+            Array cardsArray = conn.createArrayOf("varchar", cards);
+            pstmt.setArray(10, cardsArray);
 
-            Array permission_ids = conn.createArrayOf("varchar", user.getPermissionIds());
+            String[] permissionIds = {};
+            cards = user.getPermissionIds() != null ? user.getPermissionIds(): permissionIds;
+            Array permission_ids = conn.createArrayOf("varchar", permissionIds);
             pstmt.setArray(11, permission_ids);
 
             pstmt.setTimestamp(12, new java.sql.Timestamp(user.getCreateTime().getTime()));
@@ -176,11 +191,13 @@ public class UserJDBC {
             pstmt.setString(15, user.getUpdateBy());
             pstmt.setString(16, user.getStatus().toString());
 
-            logger.info(pstmt.toString());
+//            logger.info(pstmt.toString());
+            System.out.println(Calendar.getInstance().getTime() + "  UserJDBC:" +pstmt.toString());
             pstmt.executeUpdate();
 
         } catch (SQLException e) {
-            logger.debug("getUserById fail =>" + conn + " || " + pstmt + "||" + user);
+//            logger.debug("getUserById fail =>" + conn + " || " + pstmt + "||" + user);
+            System.out.println(Calendar.getInstance().getTime() + "  UserJDBC:" +"getUserById fail =>" + conn + " || " + pstmt + "||" + user);
 
             e.printStackTrace();
         } finally {
@@ -190,12 +207,14 @@ public class UserJDBC {
                     pstmt.close();
                 conn.close();
             } catch (SQLException e) {
-                logger.info("conn or pstmt close fail" + conn + " || " + pstmt);
+//                logger.info("conn or pstmt close fail" + conn + " || " + pstmt);
+                System.out.println(Calendar.getInstance().getTime() + "  UserJDBC:" +"conn or pstmt close fail" + conn + " || " + pstmt);
                 e.printStackTrace();
             }
 
         }
-        logger.info("create user successful ==> " + user);
+//        logger.info("create user successful ==> " + user);
+        System.out.println(Calendar.getInstance().getTime() + "  UserJDBC:" +"create user successful ==> " + user);
         return user;
     }
 
@@ -211,7 +230,7 @@ public class UserJDBC {
 
         // unit_ids, role_ids, emails, mobilephones, cards, permission_ids
         user.setUnitIds(null);
-        String[] roleIds = {""};
+        String[] roleIds = {"DEFAULT_USER"};
 
         user.setRoleIds(roleIds);
         user.setEmails(null);
@@ -302,7 +321,7 @@ public class UserJDBC {
                     pstmt.close();
                 conn.close();
             } catch (SQLException e) {
-                logger.info("conn or pstmt close fail" + conn + " || " + pstmt);
+                System.out.println(Calendar.getInstance().getTime() + "  UserJDBC:" +"conn or pstmt close fail" + conn + " || " + pstmt);
                 e.printStackTrace();
             }
 

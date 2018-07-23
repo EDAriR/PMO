@@ -242,6 +242,6 @@ public class User {
 		", createBy=" + createBy +
 		", updateTime=" + updateTime +
 		", updateBy=" + updateBy +
-		", status=" + status.toString();
+		", status=" + status;
 	}
 }

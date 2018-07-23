@@ -9,12 +9,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.sql.*;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
 public class PasswordListJDBC {
 
-    private static Logger logger = LoggerFactory.getLogger(Auth_GET_CONNECTION.class);
+//    private static Logger logger = LoggerFactory.getLogger(Auth_GET_CONNECTION.class);
 
     private static final String INSERT_STMT = "INSERT INTO password_list " +
             "(sequence, password, user_id, password_updatetime) "
@@ -27,14 +28,11 @@ public class PasswordListJDBC {
 
         PasswordListJDBC s = new PasswordListJDBC();
 
-        Date star_time = new Date(new java.util.Date().getTime());
 //        List<PasswordList> ss = s.getAllPasswordLists();
-        Date end_time = new Date(new java.util.Date().getTime());
-
 
         s.insertPassword(new UserJDBC().getTestUser(), "1qaz2wsx");
 
-        PasswordList passwordList = s.getPasswordListById("systemAdmin");
+        PasswordList passwordList = s.getPasswordListById(new UserJDBC().getTestUser().getId());
 
         System.out.println(passwordList);
     }
@@ -71,7 +69,8 @@ public class PasswordListJDBC {
             }
 
         } catch (SQLException e) {
-            logger.debug("getPasswordListById fail " + pstmt + "||" + conn);
+//            logger.debug("getPasswordListById fail " + pstmt + "||" + conn);
+            System.out.println(Calendar.getInstance().getTime() +" PasswordListJDBC :" + "getPasswordListById fail " + pstmt + "||" + conn);
         } finally {
 
             try {
@@ -79,7 +78,8 @@ public class PasswordListJDBC {
                     pstmt.close();
                 conn.close();
             } catch (SQLException e) {
-                logger.debug("conn or pstmt close fail" + conn + " || " + pstmt);
+//                logger.debug("conn or pstmt close fail" + conn + " || " + pstmt);
+                System.out.println(Calendar.getInstance().getTime() +" PasswordListJDBC :" + "conn or pstmt close fail" + conn + " || " + pstmt);
                 e.printStackTrace();
             }
 
@@ -91,7 +91,7 @@ public class PasswordListJDBC {
     public PasswordList insertPassword(User user, String password){
 
         PasswordList old = getPasswordListById(user.getId());
-        if(old != null)
+        if(old != null && old.getUserId() != null)
             return old;
 
         Connection conn = new Auth_GET_CONNECTION().getConn();
@@ -107,7 +107,8 @@ public class PasswordListJDBC {
             pstmt.setString(2, passwordList.getUserId());
             pstmt.setTimestamp(3, new Timestamp(passwordList.getPasswordUpdateTime().getTime()));
 
-            logger.info(pstmt.toString());
+//            logger.info(pstmt.toString());
+            System.out.println(Calendar.getInstance().getTime() +" PasswordListJDBC insertPassword:" + pstmt.toString());
             pstmt.executeUpdate();
 
             try (ResultSet rs = pstmt.getGeneratedKeys()) {
@@ -118,7 +119,8 @@ public class PasswordListJDBC {
             }
 
         } catch (SQLException e) {
-            logger.debug("insertPassword fail " + pstmt + "||" + conn);
+//            logger.debug("insertPassword fail " + pstmt + "||" + conn);
+            System.out.println(Calendar.getInstance().getTime() +" PasswordListJDBC :" + "insertPassword fail " + pstmt + "||" + conn);
 
         } finally {
 
@@ -127,12 +129,14 @@ public class PasswordListJDBC {
                     pstmt.close();
                 conn.close();
             } catch (SQLException e) {
-                logger.debug("conn or pstmt close fail" + conn + " || " + pstmt);
+//                logger.debug("conn or pstmt close fail" + conn + " || " + pstmt);
+                System.out.println(Calendar.getInstance().getTime() +" PasswordListJDBC :" + "conn or pstmt close fail" + conn + " || " + pstmt);
                 e.printStackTrace();
             }
 
         }
-        logger.info("create successful ==> " + pstmt);
+//        logger.info("create successful ==> " + pstmt);
+        System.out.println(Calendar.getInstance().getTime() +" PasswordListJDBC :" + "create successful ==> " + pstmt);
         return passwordList;
     }
 

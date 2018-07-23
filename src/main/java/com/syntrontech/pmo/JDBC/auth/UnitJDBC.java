@@ -7,12 +7,13 @@ import org.slf4j.LoggerFactory;
 
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 import java.util.Date;
 
 public class UnitJDBC {
 
-    private static Logger logger = LoggerFactory.getLogger(Auth_GET_CONNECTION.class);
+//    private static Logger logger = LoggerFactory.getLogger(Auth_GET_CONNECTION.class);
 
     private static final String GET_ALL_STMT = "SELECT * FROM unit WHERE tenant_id='TTSHB' ORDER BY sequence;";
     private static final String INSERT_STMT = "INSERT INTO unit " +
@@ -32,18 +33,17 @@ public class UnitJDBC {
 
         UnitJDBC s = new UnitJDBC();
 
-        Date star_time = new Date(new java.util.Date().getTime());
-//        List<Unit> ss = s.getAllUnits();
-        Date end_time = new Date(new java.util.Date().getTime());
+        List<Unit> ss = s.getAllUnits();
 
-//        System.out.println("star_time:" + star_time.toInstant());
-//        System.out.println("end_time:" + end_time.toInstant());
-//        System.out.println("ss size:" + ss.size());
+        System.out.println("ss size:" + ss.size());
 
-        s.insertUnit(s.getTestUnit());
+        Unit insertTest = s.insertUnit(s.getTestUnit());
 
-        Unit unit = s.getUnitById("xxx");
-        System.out.println(unit.getId() == null);
+        System.out.println("insert");
+        System.out.println(insertTest);
+        Unit unit = s.getUnitById(insertTest.getId());
+        System.out.println("get one");
+        System.out.println(unit);
 
     }
 
@@ -57,7 +57,8 @@ public class UnitJDBC {
             pstmt = conn.prepareStatement(GET_ONE);
 
             pstmt.setString(1, id);
-            logger.info(pstmt.toString());
+//            logger.info(pstmt.toString());
+            System.out.println(Calendar.getInstance().getTime() +" UnitJDBC: " + pstmt.toString());
 
             ResultSet rs = pstmt.executeQuery();
 
@@ -72,7 +73,8 @@ public class UnitJDBC {
             }
 
         } catch (SQLException e) {
-            logger.debug("insertUnit fail " + pstmt + "||" + conn);
+//            logger.debug("insertUnit fail " + pstmt + "||" + conn);
+            System.out.println(Calendar.getInstance().getTime() +" UnitJDBC: " + "insertUnit fail " + pstmt + "||" + conn);
         } finally {
 
             try {
@@ -80,12 +82,14 @@ public class UnitJDBC {
                     pstmt.close();
                 conn.close();
             } catch (SQLException e) {
-                logger.info("conn or pstmt close fail" + conn + " || " + pstmt);
+//                logger.info("conn or pstmt close fail" + conn + " || " + pstmt);
+                System.out.println(Calendar.getInstance().getTime() +" UnitJDBC: " + "conn or pstmt close fail" + conn + " || " + pstmt);
                 e.printStackTrace();
             }
 
         }
-        logger.info("getUnitById successful ==> " + unit);
+//        logger.info("getUnitById successful ==> " + unit);
+        System.out.println(Calendar.getInstance().getTime() +" UnitJDBC: " + "getUnitById successful ==> " + unit);
         return unit;
     }
 
@@ -120,12 +124,14 @@ public class UnitJDBC {
             pstmt.setString(10, unit.getUpdateBy());
             pstmt.setString(11, unit.getStatus().toString());
 
-            logger.info(pstmt.toString());
+//            logger.info(pstmt.toString());
+            System.out.println(" UnitJDBC: " + pstmt.toString());
 
             pstmt.executeUpdate();
 
         } catch (SQLException e) {
-            logger.debug("insertUnit fail " + pstmt + "||" + conn);
+//            logger.debug("insertUnit fail " + pstmt + "||" + conn);
+            System.out.println(Calendar.getInstance().getTime() +" UnitJDBC: " + "insertUnit fail " + pstmt + "||" + conn);
         } finally {
 
             try {
@@ -133,12 +139,14 @@ public class UnitJDBC {
                     pstmt.close();
                 conn.close();
             } catch (SQLException e) {
-                logger.info("conn or pstmt close fail" + conn + " || " + pstmt);
+//                logger.info("conn or pstmt close fail" + conn + " || " + pstmt);
+                System.out.println(Calendar.getInstance().getTime() +" UnitJDBC: " + "conn or pstmt close fail" + conn + " || " + pstmt);
                 e.printStackTrace();
             }
 
         }
-        logger.info("create unit successful ==> " + unit);
+//        logger.info("create unit successful ==> " + unit);
+        System.out.println(Calendar.getInstance().getTime() +" UnitJDBC: " + "create unit successful ==> " + unit);
         return unit;
     }
 
@@ -191,7 +199,7 @@ public class UnitJDBC {
                     unit.setUpdateBy(rs.getString("updateby"));
                     unit.setStatus(ModelStatus.valueOf(rs.getString("status")));
 
-                    logger.info("unit:" + unit);
+//                    logger.info("unit:" + unit);
                     units.add(unit);
                 }
             }
@@ -204,7 +212,8 @@ public class UnitJDBC {
                     pstmt.close();
                 conn.close();
             } catch (SQLException e) {
-                logger.debug("conn or pstmt close fail" + conn + " || " + pstmt);
+//                logger.debug("conn or pstmt close fail" + conn + " || " + pstmt);
+                System.out.println(Calendar.getInstance().getTime() +" UnitJDBC: " + "conn or pstmt close fail" + conn + " || " + pstmt);
                 e.printStackTrace();
             }
 
