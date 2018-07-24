@@ -19,7 +19,11 @@ import java.util.Map;
 
 public class SyncUnit {
 
-//    private static Logger logger = LoggerFactory.getLogger(SyncUnit.class);
+    private static Logger logger = LoggerFactory.getLogger(SyncUnit.class);
+
+    public static void main(String[] args) {
+        new SyncUnit().syncLocationToUnit();
+    }
 
     public void syncLocationToUnit(){
 
@@ -29,8 +33,8 @@ public class SyncUnit {
 
         List<Location> locations = locationJDBC.getAllLocation();
 
-//        logger.info(" locations need sync" + locations.size());
-        System.out.println(" locations need sync" + locations.size());
+        logger.info(" locations need sync" + locations.size());
+//        System.out.println(" locations need sync" + locations.size());
         locations.forEach(l -> {
 //            logger.info(l.toString());
             System.out.println(l.toString());
@@ -47,7 +51,7 @@ public class SyncUnit {
             }
         });
 
-//        logger.info("sync unit : " + locations.size() + " successful");
+        logger.info("sync unit : " + locations.size() + " successful");
         System.out.println("sync unit : " + locations.size() + " successful");
 
     }
@@ -87,7 +91,7 @@ public class SyncUnit {
         return unitMeta;
     }
 
-    String getCategory(String category){
+    private String getCategory(String category){
 
         Map<String, String> map = new HashMap<>();
         //        離島 : [1001411, 1001416]

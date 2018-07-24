@@ -15,7 +15,11 @@ import java.util.List;
 
 public class SyncDevice {
 
-//    private static Logger logger = LoggerFactory.getLogger(SyncDevice.class);
+    private static Logger logger = LoggerFactory.getLogger(SyncDevice.class);
+
+    public static void main(String[] args) {
+        new SyncDevice().syncDevice();
+    }
 
     public void syncDevice(){
 
@@ -30,8 +34,8 @@ public class SyncDevice {
             syncare1DeviceJDBC.updateDevice(new Syncare1_GET_CONNECTION().getConn(), sd.getSerialNo());
         });
 
-//        logger.info("sync devices total :" + syncare1Devices.size() + " successful");
-        System.out.println("sync devices total :" + syncare1Devices.size() + " successful");
+        logger.info("sync devices total :" + syncare1Devices.size() + " successful");
+//        System.out.println("sync devices total :" + syncare1Devices.size() + " successful");
 
     }
 
