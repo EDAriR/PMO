@@ -786,7 +786,6 @@ public class Sync {
         BloodPressureHeartBeatJDBC bloodPressureHeartBeatJDBC = new BloodPressureHeartBeatJDBC();
 
         System.out.println("UserValueRecord sync => " + old);
-        System.out.println("UserValueRecordMapping sync => " + recordValues);
         BloodPressureHeartBeat bloodPressureHeartBeat = bloodPressureHeartBeatJDBC
                 .insertBloodPressureHeartBeat(turnOldRecordsToBloodPressureHeartBeat(old, values, subject));
 
@@ -801,6 +800,8 @@ public class Sync {
             UserValueRecord old, Map<Integer, List<UserValueRecordMapping>> values, Subject subject) {
 
         BloodPressureHeartBeat bloodPressureHeartBeat = new BloodPressureHeartBeat();
+
+        System.out.println("UserValueRecordMapping sync => " + values);
 
         // 7 收縮壓 8 舒張壓 9 心跳
         // systolic_pressure, diastolic_pressure, heart_rate
