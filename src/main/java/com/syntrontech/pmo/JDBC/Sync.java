@@ -785,6 +785,8 @@ public class Sync {
 
         BloodPressureHeartBeatJDBC bloodPressureHeartBeatJDBC = new BloodPressureHeartBeatJDBC();
 
+        System.out.println("UserValueRecord sync => " + old);
+        System.out.println("UserValueRecordMapping sync => " + recordValues);
         BloodPressureHeartBeat bloodPressureHeartBeat = bloodPressureHeartBeatJDBC
                 .insertBloodPressureHeartBeat(turnOldRecordsToBloodPressureHeartBeat(old, values, subject));
 
