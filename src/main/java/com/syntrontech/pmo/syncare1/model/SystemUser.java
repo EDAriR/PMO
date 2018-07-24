@@ -659,6 +659,7 @@ public class SystemUser{
 		return "SystemUserJDBC ["
 				+ "userId=" + userId 
 				+ ", createTime=" + createTime 
+				+ ", caseUpdateDate=" + caseUpdateDate
 				+ ", userAccount=" + userAccount
 				+ ", userPassword=" + userPassword
 				+ ", userAddress=" + userAddress
