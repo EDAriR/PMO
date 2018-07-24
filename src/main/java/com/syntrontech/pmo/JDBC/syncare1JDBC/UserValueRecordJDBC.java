@@ -42,6 +42,13 @@ public class UserValueRecordJDBC {
 
         getByUserId.forEach(b -> System.out.println(b));
 
+        List<UserValueRecord> other = s.getOneUserOtherValueRecord(1);
+        System.out.println(other);
+        List<UserValueRecord> aType = s.getOneUserAValueRecord(1);
+        System.out.println(aType);
+
+        List<UserValueRecord> btype = s.getOneBUserValueRecord(1);
+        System.out.println(btype);
     }
 
     public List<UserValueRecord> getOneUserOtherValueRecord(int id) {
@@ -90,7 +97,7 @@ public class UserValueRecordJDBC {
             }
 
         } catch (SQLException e) {
-            logger.debug("get A type user value record fail" + conn + " || " + pstmt);
+            logger.debug("get A type user value record fail" + " || " + pstmt);
 
             e.printStackTrace();
         } catch (Exception e) {

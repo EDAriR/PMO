@@ -83,7 +83,7 @@ public class QuestionnairReply {
 				"questionnairSeq=" + questionnairSeq + ", " +
 				"questionnairTitle=" + questionnairTitle + ", " +
 				"createTime=" + createTime + ", " +
-				"updateBy=" + updateBy + ", " +
+				"updateBy=" + updateBy +
 				"]";
 	}
 

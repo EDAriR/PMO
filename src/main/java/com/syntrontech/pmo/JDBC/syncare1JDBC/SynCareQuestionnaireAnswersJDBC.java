@@ -2,15 +2,21 @@ package com.syntrontech.pmo.JDBC.syncare1JDBC;
 
 import com.syntrontech.pmo.syncare1.model.Calendar;
 import com.syntrontech.pmo.syncare1.model.SynCareQuestionnaireAnswers;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class SynCareQuestionnaireAnswersJDBC {
+
+    private static Logger logger = LoggerFactory.getLogger(SynCareQuestionnaireAnswersJDBC.class);
+
 
     private static final String GET_ALL_STMT = "SELECT * FROM syncare_questionnaire_answers WHERE sync_status = 'N' ORDER BY id;";
     private static final String UPDATE = "UPDATE syncare_questionnaire_answers SET sync_status= 'Y' WHERE id=? ;";
@@ -19,8 +25,18 @@ public class SynCareQuestionnaireAnswersJDBC {
     public static void main(String[] args) {
         SynCareQuestionnaireAnswersJDBC answersJDBC = new SynCareQuestionnaireAnswersJDBC();
 
+        Date start = java.util.Calendar.getInstance().getTime();
         List<SynCareQuestionnaireAnswers> answers = answersJDBC.getAll();
+
+        Date update = java.util.Calendar.getInstance().getTime();
+
         answers.forEach(a-> answersJDBC.update(a.getId()));
+
+        Date end = java.util.Calendar.getInstance().getTime();
+
+        System.out.println("start =>" + start);
+        System.out.println("update =>" + update);
+        System.out.println("start =>" + end);
     }
     public List<SynCareQuestionnaireAnswers> getAll() {
 
@@ -43,20 +59,19 @@ public class SynCareQuestionnaireAnswersJDBC {
 
                     answer.setId(rs.getInt("id"));
                     answer.setUser(rs.getString("user_id"));
-                    answer.setQuestionnaire(rs.getString("questionnaire_id"));
+                    answer.setQuestionnaire(rs.getLong("questionnaire_id"));
                     answer.setQuestionnaireTitle(rs.getString("questionnaire_title"));
                     answer.setQuestionnaireQuestionsId(rs.getInt("questionnaire_questions_id"));
                     answer.setQuestionnaireQuestionsTitle(rs.getString("questionnaire_questions_title"));
                     answer.setQuestionnaireAnswersItemId(rs.getInt("questionnaire_answers_item_id"));
                     answer.setQuestionnaireAnswersItemValue(rs.getString("questionnaire_answers_item_value"));
+                    answer.setCreateDate(rs.getTimestamp("create_date"));
 
-//                    System.out.println("LocationJDBC ==>" + location);
                     answers.add(answer);
                 }
             }
 
         } catch (SQLException e) {
-            System.out.println("MySQL操作错误");
             e.printStackTrace();
         } catch (Exception e) {
             e.printStackTrace();
@@ -71,7 +86,8 @@ public class SynCareQuestionnaireAnswersJDBC {
             }
 
         }
-        System.out.println(java.util.Calendar.getInstance() + "answers: " +  answers);
+        logger.info("answers: " +  answers);
+
         return answers;
     }
 
@@ -87,7 +103,7 @@ public class SynCareQuestionnaireAnswersJDBC {
             pstmt.setInt(1, id);
             pstmt.executeUpdate();
 
-            System.out.println(java.util.Calendar.getInstance() + " update " + id + " successful ==============");
+            logger.info("update SynCareQuestionnaireAnswers :[" + id + "] successful ");
 
 
         } catch (SQLException e) {

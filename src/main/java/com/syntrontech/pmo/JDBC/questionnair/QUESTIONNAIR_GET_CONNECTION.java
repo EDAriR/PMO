@@ -18,7 +18,6 @@ public class QUESTIONNAIR_GET_CONNECTION {
         try {
 
             Class.forName(DRIVER_PATH);
-            System.out.println("Connection questionnairdb ");
             conn = DriverManager.getConnection(DB_PATH, DB_USER, DB_PASSWORD);
 
         }catch (ClassNotFoundException e) {

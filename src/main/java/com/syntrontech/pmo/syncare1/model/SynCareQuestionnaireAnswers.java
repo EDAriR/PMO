@@ -28,7 +28,7 @@ public class SynCareQuestionnaireAnswers implements Serializable{
 	private String user;
 	
 	@JoinColumn(name="questionnaire_id")
-	private String questionnaire;
+	private Long questionnaire;
 	
 	@Column(name="questionnaire_title")
 	private String questionnaireTitle;
@@ -57,7 +57,7 @@ public class SynCareQuestionnaireAnswers implements Serializable{
 		return user;
 	}
 
-	public String getQuestionnaire() {
+	public Long getQuestionnaire() {
 		return questionnaire;
 	}
 
@@ -93,7 +93,7 @@ public class SynCareQuestionnaireAnswers implements Serializable{
 		this.user = user;
 	}
 
-	public void setQuestionnaire(String questionnaireId) {
+	public void setQuestionnaire(Long questionnaireId) {
 		this.questionnaire = questionnaireId;
 	}
 

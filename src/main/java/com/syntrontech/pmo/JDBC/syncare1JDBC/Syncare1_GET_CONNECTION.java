@@ -1,10 +1,16 @@
 package com.syntrontech.pmo.JDBC.syncare1JDBC;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
 public class Syncare1_GET_CONNECTION {
+
+    private static Logger logger = LoggerFactory.getLogger(Syncare1_GET_CONNECTION.class);
+
 
     private static final String DB_PATH = "jdbc:mysql://localhost:3307/SynCare"
             + "?user=root&password=1qaz2wsx" +
@@ -19,17 +25,12 @@ public class Syncare1_GET_CONNECTION {
         try {
 
             Class.forName(DRIVER_PATH);
-            System.out.println("Connection MySQL ");
             conn = DriverManager.getConnection(DB_PATH);
 
         }catch (ClassNotFoundException e) {
-
-            System.out.println("Where is your MySQL JDBC Driver? "
-                    + "Include in your library path!");
-            e.printStackTrace();
+            logger.warn("com.mysql.cj.jdbc.Driver ClassNotFoundException ");
         } catch (SQLException e) {
-
-            System.out.println("Connection Failed! Check output console");
+            logger.warn("Syncare1_GET_CONNECTION SQLException ");
             e.printStackTrace();
 
         }

@@ -4,6 +4,8 @@ import com.syntrontech.pmo.syncare1.model.Area;
 import com.syntrontech.pmo.syncare1.model.SystemUser;
 import com.syntrontech.pmo.syncare1.model.common.Sex;
 import com.syntrontech.pmo.syncare1.model.common.YN;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -12,6 +14,9 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 public class SystemUserJDBC {
+
+    private static Logger logger = LoggerFactory.getLogger(SystemUserJDBC.class);
+
 
     private static final String GET_ALL_STMT = "SELECT * FROM system_user WHERE recluse='Y' AND sync_status = 'N' ORDER BY USER_ID;";
 
@@ -47,11 +52,12 @@ public class SystemUserJDBC {
             pstmt.setInt(1, id);
             pstmt.executeUpdate();
 
-            System.out.println("update " + id + " successful ==============");
+            logger.info("update SystemUser :[" + id + "] successful ");
 
 
         } catch (SQLException e) {
-            System.out.println("MySQL操作错误");
+            logger.warn("Syncare1_GET_CONNECTION SQLException ");
+
             e.printStackTrace();
         } catch (Exception e) {
             e.printStackTrace();
