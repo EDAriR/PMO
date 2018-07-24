@@ -559,35 +559,38 @@ public class Sync {
 
             BloodPressureHeartBeat bloodPressureHeartBeat = syncBloodPressureHeartBeat(userValueRecordMap, old, subject);
 
-            // 更新舊 UserValueRecord 資料狀態
-            userValueRecordJDBC.updateUserValueRecord(old.getBodyValueRecordId());
+            if(bloodPressureHeartBeat != null){
+                // 更新舊 UserValueRecord 資料狀態
+                userValueRecordJDBC.updateUserValueRecord(old.getBodyValueRecordId());
 
-            // 連續兩筆紀錄為異常 做異常紀錄
-            if (bloodPressureHeartBeats.size() > 0) {
-                BloodPressureHeartBeat oldBloodPressureHeartBeat = bloodPressureHeartBeats.get(bloodPressureHeartBeats.size() - 1);
+                // 連續兩筆紀錄為異常 做異常紀錄
+                if (bloodPressureHeartBeats.size() > 0) {
+                    BloodPressureHeartBeat oldBloodPressureHeartBeat = bloodPressureHeartBeats.get(bloodPressureHeartBeats.size() - 1);
 
-                // 判斷是否為異常
-                if (isBloodPressureAbnormal(oldBloodPressureHeartBeat) && isBloodPressureAbnormal(bloodPressureHeartBeat)) {
-                    AbnormalBloodPressure abnormalBloodPressure = abnormalBloodPressureJDBC
-                            .insertAbnormalBloodPressure(
-                                    turnNoarmalToAbnormal(bloodPressureHeartBeat, su));
-
-                    // 尚未處理不需存log
-                    if (su.getCaseStatus() != 0 || su.getCaseNote() != null)
-                        abnormalBloodPressureLogJDBC
+                    // 判斷是否為異常
+                    if (isBloodPressureAbnormal(oldBloodPressureHeartBeat) && isBloodPressureAbnormal(bloodPressureHeartBeat)) {
+                        AbnormalBloodPressure abnormalBloodPressure = abnormalBloodPressureJDBC
                                 .insertAbnormalBloodPressure(
-                                        turnBloodPressureAbnormalToLog(abnormalBloodPressure, su));
+                                        turnNoarmalToAbnormal(bloodPressureHeartBeat, su));
+
+                        // 尚未處理不需存log
+                        if (su.getCaseStatus() != 0 || su.getCaseNote() != null)
+                            abnormalBloodPressureLogJDBC
+                                    .insertAbnormalBloodPressure(
+                                            turnBloodPressureAbnormalToLog(abnormalBloodPressure, su));
+                    }
+
                 }
 
+                System.out.println(old);
+                System.out.println(bloodPressureHeartBeat);
+                pmoResultJDBC.insert(turnOldRecordsToPmoResult(old, bloodPressureHeartBeat.getSubjectId(), bloodPressureHeartBeat.getSequence(), MeasurementPMOType.BloodPressure));
+
+                updateUserValueRecordMapping(userValueRecordMap, old.getBodyValueRecordId());
+
+                bloodPressureHeartBeats.add(bloodPressureHeartBeat);
+
             }
-
-            System.out.println(old);
-            System.out.println(bloodPressureHeartBeat);
-            pmoResultJDBC.insert(turnOldRecordsToPmoResult(old, bloodPressureHeartBeat.getSubjectId(), bloodPressureHeartBeat.getSequence(), MeasurementPMOType.BloodPressure));
-
-            updateUserValueRecordMapping(userValueRecordMap, old.getBodyValueRecordId());
-
-            bloodPressureHeartBeats.add(bloodPressureHeartBeat);
 
         });
     }
@@ -786,8 +789,12 @@ public class Sync {
         BloodPressureHeartBeatJDBC bloodPressureHeartBeatJDBC = new BloodPressureHeartBeatJDBC();
 
         System.out.println("UserValueRecord sync => " + old);
-        BloodPressureHeartBeat bloodPressureHeartBeat = bloodPressureHeartBeatJDBC
-                .insertBloodPressureHeartBeat(turnOldRecordsToBloodPressureHeartBeat(old, values, subject));
+        if(values.keySet().size() < 3){
+            return null;
+        }
+            BloodPressureHeartBeat bph = turnOldRecordsToBloodPressureHeartBeat(old, values, subject);
+            BloodPressureHeartBeat bloodPressureHeartBeat = bloodPressureHeartBeatJDBC
+                    .insertBloodPressureHeartBeat(bph);
 
         // 更新舊 UserValueRecordMapping 資料狀態
         recordValues.forEach(mapping -> new UserValueRecordMappingJDBC()
