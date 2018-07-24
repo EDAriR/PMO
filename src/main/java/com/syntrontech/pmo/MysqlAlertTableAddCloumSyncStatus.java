@@ -18,16 +18,23 @@ public class MysqlAlertTableAddCloumSyncStatus {
 
     private static final String DRIVER_PATH = "com.mysql.cj.jdbc.Driver";
 
-    public static void main( String[] args ) throws SQLException
-    {
-        Connection conn = null;
+    public static void main(String[] args) throws SQLException {
 
+
+        MysqlAlertTableAddCloumSyncStatus msq = new MysqlAlertTableAddCloumSyncStatus();
+
+        msq.alertTable();
+    }
+
+    public void alertTable() throws SQLException {
+
+        Connection conn = null;
 
         try {
 
             Class.forName(DRIVER_PATH);
             conn = DriverManager.getConnection(DB_PATH);
-            
+
             System.out.println("Connection MySQL ");
 
             Statement stmt = conn.createStatement();
@@ -43,7 +50,7 @@ public class MysqlAlertTableAddCloumSyncStatus {
                     if (name.equals("DATABASECHANGELOG") || name.equals("DATABASECHANGELOGLOCK"))
                         continue;
 
-                    sql = "ALTER TABLE " + name +  " ADD sync_status varchar(2) DEFAULT 'N'";
+                    sql = "ALTER TABLE " + name + " ADD sync_status varchar(2) DEFAULT 'N'";
 //                    sql = "ALTER TABLE " + name +  " DROP sync_status";
 
                     try {
@@ -58,7 +65,7 @@ public class MysqlAlertTableAddCloumSyncStatus {
                     }
                 }
             }
-        }catch (ClassNotFoundException e) {
+        } catch (ClassNotFoundException e) {
             logger.warn("com.mysql.cj.jdbc.Driver ClassNotFoundException ");
         } catch (SQLException e) {
             e.printStackTrace();
@@ -68,4 +75,5 @@ public class MysqlAlertTableAddCloumSyncStatus {
             conn.close();
         }
     }
+
 }

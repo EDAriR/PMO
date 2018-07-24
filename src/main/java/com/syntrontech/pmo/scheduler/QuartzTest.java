@@ -38,4 +38,26 @@ public class QuartzTest {
 //        scheduler.shutdown(true);
 
     }
+
+    public void startScheduler() throws SchedulerException, ParseException {
+        SchedulerFactory schedulerFactory = new StdSchedulerFactory();
+        Scheduler scheduler = schedulerFactory.getScheduler();
+
+        JobDetail jobDetail = JobBuilder.newJob(SyncJob.class)
+                .withIdentity("SyncJob", Scheduler.DEFAULT_GROUP)
+                .build();
+
+
+        // "0 0 12 * * ?" 每天中午12点触发
+
+        Trigger trigger = TriggerBuilder.newTrigger()
+                .withIdentity("helloTrigger", Scheduler.DEFAULT_GROUP)
+                .withSchedule(CronScheduleBuilder.cronSchedule(new CronExpression("0 0/5 * * * ?")))
+                .build();
+
+        scheduler.scheduleJob(jobDetail, trigger);
+
+        // 启动调度器
+        scheduler.start();
+    }
 }

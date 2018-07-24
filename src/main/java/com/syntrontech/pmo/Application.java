@@ -1,6 +1,7 @@
 package com.syntrontech.pmo;
 
 
+import java.sql.SQLException;
 import java.text.ParseException;
 import java.util.Date;
 import java.util.Properties;
@@ -9,6 +10,7 @@ import com.syntrontech.pmo.JDBC.Sync;
 import com.syntrontech.pmo.JDBC.SyncAnswers;
 import com.syntrontech.pmo.JDBC.SyncDevice;
 import com.syntrontech.pmo.JDBC.SyncUnit;
+import com.syntrontech.pmo.scheduler.QuartzTest;
 import com.syntrontech.pmo.scheduler.SyncJob;
 import com.syntrontech.pmo.sync.SendPUTRequest;
 import org.quartz.*;
@@ -24,33 +26,23 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 public class Application {
 
-    public static void main(String[] args) throws SchedulerException, InterruptedException, ParseException {
+    public static void main(String[] args) throws SchedulerException, InterruptedException, ParseException, SQLException {
 
 
-//        SchedulerFactory schedulerFactory = new StdSchedulerFactory();
-//        Scheduler scheduler = schedulerFactory.getScheduler();
-//
-//        JobDetail jobDetail = JobBuilder.newJob(SyncJob.class)
-//                .withIdentity("SyncJob", Scheduler.DEFAULT_GROUP)
-//                .build();
-//
-//
-//        // "0 0 12 * * ?" 每天中午12点触发
-//
-//        Trigger trigger = TriggerBuilder.newTrigger()
-//                .withIdentity("helloTrigger", Scheduler.DEFAULT_GROUP)
-//                .withSchedule(CronScheduleBuilder.cronSchedule(new CronExpression("0 0/5 * * * ?")))
-//                .build();
-//
-//        scheduler.scheduleJob(jobDetail, trigger);
-//
-//        // 启动调度器
-//        scheduler.start();
 
 
         System.out.println("args = " + args.length);
-        if(args.length > 0)
-            System.out.println(args[0]);
+        if (args.length > 0) {
+            if (args[0].equals(2)) {
+                MysqlAlertTableAddCloumSyncStatus msq = new MysqlAlertTableAddCloumSyncStatus();
+
+                msq.alertTable();
+            }else if(args[0].equals(1)){
+                QuartzTest qt = new QuartzTest();
+                qt.startScheduler();
+            }
+        }
+        System.out.println(args[0]);
 
         System.out.println("Start sync syncare1 data fireTime:" + new Date().toInstant());
 

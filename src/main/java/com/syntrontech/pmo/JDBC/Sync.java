@@ -680,6 +680,7 @@ public class Sync {
         abnormalBloodPressure.setSubjectSeq(bloodPressureHeartBeat.getSubjectSeq());
 
         abnormalBloodPressure.setSubjectId(bloodPressureHeartBeat.getSubjectId());
+        abnormalBloodPressure.setBloodPressureSeq(bloodPressureHeartBeat.getSequence());
 
         abnormalBloodPressure.setSubjectName(bloodPressureHeartBeat.getSubjectName());
         abnormalBloodPressure.setSubjectGender(bloodPressureHeartBeat.getSubjectGender());
