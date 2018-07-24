@@ -185,7 +185,7 @@ public class UserJDBC {
             pstmt.setArray(10, cardsArray);
 
             String[] permissionIds = {};
-            cards = user.getPermissionIds() != null ? user.getPermissionIds(): permissionIds;
+            permissionIds = user.getPermissionIds() != null ? user.getPermissionIds(): permissionIds;
             Array permission_ids = conn.createArrayOf("varchar", permissionIds);
             pstmt.setArray(11, permission_ids);
 

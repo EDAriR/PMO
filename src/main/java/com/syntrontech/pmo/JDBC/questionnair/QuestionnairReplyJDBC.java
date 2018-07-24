@@ -13,12 +13,12 @@ public class QuestionnairReplyJDBC {
     private static final String GET_ALL_STMT = "select * from questionnair_reply WHERE status='EXISTED' order by sequence;";
     private static final String INSERT_STMT = "INSERT INTO questionnair_reply " +
             "(sequence, user_id, tenant_id, questionnaire_seq, " +
-            "unit_parent_name, unit_status, tenant_id, category, " +
-            "contact, address, home_phone, mobile_phone," +
-            " comment, createtime, createby, updatetime, updateby) "
+            "questionnaire_title, questionnaire_question_seq, questionnaire_question_title, questionnaire_question_option_seq, " +
+            "questionnaire_question_option_score, questionnaire_question_answer," +
+            " createtime, createby, updatetime, updateby, status) "
             + "VALUES (nextval('questionnair_reply_sequence_seq'), ?, ?, ?, " +
             "?, ?, ?, ?, " +
-            "?, ?, ?, ?, " +
+            "?, ?, " +
             "?, ?, ?, ?, ?);";
 //        sequence, user_id, tenant_id, questionnaire_seq
 //        questionnaire_title, questionnaire_question_seq, questionnaire_question_title, questionnaire_question_option_seq
@@ -58,6 +58,7 @@ public class QuestionnairReplyJDBC {
 
 //        createtime, createby, updatetime, updateby, status
 
+
             //  user_id, tenant_id, questionnaire_seq
             pstmt.setInt(1, questionnairReply.getUserId();
             pstmt.setString(2, questionnairReply.getTenantId());
@@ -69,40 +70,33 @@ public class QuestionnairReplyJDBC {
             pstmt.setLong(5, questionnairReply.getQuestionnairQuestionSeq());
             pstmt.setString(6, questionnairReply.getQuestionnairQuestionTitle());
 
-            conn.createArrayOf(questionnairReply.getQuestionnairQuestionOptionSeq());
-            pstmt.setLong(7, );
+
+            Long[] questionnairQuestionOptionSeq = {};
+            questionnairQuestionOptionSeq = questionnairReply.getQuestionnairQuestionOptionSeq() != null ? questionnairReply.getQuestionnairQuestionOptionSeq() : permissionIds;
+            Array opSeq = conn.createArrayOf("BigInt", questionnairQuestionOptionSeq);
+
+            conn.createArrayOf("BigInt", opSeq);
+            pstmt.setArray(7, opSeq);
 
 
+            String[] questionnairQuestionOptionScore;
+            conn.createArrayOf("varchar", questionnairReply.getQuestionnairQuestionOptionScore());
             //        questionnaire_question_option_score, questionnaire_question_answer
-            pstmt.setString(7, questionnairReply.getStatus().toString());
-            pstmt.setTimestamp(8, new Timestamp(questionnairReply.getCreateTime().getTime()));
-            pstmt.setString(9, questionnairReply.getCreateBy());
-            pstmt.setString(10, questionnairReply.getTenantId());
-            pstmt.setString(11, questionnairReply.getDeviceMacAddress());
+            pstmt.setArray(8, questionnairReply.getQuestionnairQuestionOptionScore());
 
-            pstmt.setLong(12, questionnairReply.getSubjectSeq());
-            pstmt.setString(13, questionnairReply.getSubjectId());
-            pstmt.setString(14, questionnairReply.getSubjectName());
-            pstmt.setString(15, questionnairReply.getSubjectGender().toString());
-            pstmt.setInt(16, questionnairReply.getSubjectAge());
-            pstmt.setString(17, questionnairReply.getSubjectUserId());
-            pstmt.setString(18, questionnairReply.getSubjectUserName());
 
-            if(questionnairReply.getRuleSeq() != null){
-                pstmt.setLong(19, questionnairReply.getRuleSeq());
-            }else {
-                pstmt.setNull(19, Types.BIGINT);
-            }
-            if(questionnairReply.getRuleDescription() != null){
-                pstmt.setString(20, questionnairReply.getRuleDescription());
-            }else {
-                pstmt.setNull(20, Types.VARCHAR);
-            }
-            pstmt.setString(21, questionnairReply.getUnitId());
-            pstmt.setString(22, questionnairReply.getUnitName());
-            pstmt.setString(23, questionnairReply.getParentUnitId());
-            pstmt.setString(24, questionnairReply.getParentUnitName());
-            pstmt.setString(25, questionnairReply.getDeviceId());
+            String[] questionnairQuestionAnswer;
+            conn.createArrayOf(questionnairReply.getQuestionnairQuestionAnswer());
+            pstmt.setArray(8, questionnairReply.getQuestionnairQuestionAnswer());
+
+
+            pstmt.setTimestamp(9, new Timestamp(questionnairReply.getCreateTime().getTime()));
+            pstmt.setString(10, questionnairReply.getCreateBy());
+            pstmt.setString(11, questionnairReply.getUpdateTime());
+            pstmt.setString(12, questionnairReply.getUpdateBy());
+
+            pstmt.setString(13, questionnairReply.getStatus().toString());
+iceId());
 
 //            logger.info("sql => " + pstmt);
             pstmt.executeUpdate();
