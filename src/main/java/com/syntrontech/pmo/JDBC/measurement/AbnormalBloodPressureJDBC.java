@@ -14,7 +14,7 @@ import java.util.List;
 
 public class AbnormalBloodPressureJDBC {
 
-//    private static Logger logger = LoggerFactory.getLogger(AbnormalBloodPressureJDBC.class);
+    private static Logger logger = LoggerFactory.getLogger(AbnormalBloodPressureJDBC.class);
 
     private static final String GET_ALL_STMT = "SELECT * FROM abnormal_blood_pressure ORDER BY sequence;";
     private static final String INSERT_STMT = "INSERT INTO abnormal_blood_pressure " +
@@ -30,11 +30,6 @@ public class AbnormalBloodPressureJDBC {
             "?, ?, ?, ?, ?, " +
             "?, ?, ?);";
 
-// blood_pressure_seq, subject_seq, subject_id, subject_name, subject_gender
-// subject_age, subject_user_id, subject_user_name, systolic_pressure, diastolic_pressure, heart_rate
-// recordtime, createby, case_status, last_change_case_status_time, unit_id
-// tenant_id, device_mac_address, unit_name, status, rule_description
-// parent_unit_id, parent_unit_name, device_id
 
     private static final String GET_ONE = "SELECT * FROM abnormal_blood_pressure WHERE id=? and tenant_id='TTSHB'" +
             " AND status='ENABLED';";
@@ -128,27 +123,27 @@ public class AbnormalBloodPressureJDBC {
             pstmt.setString(16, abnormalBloodPressure.getUnitId());
 
             // tenant_id, device_mac_address, unit_name, status, rule_description
-            pstmt.setString(16, abnormalBloodPressure.getTenantId());
+            pstmt.setString(17, abnormalBloodPressure.getTenantId());
 
             String macAddress = abnormalBloodPressure.getDeviceMacAddress();
             if(macAddress != null)
-                pstmt.setString(17, abnormalBloodPressure.getDeviceMacAddress());
+                pstmt.setString(18, abnormalBloodPressure.getDeviceMacAddress());
             else
-                pstmt.setNull(17, Types.VARCHAR);
+                pstmt.setNull(18, Types.VARCHAR);
 
-            pstmt.setString(18, abnormalBloodPressure.getUnitName());
-            pstmt.setString(19, abnormalBloodPressure.getStatus().toString());
+            pstmt.setString(19, abnormalBloodPressure.getUnitName());
+            pstmt.setString(20, abnormalBloodPressure.getStatus().toString());
 
             String ruleDescription = abnormalBloodPressure.getRuleDescription();
             if(ruleDescription != null)
-                pstmt.setString(20, abnormalBloodPressure.getRuleDescription());
+                pstmt.setString(21, abnormalBloodPressure.getRuleDescription());
             else
-                pstmt.setNull(20, Types.VARCHAR);
+                pstmt.setNull(21, Types.VARCHAR);
 
             // parent_unit_id, parent_unit_name, device_id
-            pstmt.setString(21, abnormalBloodPressure.getParentUnitId());
-            pstmt.setString(22, abnormalBloodPressure.getParentUnitName());
-            pstmt.setString(23, abnormalBloodPressure.getDeviceId());
+            pstmt.setString(22, abnormalBloodPressure.getParentUnitId());
+            pstmt.setString(23, abnormalBloodPressure.getParentUnitName());
+            pstmt.setString(24, abnormalBloodPressure.getDeviceId());
 
             System.out.println("sql => " + pstmt);
             pstmt.executeUpdate();
@@ -163,7 +158,7 @@ public class AbnormalBloodPressureJDBC {
 //            logger.info("create AbnormalBloodPressure successful => " + abnormalBloodPressure);
 
         } catch (SQLException e) {
-//            logger.debug("create AbnormalBloodPressure fail =>" + abnormalBloodPressure);
+            logger.debug("create AbnormalBloodPressure fail =>" + abnormalBloodPressure);
             e.printStackTrace();
         } finally {
 
@@ -172,8 +167,8 @@ public class AbnormalBloodPressureJDBC {
                     pstmt.close();
                 conn.close();
             } catch (SQLException e) {
-//                logger.debug("conn or pstmt close fail" + conn + " || " + pstmt);
-                e.printStackTrace();
+                logger.debug("conn or pstmt close fail" + conn + " || " + pstmt);
+//                e.printStackTrace();
             }
 
         }

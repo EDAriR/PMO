@@ -40,7 +40,10 @@ public class QuestionnairReplyJDBC {
         System.out.println("star_time:" + star_time.toInstant());
         System.out.println("end_time:" + end_time.toInstant());
         System.out.println("ss size:" + ss.size());
-//
+
+        QuestionnairReply gg = s.insert(qq);
+        System.out.println("=====");
+        System.out.println(gg);
 //        s.insertUnitMeta(s.getTestQuestionnairReply());
 //
 //        UnitMeta unit = s.getUnitMetaById("1001401");
@@ -60,7 +63,7 @@ public class QuestionnairReplyJDBC {
 
 
             //  user_id, tenant_id, questionnaire_seq
-            pstmt.setInt(1, questionnairReply.getUserId();
+            pstmt.setString(1, questionnairReply.getUserId());
             pstmt.setString(2, questionnairReply.getTenantId());
             pstmt.setLong(3, questionnairReply.getQuestionnairQuestionSeq());
 
@@ -72,31 +75,33 @@ public class QuestionnairReplyJDBC {
 
 
             Long[] questionnairQuestionOptionSeq = {};
-            questionnairQuestionOptionSeq = questionnairReply.getQuestionnairQuestionOptionSeq() != null ? questionnairReply.getQuestionnairQuestionOptionSeq() : permissionIds;
+            questionnairQuestionOptionSeq = questionnairReply.getQuestionnairQuestionOptionSeq() != null ?
+                    questionnairReply.getQuestionnairQuestionOptionSeq() : questionnairQuestionOptionSeq;
             Array opSeq = conn.createArrayOf("BigInt", questionnairQuestionOptionSeq);
-
-            conn.createArrayOf("BigInt", opSeq);
             pstmt.setArray(7, opSeq);
 
 
-            String[] questionnairQuestionOptionScore;
-            conn.createArrayOf("varchar", questionnairReply.getQuestionnairQuestionOptionScore());
+            String[] questionnairQuestionOptionScore = {};
+            questionnairQuestionOptionScore = questionnairReply.getQuestionnairQuestionOptionScore() != null ?
+                    questionnairReply.getQuestionnairQuestionOptionScore() : questionnairQuestionOptionScore;
+            Array score = conn.createArrayOf("varchar", questionnairQuestionOptionScore);
             //        questionnaire_question_option_score, questionnaire_question_answer
-            pstmt.setArray(8, questionnairReply.getQuestionnairQuestionOptionScore());
+            pstmt.setArray(8, score);
 
 
-            String[] questionnairQuestionAnswer;
-            conn.createArrayOf(questionnairReply.getQuestionnairQuestionAnswer());
-            pstmt.setArray(8, questionnairReply.getQuestionnairQuestionAnswer());
+            String[] questionnairQuestionAnswer = {};
+            questionnairQuestionAnswer = questionnairReply.getQuestionnairQuestionAnswer() != null ?
+                    questionnairReply.getQuestionnairQuestionAnswer() : questionnairQuestionAnswer;
+            Array answer = conn.createArrayOf("varchar", questionnairQuestionAnswer);
+            pstmt.setArray(9, answer);
 
 
-            pstmt.setTimestamp(9, new Timestamp(questionnairReply.getCreateTime().getTime()));
-            pstmt.setString(10, questionnairReply.getCreateBy());
-            pstmt.setString(11, questionnairReply.getUpdateTime());
-            pstmt.setString(12, questionnairReply.getUpdateBy());
+            pstmt.setTimestamp(10, new Timestamp(questionnairReply.getCreateTime().getTime()));
+            pstmt.setString(11, questionnairReply.getCreateBy());
+            pstmt.setTimestamp(12, new Timestamp(questionnairReply.getUpdateTime().getTime()));
+            pstmt.setString(13, questionnairReply.getUpdateBy());
 
-            pstmt.setString(13, questionnairReply.getStatus().toString());
-iceId());
+            pstmt.setString(14, questionnairReply.getStatus().toString());
 
 //            logger.info("sql => " + pstmt);
             pstmt.executeUpdate();

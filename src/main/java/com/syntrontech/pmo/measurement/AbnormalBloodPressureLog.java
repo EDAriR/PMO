@@ -49,7 +49,21 @@ public class AbnormalBloodPressureLog {
 
     @Column(name = "tenant_id", nullable = false)
     private String tenantId;
-	
+
+	@Override
+	public String toString() {
+		return "AbnormalBloodPressureLog:[" +
+				"sequence=" + sequence + ", " +
+				"abnormalBloodPressureSquence=" + abnormalBloodPressureSquence + ", " +
+				"caseStatus=" + caseStatus + ", " +
+				"subjectId=" + subjectId + ", " +
+				"caseCreatorUserId=" + caseCreatorUserId + ", " +
+				"caseDescription=" + caseDescription + ", " +
+				"changeCaseStatusTime=" + changeCaseStatusTime + ", " +
+				"tenantId=" + tenantId + ", " +
+				"]";
+	}
+
 	public Long getSequence() {
 		return sequence;
 	}

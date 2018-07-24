@@ -16,7 +16,7 @@ public class PmoResultJDBC {
     private static final String GET_ALL_STMT = "SELECT * FROM pmo_result WHERE tenant_id='TTSHB' ORDER BY sequence;";
     private static final String INSERT_STMT = "INSERT INTO pmo_result " +
             "(sequence, user_id, measurement_type, record_id, result, status, synctime, tenant_id) "
-            + "VALUES (nextval('pmo_user_sequence_seq'), ?, ?, ?, ?, ?. ?, ?);";
+            + "VALUES (nextval('pmo_user_sequence_seq'), ?, ?, ?, ?, ?, ?, ?);";
 
     private static final String GET_ONE = "SELECT * FROM pmo_result WHERE user_id=? and record_id=? and measurement_type = ? and tenant_id='TTSHB'" +
             " AND status='ENABLED';";
@@ -120,7 +120,9 @@ public class PmoResultJDBC {
             pstmt.executeUpdate();
 
         } catch (SQLException e) {
-            logger.debug("insert  pmoUser fail" + conn + " || " + pstmt);
+            logger.warn("insert  PmoResult fail" + conn + " || " + pstmt);
+            logger.warn(e.getMessage());
+
         } finally {
 
             try {
@@ -128,7 +130,7 @@ public class PmoResultJDBC {
                     pstmt.close();
                 conn.close();
             } catch (SQLException e) {
-                logger.debug("conn or pstmt close fail" + conn + " || " + pstmt);
+                logger.warn("conn or pstmt close fail" + conn + " || " + pstmt);
                 e.printStackTrace();
             }
 

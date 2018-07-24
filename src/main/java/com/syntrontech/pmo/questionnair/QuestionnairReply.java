@@ -74,6 +74,19 @@ public class QuestionnairReply {
 	@Enumerated(EnumType.STRING)
 	private UnmodifiableDataStatus status;
 
+	@Override
+	public String toString() {
+		return "QuestionnairReply=[" +
+				"sequence=" + sequence + ", " +
+				"userId=" + userId + ", " +
+				"tenantId=" + tenantId + ", " +
+				"questionnairSeq=" + questionnairSeq + ", " +
+				"questionnairTitle=" + questionnairTitle + ", " +
+				"createTime=" + createTime + ", " +
+				"updateBy=" + updateBy + ", " +
+				"]";
+	}
+
 	public Long getSequence() {
 		return sequence;
 	}

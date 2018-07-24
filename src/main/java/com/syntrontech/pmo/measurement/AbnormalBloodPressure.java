@@ -101,7 +101,9 @@ public class AbnormalBloodPressure {
 
     @Override
     public String toString() {
-        return "AbnormalBloodPressure :[ bloodPressureSeq =" + bloodPressureSeq + ", " +
+        return "AbnormalBloodPressure :[ " +
+                "sequence =" + sequence + ", " +
+                "bloodPressureSeq =" + bloodPressureSeq + ", " +
                 "subjectId=" + subjectId + ", " +
                 "systolicPressure =" + systolicPressure + ", " +
                 "diastolicPressure=" + diastolicPressure + ", " +
