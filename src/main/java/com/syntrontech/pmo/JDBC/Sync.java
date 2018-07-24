@@ -718,7 +718,10 @@ public class Sync {
         abnormalBloodPressure.setCaseStatus(casetStatus);
 
 //        private Date lastChangeCaseStatusTime;
-        abnormalBloodPressure.setLastChangeCaseStatusTime(systemUser.getCaseUpdateDate());
+        if(systemUser.getCaseUpdateDate() != null)
+            abnormalBloodPressure.setLastChangeCaseStatusTime(systemUser.getCaseUpdateDate());
+        else
+            abnormalBloodPressure.setLastChangeCaseStatusTime(bloodPressureHeartBeat.getCreateTime());
 
         abnormalBloodPressure.setUnitId(bloodPressureHeartBeat.getUnitId());
         abnormalBloodPressure.setTenantId(bloodPressureHeartBeat.getTenantId());
