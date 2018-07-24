@@ -119,6 +119,7 @@ public class BloodPressureHeartBeatJDBC {
             if(bloodPressureHeartBeat.getSequence() == null){
 
                     pstmt = conn.prepareStatement(GET_SEQUENCE);
+                    logger.info("get bloodPressureHeartBeat seq => ");
                     try (ResultSet rs = pstmt.executeQuery()) {
                         if (rs.next()) {
                             bloodPressureHeartBeat.setSequence(rs.getLong(1));
