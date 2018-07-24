@@ -501,7 +501,7 @@ public class Sync {
         BloodGlucose testBloodGlucose = new BloodGlucose();
 
         testBloodGlucose.setGlucose(glucoseValue);
-        // TODO 舊的沒有量測時間
+        // type_id = 2033
         testBloodGlucose.setGlucoseType(type);
 
         // recordtime, latitude, longitude
@@ -581,6 +581,8 @@ public class Sync {
 
             }
 
+            System.out.println(old);
+            System.out.println(bloodPressureHeartBeat);
             pmoResultJDBC.insert(turnOldRecordsToPmoResult(old, bloodPressureHeartBeat.getSubjectId(), bloodPressureHeartBeat.getSequence(), MeasurementPMOType.BloodPressure));
 
             updateUserValueRecordMapping(userValueRecordMap, old.getBodyValueRecordId());
@@ -800,7 +802,6 @@ public class Sync {
 
         // recordtime, latitude, longitude
         bloodPressureHeartBeat.setRecordTime(old.getRecordDate());
-
 
         // status, createtime, createby, tenant_id, device_mac_address
         // private MeasurementStatusType status;

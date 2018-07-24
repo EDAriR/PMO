@@ -143,7 +143,6 @@ public class UserValueRecordJDBC {
                     Device device = new Device();
                     device.setSerialNo(rs.getString("serial_no"));
                     userValueRecord.setDevice(device);
-                    System.out.println("serial_no >>" + rs.getString("serial_no") + "<<");
 
                     String pmo_status = rs.getString("pmo_status");
                     UserValueRecord.RecordPmoStatus recordPmoStatus = pmo_status != null ? UserValueRecord.RecordPmoStatus.valueOf(pmo_status) : null;
@@ -178,6 +177,7 @@ public class UserValueRecordJDBC {
             }
 
         }
+        logger.info(userValueRecords.toString());
 
         return userValueRecords;
     }
@@ -208,7 +208,6 @@ public class UserValueRecordJDBC {
                     Device device = new Device();
                     device.setSerialNo(rs.getString("serial_no"));
                     userValueRecord.setDevice(device);
-                    System.out.println("serial_no >>" + rs.getString("serial_no") + "<<");
 
                     String pmo_status = rs.getString("pmo_status");
                     UserValueRecord.RecordPmoStatus recordPmoStatus = pmo_status != null ? UserValueRecord.RecordPmoStatus.valueOf(pmo_status) : null;
@@ -221,8 +220,6 @@ public class UserValueRecordJDBC {
                     userValueRecord.setSynCare2Status(synCare2Status);
 
                     userValueRecord.setUserAccountSerial(rs.getLong("user_account_serial"));
-
-                    System.out.println("USER_ID :" + rs.getString("USER_ID"));
 
                     System.out.println(userValueRecord);
                 }
@@ -244,6 +241,7 @@ public class UserValueRecordJDBC {
             }
 
         }
+        logger.info(userValueRecord.toString());
 
         return userValueRecord;
     }
@@ -275,7 +273,6 @@ public class UserValueRecordJDBC {
                     Device device = new Device();
                     device.setSerialNo(rs.getString("serial_no"));
                     userValueRecord.setDevice(device);
-                    System.out.println("serial_no >>" + rs.getString("serial_no") + "<<");
 
                     String pmo_status = rs.getString("pmo_status");
                     UserValueRecord.RecordPmoStatus recordPmoStatus = pmo_status != null ? UserValueRecord.RecordPmoStatus.valueOf(pmo_status) : null;
@@ -289,16 +286,12 @@ public class UserValueRecordJDBC {
 
                     userValueRecord.setUserAccountSerial(rs.getLong("user_account_serial"));
 
-                    System.out.println("USER_ID :" + rs.getString("USER_ID"));
-
-                    System.out.println(userValueRecord);
-
                     userValueRecords.add(userValueRecord);
                 }
             }
 
         } catch (SQLException e) {
-            logger.debug("get B type user value record fail" + conn + " || " + pstmt);
+            logger.debug("get B type user value record fail \n" + pstmt);
 
         } catch (Exception e) {
 
@@ -315,6 +308,7 @@ public class UserValueRecordJDBC {
             }
 
         }
+        logger.info(userValueRecords.toString());
 
         return userValueRecords;
     }
@@ -364,7 +358,8 @@ public class UserValueRecordJDBC {
             }
 
         } catch (SQLException e) {
-            logger.debug("get BG type user value record fail" + conn + " || " + pstmt);
+            logger.debug("get BG type user value record fail\n " + pstmt);
+            e.printStackTrace();
 
         } catch (Exception e) {
             logger.debug("get BG type user value record fail" + conn + " || " + pstmt);
@@ -395,7 +390,7 @@ public class UserValueRecordJDBC {
             pstmt.setInt(1, id);
             pstmt.executeUpdate();
 
-            System.out.println("update " + id + " successful ==============");
+            System.out.println("update UserValueRecord BODY_VALUE_RECORD_ID=[" + id + "] successful ");
 
 
         } catch (SQLException e) {
@@ -441,8 +436,6 @@ public class UserValueRecordJDBC {
                     userValueRecord.setRecordDate(rs.getTimestamp("RECORD_DATE"));
                     userValueRecord.setUpdateDate(rs.getTimestamp("UPDATE_DATE"));
 
-                    System.out.println("Device >>" + rs.getString("serial_no") + "<<");
-
                     String pmo_status = rs.getString("pmo_status");
                     UserValueRecord.RecordPmoStatus recordPmoStatus = pmo_status != null ? UserValueRecord.RecordPmoStatus.valueOf(pmo_status) : null;
                     userValueRecord.setPmoStatus(recordPmoStatus);
@@ -455,16 +448,12 @@ public class UserValueRecordJDBC {
 
                     userValueRecord.setUserAccountSerial(rs.getLong("user_account_serial"));
 
-                    System.out.println("USER_ID :" + rs.getString("USER_ID"));
-
-                    System.out.println(userValueRecord);
-
                     userValueRecordlist.add(userValueRecord);
                 }
             }
 
         } catch (SQLException e) {
-            System.out.println("MySQL操作错误");
+            logger.warn("get B type user value record fail\n " + pstmt);
             e.printStackTrace();
         } catch (Exception e) {
             e.printStackTrace();
@@ -474,11 +463,12 @@ public class UserValueRecordJDBC {
                 pstmt.close();
                 conn.close();
             } catch (SQLException e) {
-                System.out.println("conn or pstmt close fail" + conn + " || " + pstmt);
+                logger.warn("conn or pstmt close fail" + conn + " || " + pstmt);
                 e.printStackTrace();
             }
 
         }
+        logger.info("userValueRecord=>" + userValueRecordlist);
         return userValueRecordlist;
     }
 
