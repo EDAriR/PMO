@@ -47,7 +47,8 @@ public class Application {
 //        // 启动调度器
 //        scheduler.start();
 
-        System.out.println("args = " + args);
+
+        System.out.println("args = " + args.length);
         if(args.length > 0)
             System.out.println(args[0]);
 
