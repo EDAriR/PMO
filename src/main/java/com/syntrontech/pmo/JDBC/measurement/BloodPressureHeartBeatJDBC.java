@@ -15,7 +15,7 @@ import java.util.List;
 
 public class BloodPressureHeartBeatJDBC {
 
-//    private static Logger logger = LoggerFactory.getLogger(BloodPressureHeartBeatJDBC.class);
+    private static Logger logger = LoggerFactory.getLogger(BloodPressureHeartBeatJDBC.class);
 
     private static final String GET_ALL_STMT = "SELECT * FROM blood_pressure_heartbeat ORDER BY sequence;";
     private static final String INSERT_STMT = "INSERT INTO blood_pressure_heartbeat " +
@@ -37,6 +37,9 @@ public class BloodPressureHeartBeatJDBC {
 
     private static final String GET_ONE = "SELECT * FROM blood_pressure_heartbeat WHERE sequence=? and tenant_id='DEFAULT_TENANT'" +
             " AND status='ENABLED';";
+
+    private static final String GET_SEQUENCE = "SELECT MAX(sequence) FROM blood_pressure_heartbeat;";
+
 
     public static void main(String[] args) {
 
@@ -113,6 +116,16 @@ public class BloodPressureHeartBeatJDBC {
                 rs.close();
             }
 
+            if(bloodPressureHeartBeat.getSequence() == null){
+
+                    pstmt = conn.prepareStatement(GET_SEQUENCE);
+                    try (ResultSet rs = pstmt.executeQuery()) {
+                        if (rs.next()) {
+                            bloodPressureHeartBeat.setSequence(rs.getLong(1));
+                        }
+                    }
+            }
+
         } catch (SQLException e) {
 //            logger.debug("create bloodPressureHeartBeat fail =>" + bloodPressureHeartBeat);
             e.printStackTrace();
@@ -129,6 +142,7 @@ public class BloodPressureHeartBeatJDBC {
 
         }
 
+        logger.info("create bloodPressureHeartBeat =>" + bloodPressureHeartBeat);
         return bloodPressureHeartBeat;
     }
 

@@ -47,6 +47,10 @@ public class Application {
 //        // 启动调度器
 //        scheduler.start();
 
+        System.out.println("args = " + args);
+        if(args.length > 0)
+            System.out.println(args[0]);
+
         System.out.println("Start sync syncare1 data fireTime:" + new Date().toInstant());
 
         new SyncUnit().syncLocationToUnit();

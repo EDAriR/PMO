@@ -32,6 +32,8 @@ public class BodyInfoJDBC {
             "?, ?, ?, ?, ?, ?, ?," +
             "?, ?, ?, ?," +
             "?, ?, ?);";
+    private static final String GET_SEQUENCE = "SELECT MAX(sequence) FROM body_info;";
+
 
     public static void main(String[] args) {
 
@@ -113,13 +115,22 @@ public BodyInfo insert(BodyInfo bodyInfo){
 
         try (ResultSet rs = pstmt.getGeneratedKeys()) {
             if (rs.next()) {
-                bodyInfo.setSequence(rs.getLong(0));
+                bodyInfo.setSequence(rs.getLong(1));
             }
             rs.close();
         }
+        if(bodyInfo.getSequence() == null){
+
+            pstmt = conn.prepareStatement(GET_SEQUENCE);
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    bodyInfo.setSequence(rs.getLong(1));
+                }
+            }
+        }
 
     } catch (SQLException e) {
-//        logger.debug("create bodyInfo fail =>" + bodyInfo);
+        logger.warn("create bodyInfo fail =>" + bodyInfo);
 
         e.printStackTrace();
     } finally {
@@ -129,12 +140,14 @@ public BodyInfo insert(BodyInfo bodyInfo){
                 pstmt.close();
             conn.close();
         } catch (SQLException e) {
-//            logger.debug("conn or pstmt close fail" + conn + " || " + pstmt);
+            logger.warn("conn or pstmt close fail" + conn + " || " + pstmt);
 
             e.printStackTrace();
         }
 
     }
+
+    logger.info("create bodyInfo =>" + bodyInfo);
 
     return bodyInfo;
 }
