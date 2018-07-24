@@ -249,8 +249,14 @@ public class Sync {
         // 3身高 4體重 5 BMI
         bodyInfo.setHeight(getRecordValue(value, 3));
         bodyInfo.setWeight(getRecordValue(value, 4));
-        bodyInfo.setBmi(getRecordValue(value, 5));
 
+        Double bmi = null;
+        try {
+            bmi = getRecordValue(value, 5);
+        }catch (NumberFormatException e){
+
+        }
+        bodyInfo.setBmi(bmi);
 
         // recordtime, latitude, longitude
         bodyInfo.setRecordTime(record.getRecordDate());
