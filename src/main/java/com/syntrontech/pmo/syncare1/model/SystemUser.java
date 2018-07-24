@@ -660,7 +660,8 @@ public class SystemUser{
 				+ "userId=" + userId 
 				+ ", createTime=" + createTime 
 				+ ", userAccount=" + userAccount
-				+ ", userAddress=" + userAddress 
+				+ ", userPassword=" + userPassword
+				+ ", userAddress=" + userAddress
 				+ ", userBirthday=" + userBirthday
 				+ ", age=" + age 
 				+ ", userDisplayName=" + userDisplayName 

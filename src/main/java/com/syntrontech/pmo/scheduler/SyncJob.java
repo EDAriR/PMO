@@ -3,6 +3,7 @@ package com.syntrontech.pmo.scheduler;
 import java.util.Date;
 
 import com.syntrontech.pmo.JDBC.Sync;
+import com.syntrontech.pmo.JDBC.SyncAnswers;
 import com.syntrontech.pmo.JDBC.SyncDevice;
 import com.syntrontech.pmo.JDBC.SyncUnit;
 import com.syntrontech.pmo.sync.SendPUTRequest;
@@ -27,6 +28,7 @@ public class SyncJob implements Job {
         new SyncUnit().syncLocationToUnit();
         new SyncDevice().syncDevice();
         new Sync().syncSystemUserToUserAndSubject();
+        new SyncAnswers().syncAnswers();
 //
         SendPUTRequest sendPUTRequestApp = new SendPUTRequest();
         sendPUTRequestApp.sendSyncRequest();

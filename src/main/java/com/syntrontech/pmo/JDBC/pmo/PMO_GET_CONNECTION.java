@@ -30,6 +30,7 @@ public class PMO_GET_CONNECTION {
             logger.debug("JDBC ClassNotFoundException");
         } catch (SQLException e) {
             logger.debug("PMO_GET_CONNECTION Failed!");
+            e.printStackTrace();
         }
 
         if (conn != null)

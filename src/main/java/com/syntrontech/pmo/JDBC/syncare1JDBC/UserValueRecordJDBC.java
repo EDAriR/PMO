@@ -26,7 +26,7 @@ public class UserValueRecordJDBC {
     private static final String GET_ONE_USER_BG_STMT = "SELECT * FROM user_value_record WHERE USER_ID=? AND COLUMN_TYPE='BG' AND sync_status = 'N' ORDER BY BODY_VALUE_RECORD_ID;";
 
     // 其他
-    private static final String GET_ONE_USER_OTHER_STMT = "SELECT * FROM user_value_record WHERE COLUMN_TYPE != 'B' AND COLUMN_TYPE != 'BG' AND COLUMN_TYPE != 'A' AND sync_status = 'N' ORDER BY BODY_VALUE_RECORD_ID;";
+    private static final String GET_ONE_USER_OTHER_STMT = "SELECT * FROM user_value_record WHERE USER_ID=? AND COLUMN_TYPE != 'B' AND COLUMN_TYPE != 'BG' AND COLUMN_TYPE != 'A' AND sync_status = 'N' ORDER BY BODY_VALUE_RECORD_ID;";
 
     private static final String GET_ONE_STMT = "SELECT * FROM user_value_record WHERE BODY_VALUE_RECORD_ID=? ;";
 
@@ -78,7 +78,6 @@ public class UserValueRecordJDBC {
                     Device device = new Device();
                     device.setSerialNo(rs.getString("serial_no"));
                     userValueRecord.setDevice(device);
-                    System.out.println("serial_no >>" + rs.getString("serial_no") + "<<");
 
                     String pmo_status = rs.getString("pmo_status");
                     UserValueRecord.RecordPmoStatus recordPmoStatus = pmo_status != null ? UserValueRecord.RecordPmoStatus.valueOf(pmo_status) : null;
@@ -97,7 +96,7 @@ public class UserValueRecordJDBC {
             }
 
         } catch (SQLException e) {
-            logger.debug("get A type user value record fail" + " || " + pstmt);
+            logger.debug("get Other type user value record fail " + pstmt);
 
             e.printStackTrace();
         } catch (Exception e) {
@@ -163,7 +162,7 @@ public class UserValueRecordJDBC {
             }
 
         } catch (SQLException e) {
-            logger.debug("get A type user value record fail" + conn + " || " + pstmt);
+            logger.debug("get A type user value record fail " + pstmt);
 
             e.printStackTrace();
         } catch (Exception e) {
@@ -347,7 +346,6 @@ public class UserValueRecordJDBC {
                     Device device = new Device();
                     device.setSerialNo(rs.getString("serial_no"));
                     userValueRecord.setDevice(device);
-                    System.out.println("serial_no >>" + rs.getString("serial_no") + "<<");
 
                     String pmo_status = rs.getString("pmo_status");
                     UserValueRecord.RecordPmoStatus recordPmoStatus = pmo_status != null ? UserValueRecord.RecordPmoStatus.valueOf(pmo_status) : null;

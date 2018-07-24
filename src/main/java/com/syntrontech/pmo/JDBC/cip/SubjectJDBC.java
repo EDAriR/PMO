@@ -15,7 +15,7 @@ import java.util.stream.Collectors;
 
 public class SubjectJDBC {
 
-//    private static Logger logger = LoggerFactory.getLogger(SubjectJDBC.class);
+    private static Logger logger = LoggerFactory.getLogger(SubjectJDBC.class);
 
     private static final String GET_ALL_STMT = "SELECT * FROM subject ORDER BY sequence;";
     private static final String INSERT_STMT = "INSERT INTO subject " +
@@ -135,6 +135,15 @@ public class SubjectJDBC {
         } catch (SQLException e) {
 //            logger.debug("getOneSubject fail " + conn + " || " + pstmt);
             System.out.println(Calendar.getInstance().getTime() + "  SubjectJDBC:" + "getOneSubject fail " + conn + " || " + pstmt);
+        }finally {
+            try {
+                if (pstmt != null)
+                    pstmt.close();
+                conn.close();
+            } catch (SQLException e) {
+                logger.debug("conn or pstmt close fail" + conn + " || " + pstmt);
+                e.printStackTrace();
+            }
         }
 
 //        logger.info("getOneSubject successful ==> " + subject);
@@ -224,6 +233,15 @@ public class SubjectJDBC {
         } catch (SQLException e) {
 //            logger.debug("getAllSubjects fail" + conn + " || " + pstmt);
             System.out.println(Calendar.getInstance().getTime() + "  SubjectJDBC:" + "getAllSubjects fail" + conn + " || " + pstmt);
+        }finally {
+            try {
+                if (pstmt != null)
+                    pstmt.close();
+                conn.close();
+            } catch (SQLException e) {
+                logger.debug("conn or pstmt close fail" + conn + " || " + pstmt);
+                e.printStackTrace();
+            }
         }
 
         return subjects;
@@ -279,25 +297,39 @@ public class SubjectJDBC {
             pstmt.setString(20, subject.getUpdateBy());
             pstmt.setString(21, subject.getStatus().toString());
 
-//            logger.info(pstmt.toString());
-            System.out.println(Calendar.getInstance().getTime() + "  SubjectJDBC:" + pstmt.toString());
+            logger.info(pstmt.toString());
+//            System.out.println(Calendar.getInstance().getTime() + "  SubjectJDBC:" + pstmt.toString());
 
             pstmt.executeUpdate();
-            try (ResultSet rs = pstmt.getGeneratedKeys()) {
-                if (rs.next()) {
-                    subject.setSequence(rs.getLong(1));
-                }
-                rs.close();
+            System.out.println(pstmt);
+            ResultSet rs = pstmt.getGeneratedKeys();
+            if (rs.next()) {
+                long seq = rs.getLong(1);
+                subject.setSequence(seq );
+            }else{
+                subject = getOneSubject(subject.getId(),subject.getUserId());
+
             }
-//            logger.info("create successful ==> " + subject);
-            System.out.println(Calendar.getInstance().getTime() + "  SubjectJDBC:" + "create successful ==> " + subject);
+
+            rs.close();
+
+//            System.out.println(Calendar.getInstance().getTime() + "  SubjectJDBC:" + "create successful ==> " + subject);
 
         } catch (SQLException e) {
-//            logger.debug("create subject fail" + conn + " || " + pstmt);
-            System.out.println(Calendar.getInstance().getTime() + "  SubjectJDBC:" + "create subject fail" + conn + " || " + pstmt);
+            logger.debug("create subject fail" + conn + " || " + pstmt);
+//            System.out.println(Calendar.getInstance().getTime() + "  SubjectJDBC:" + "create subject fail" + conn + " || " + pstmt);
             e.printStackTrace();
+        }finally {
+            try {
+                if (pstmt != null)
+                    pstmt.close();
+                conn.close();
+            } catch (SQLException e) {
+                logger.debug("conn or pstmt close fail" + conn + " || " + pstmt);
+                e.printStackTrace();
+            }
         }
-
+        logger.info("create successful ==> " + subject);
         return subject;
     }
 

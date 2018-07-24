@@ -42,7 +42,7 @@ public class UserRoleJDBC {
             pstmt.setInt(1, id);
             pstmt.executeUpdate();
 
-            System.out.println("update " + id + " successful ==============");
+            System.out.println("update UserRoles  user_id =[" + id + "] successful ");
 
 
         } catch (SQLException e) {

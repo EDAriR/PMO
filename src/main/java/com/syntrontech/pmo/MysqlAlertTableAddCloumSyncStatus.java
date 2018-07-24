@@ -1,6 +1,8 @@
 package com.syntrontech.pmo;
 
 import com.syntrontech.pmo.JDBC.syncare1JDBC.Syncare1_GET_CONNECTION;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -8,21 +10,30 @@ import java.util.List;
 
 public class MysqlAlertTableAddCloumSyncStatus {
 
+    private static Logger logger = LoggerFactory.getLogger(MysqlAlertTableAddCloumSyncStatus.class);
+
+    private static final String DB_PATH = "jdbc:mysql://localhost:3307/SynCare"
+            + "?user=root&password=1qaz2wsx" +
+            "&useUnicode=true&characterEncoding=UTF8";
+
+    private static final String DRIVER_PATH = "com.mysql.cj.jdbc.Driver";
+
     public static void main( String[] args ) throws SQLException
     {
         Connection conn = null;
-        String sql;
 
-        conn = new Syncare1_GET_CONNECTION().getConn();
+
         try {
 
-System.out.println("Connection MySQL ");
+            Class.forName(DRIVER_PATH);
+            conn = DriverManager.getConnection(DB_PATH);
+            
+            System.out.println("Connection MySQL ");
 
             Statement stmt = conn.createStatement();
-            sql = "show tables;";
+            String sql = "show tables;";
             ResultSet result = stmt.executeQuery(sql);
 
-            List<String> tableNames = new ArrayList<>();
             if (result != null) {
                 while (result.next()) {
 
@@ -47,9 +58,9 @@ System.out.println("Connection MySQL ");
                     }
                 }
             }
-
+        }catch (ClassNotFoundException e) {
+            logger.warn("com.mysql.cj.jdbc.Driver ClassNotFoundException ");
         } catch (SQLException e) {
-System.out.println("MySQL操作错误");
             e.printStackTrace();
         } catch (Exception e) {
             e.printStackTrace();

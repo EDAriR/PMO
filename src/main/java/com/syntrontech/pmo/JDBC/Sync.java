@@ -27,19 +27,21 @@ import com.syntrontech.pmo.syncare1.model.*;
 import com.syntrontech.pmo.syncare1.model.common.Sex;
 import com.syntrontech.pmo.syncare1.model.common.YN;
 import com.syntrontech.pmo.util.CalendarUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
 public class Sync {
 
+        private static Logger logger = LoggerFactory.getLogger(Sync.class);
+
     public static void main(String[] args) {
 
         // TODO 台東 預設 系統管理員 TENANT ==> TTSHB
         // 測試流程 ==> 新建TTSHB  TENANT 給 default user 權限後測試
         Sync sync = new Sync();
-
-        // TODO syncare_questionnaire_answers
 
 //        new SyncUnit().syncLocationToUnit();
 //        new SyncDevice().syncDevice();
@@ -69,12 +71,21 @@ public class Sync {
         Map<Integer, List<UserValueRecordMapping>> userValueRecordMap = new UserValueRecordMappingJDBC()
                 .getAllUserValueRecordMapping();
 
-        userIds.stream()   // 找出未同步systemuser
+        List<SystemUser> users = userIds.stream()   // 找出未同步systemuser
                 .map(id -> systemUserJDBC.getSystemUserById(id))
-                .forEach(su -> {
+                .collect(Collectors.toList());
+
+                for (SystemUser su:users){
+
+                    logger.info("sync system user :" + su);
+                    if(su.getUserAccount() == null)
+                    {
+                        continue;
+                    }
 
                     // 新增 user
                     User user = userJDBC.insertUser(syncSystemUserToUser(su, newrole));
+                    System.out.println("user in new db : " + user);
                     // 密碼
                     passwordListJDBC.insertPassword(user, su.getUserPassword());
                     // 新增 subject
@@ -96,6 +107,9 @@ public class Sync {
                     BodyInfoJDBC bodyInfoJDBC = new BodyInfoJDBC();
                     List<UserValueRecord> userBodyInfoValueRecords = userValueRecordJDBC.getOneUserAValueRecord(su.getUserId());
                     userBodyInfoValueRecords.forEach(record -> {
+                        System.out.println("sync bodyInfo ");
+                        System.out.println("record " + record);
+                        System.out.println("subject " + subject);
                         BodyInfo bodyInfo = bodyInfoJDBC.insert(turnValueRecordToBodyInfo(record, subject, userValueRecordMap));
                         // TODO update mapping
                         userValueRecordJDBC.updateUserValueRecord(record.getBodyValueRecordId());
@@ -118,8 +132,9 @@ public class Sync {
                     // ALBUM_NAME	varchar(45) NULL
                     // ALBUM_TYPE	int(11) unsigned [0]	使用者mapping的相本為 -> 1;picasa, 2:無名 .....
                     // ADVERTISMENT_STATUS 好康報報對於使用者的狀態_1: 此使用者尚未收到"新廣告通知了"(包含修改),2:此使用者已經收到"新廣告通知了
+                    new UserRoleJDBC().updateUserRoles(su.getUserId());
 
-                });
+                }
     }
 
     private Biochemistry turnValueRecordToBiochemistry(UserValueRecord record, Subject subject, Map<Integer, List<UserValueRecordMapping>> userValueRecordMap) {
@@ -247,8 +262,8 @@ public class Sync {
         // private MeasurementStatusType status;
         bodyInfo.setStatus(MeasurementStatusType.EXISTED);
         bodyInfo.setCreateTime(record.getUpdateDate());
-        bodyInfo.setCreateBy("TTSB");
-        bodyInfo.setTenantId("TTSB");
+        bodyInfo.setCreateBy("TTSHB");
+        bodyInfo.setTenantId("TTSHB");
 
         // subject_seq, subject_id, subject_name, subject_gender, subject_age, subject_user_id, subject_user_name,
         bodyInfo.setSubjectSeq(subject.getSequence());
@@ -263,6 +278,11 @@ public class Sync {
         // rule_seq, rule_description, unit_id, unit_name, parent_unit_id, parent_unit_name, device_id
         UnitJDBC unitJDBC = new UnitJDBC();
         Unit unit = unitJDBC.getUnitById(subject.getUnitId());
+        if(unit == null || unit.getId() == null){
+            unit = getOtherUnit(unit);
+            bodyInfo.setUnitId(record.getLocationId());
+            bodyInfo.setUnitName(record.getLocationName());
+        }
         bodyInfo.setUnitId(unit.getId());
         bodyInfo.setUnitName(unit.getName());
         bodyInfo.setParentUnitId(unit.getParentId());
@@ -275,13 +295,20 @@ public class Sync {
 
         List<UserValueRecordMapping> record = value.get(type);
 
-        if(record != null || record.size() > 0 ){
-            String v = record.get(0).getRecordValue();
-            if(v != null)
-                return Double.valueOf(v);
-            else
-                return null;
+        try {
+            if(record != null || record.size() > 0 ){
+                String v = record.get(0).getRecordValue();
+                if(v != null)
+                    return Double.valueOf(v);
+                else
+                    return null;
+            }
+        }catch (NumberFormatException e){
+            e.printStackTrace();
+        }catch (Exception e){
+            e.printStackTrace();
         }
+
         return null;
     }
 
@@ -294,10 +321,14 @@ public class Sync {
 
         List<UserValueRecord> userBGValueRecords = userValueRecordJDBC.getOneBGUserValueRecord(su.getUserId());
         userBGValueRecords.forEach(bg -> {
+            System.out.println("sync BloodGlucose");
+            System.out.println("BloodGlucose " + bg);
+            System.out.println("subject " + subject);
             BloodGlucose bloodGlucose = bloodGlucoseJDBC.insert(turnValueRecordToBloodGlucose(bg, subject, userValueRecordMap));
             userValueRecordJDBC.updateUserValueRecord(bg.getBodyValueRecordId());
 
             // PMO_result
+            System.out.println(bloodGlucose);
             pmoResultJDBC.insert(turnOldRecordsToPmoResult(bg, bloodGlucose.getSubjectId(), bloodGlucose.getSequence(), MeasurementPMOType.BloodGlucose));
 
         });
@@ -422,6 +453,8 @@ public class Sync {
             pmoStatus = PmoStatus.Error;
         pmoUser.setPmoStatus(pmoStatus);
 
+        pmoUser.setTenantId("TTSHB");
+
         return pmoUser;
 
     }
@@ -448,6 +481,7 @@ public class Sync {
             pmoStatus = PmoStatus.Error;
         pmoResult.setPmoStatus(pmoStatus);
         // synctime
+        pmoResult.setSynctime(old.getUpdateDate());
 
         return pmoResult;
 

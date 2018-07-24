@@ -18,6 +18,7 @@
         <java.version>1.8</java.version>
         <maven.compiler.plugin.version>3.1</maven.compiler.plugin.version>
         <quartz.version>2.3.0</quartz.version>
+        <!--<start-class>com.syntrontech.pmo.Application</start-class>-->
     </properties>
 
     <dependencies>
@@ -154,17 +155,67 @@
 
 
     </dependencies>
+    <!--<build>-->
+        <!--<plugins>-->
+            <!--<plugin>-->
+                <!--<groupId>org.springframework.boot</groupId>-->
+                <!--<artifactId>spring-boot-maven-plugin</artifactId>-->
+                <!--&lt;!&ndash; <configuration>-->
+                        <!--<source>${javac.compile.level}</source>-->
+                        <!--<target>${javac.compile.level}</target>-->
+                    <!--</configuration> &ndash;&gt;-->
+            <!--</plugin>-->
+        <!--</plugins>-->
+    <!--</build>-->
     <build>
-        <plugins>
-            <plugin>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-maven-plugin</artifactId>
-                <!-- <configuration>
-                        <source>${javac.compile.level}</source>
-                        <target>${javac.compile.level}</target>
-                    </configuration> -->
-            </plugin>
-        </plugins>
+    <plugins>
+        <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-dependency-plugin</artifactId>
+            <executions>
+                <execution>
+                    <id>copy-dependencies</id>
+                    <phase>package</phase>
+                    <goals>
+                        <goal>copy-dependencies</goal>
+                    </goals>
+                    <configuration>
+                        <outputDirectory>${project.build.directory}/lib</outputDirectory>
+                        <overWriteReleases>false</overWriteReleases>
+                        <overWriteSnapshots>false</overWriteSnapshots>
+                        <overWriteIfNewer>true</overWriteIfNewer>
+                    </configuration>
+                </execution>
+            </executions>
+        </plugin>
+        <plugin>
+            <artifactId>maven-assembly-plugin</artifactId>
+            <configuration>
+                <archive>
+                    <manifest>
+                        <!--<mainClass>com.syntrontech.pmo.MysqlAlertTableAddCloumSyncStatus</mainClass>-->
+                        <mainClass>com.syntrontech.pmo.Application</mainClass>
+                    </manifest>
+                    <manifestEntries>
+                        <Class-Path>.</Class-Path>
+                    </manifestEntries>
+                </archive>
+                <descriptorRefs>
+                    <descriptorRef>jar-with-dependencies</descriptorRef>
+                </descriptorRefs>
+            </configuration>
+            <executions>
+                <execution>
+                    <id>make-assembly</id>
+                    <phase>package</phase>
+                    <goals>
+                        <goal>single</goal>
+                    </goals>
+                </execution>
+            </executions>
+        </plugin>
+    </plugins>
+        <finalName>dbsync_syncare1</finalName>
     </build>
 
 </project>

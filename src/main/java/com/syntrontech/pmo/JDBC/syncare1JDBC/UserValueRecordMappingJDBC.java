@@ -3,6 +3,8 @@ package com.syntrontech.pmo.JDBC.syncare1JDBC;
 import com.syntrontech.pmo.syncare1.model.Mapping;
 import com.syntrontech.pmo.syncare1.model.UserValueRecord;
 import com.syntrontech.pmo.syncare1.model.UserValueRecordMapping;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -12,6 +14,8 @@ import java.util.*;
 
 
 public class UserValueRecordMappingJDBC {
+
+    private static Logger logger = LoggerFactory.getLogger(UserValueRecordMappingJDBC.class);
 
     private static final String GET_ALL_STMT = "SELECT * FROM user_value_record_mapping WHERE sync_status = 'N' ORDER BY USER_VALUE_RECORD_ID;";
     private static final String UPDATE = "UPDATE user_value_record_mapping SET sync_status= 'Y' WHERE USER_VALUE_RECORD_MAPPING_ID=? ;";
@@ -80,7 +84,7 @@ public class UserValueRecordMappingJDBC {
             }
 
         } catch (SQLException e) {
-            System.out.println("MySQL操作错误");
+            logger.debug("get all fail " + pstmt);
             e.printStackTrace();
         } catch (Exception e) {
             e.printStackTrace();
@@ -110,10 +114,12 @@ public class UserValueRecordMappingJDBC {
             pstmt.setInt(1, id);
             pstmt.executeUpdate();
 
-            System.out.println("update " + id + " successful ==============");
+            System.out.println("update UserValueRecordMapping USER_VALUE_RECORD_MAPPING_ID=[" + id + "] successful");
 
 
         } catch (SQLException e) {
+            logger.debug("get Other type user value record fail " + pstmt);
+
             System.out.println("MySQL操作错误");
             e.printStackTrace();
         } catch (Exception e) {

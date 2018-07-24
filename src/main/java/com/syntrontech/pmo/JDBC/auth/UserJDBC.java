@@ -79,7 +79,7 @@ public class UserJDBC {
 
                     Source source = rs.getString("source") != null ? Source.valueOf(rs.getString("source")) : null;
                     user.setSource(source);
-                    user.setMeta(rs.getString(""));
+//                    user.setMeta(rs.getString("meta"));
 
                     // unit_ids, role_ids, emails, mobilephones, cards, permission_ids
 
@@ -116,8 +116,9 @@ public class UserJDBC {
             }
 
         } catch (SQLException e) {
-            logger.debug("getUserById fail =>" + conn + " || " + pstmt + "||" + user);
+            logger.warn("getUserById fail \n"+ pstmt + "\n user =>" + user);
 //            System.out.println(Calendar.getInstance().getTime() + "  UserJDBC:" + "getUserById fail =>" + conn + " || " + pstmt + "||" + user);
+            e.printStackTrace();
         } finally {
 
             try {
@@ -125,8 +126,8 @@ public class UserJDBC {
                     pstmt.close();
                 conn.close();
             } catch (SQLException e) {
-//                logger.debug("conn or pstmt close fail" + conn + " || " + pstmt);
-                System.out.println(Calendar.getInstance().getTime() + "  UserJDBC:" +"conn or pstmt close fail" + conn + " || " + pstmt);
+                logger.debug("conn or pstmt close fail =>" + pstmt);
+//                System.out.println(Calendar.getInstance().getTime() + "  UserJDBC:" +"conn or pstmt close fail" + conn + " || " + pstmt);
                 e.printStackTrace();
             }
 
@@ -208,8 +209,8 @@ public class UserJDBC {
             pstmt.executeUpdate();
 
         } catch (SQLException e) {
-//            logger.debug("getUserById fail =>" + conn + " || " + pstmt + "||" + user);
-            System.out.println(Calendar.getInstance().getTime() + "  UserJDBC:" +"getUserById fail =>" + conn + " || " + pstmt + "||" + user);
+            logger.warn("insert user fail =>" + pstmt + "\n" + user);
+//            System.out.println(Calendar.getInstance().getTime() + "  UserJDBC:" +"getUserById fail =>" + conn + " || " + pstmt + "||" + user);
 
             e.printStackTrace();
         } finally {

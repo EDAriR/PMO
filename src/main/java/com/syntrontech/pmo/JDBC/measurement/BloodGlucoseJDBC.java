@@ -27,6 +27,7 @@ public class BloodGlucoseJDBC {
             "?, ?, ?, ?, ?, ?, ?," +
             "?, ?, ?, ?, ?, ?, ?);";
 
+    private static final String GET_SEQUENCE = "SELECT MAX(sequence) FROM blood_glucose;";
 
     public static void main(String[] args) {
 //        BloodGlucose
@@ -131,8 +132,6 @@ public class BloodGlucoseJDBC {
 //            System.out.println("sql => " + pstmt);
             logger.info("sql => " + pstmt);
             pstmt.executeUpdate();
-//            logger.info("create bloodGlucose successful => " + bloodGlucose);
-
 
             try (ResultSet rs = pstmt.getGeneratedKeys()) {
                 if (rs.next()) {
@@ -140,6 +139,17 @@ public class BloodGlucoseJDBC {
                 }
                 rs.close();
             }
+
+            if(bloodGlucose.getSequence() == null){
+
+                pstmt = conn.prepareStatement(GET_SEQUENCE);
+                try (ResultSet rs = pstmt.executeQuery()) {
+                    if (rs.next()) {
+                        bloodGlucose.setSequence(rs.getLong(1));
+                    }
+                }
+            }
+
 
         } catch (SQLException e) {
             logger.warn("create bloodGlucose fail =>" + bloodGlucose);
@@ -158,7 +168,7 @@ public class BloodGlucoseJDBC {
             }
 
         }
-        System.out.println(bloodGlucose);
+        logger.info(bloodGlucose.toString());
         return bloodGlucose;
     }
 

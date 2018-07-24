@@ -15,20 +15,22 @@ import java.util.List;
 
 public class BodyInfoJDBC {
 
-//    private static Logger logger = LoggerFactory.getLogger(BodyInfoJDBC.class);
+    private static Logger logger = LoggerFactory.getLogger(BodyInfoJDBC.class);
 
     private static final String GET_ALL_STMT = "SELECT * FROM body_info ORDER BY sequence;";
     private static final String INSERT_STMT = "INSERT INTO body_info " +
             "(sequence, height, weight, bmi, bfp," +
+            "recordtime, latitude, longitude, status, createtime, createby," +
+            "tenant_id, device_mac_address, " +
             " subject_seq, subject_id, subject_name, subject_gender, subject_age, subject_user_id, subject_user_name," +
-            "recordtime, createby, case_status, last_change_case_status_time, unit_id, " +
-            "tenant_id, device_mac_address, unit_name, status, rule_description," +
+            "rule_seq, rule_description, unit_id, unit_name," +
             "parent_unit_id, parent_unit_name, device_id)"
 
-            + "VALUES (nextval('abnormal_blood_pressure_sequence_seq'), ?, ?, ?, ?, " +
-            "?, ?, ?, ?, ?, ?, ?, " +
-            "?, ?, ?, ?, ?, " +
-            "?, ?, ?, ?, ?, " +
+            + "VALUES (nextval('body_info_sequence_seq'), ?, ?, ?, ?, " +
+            "?, ?, ?, ?, ?, ?, " +
+            "?, ?, " +
+            "?, ?, ?, ?, ?, ?, ?," +
+            "?, ?, ?, ?," +
             "?, ?, ?);";
 
     public static void main(String[] args) {
@@ -51,13 +53,14 @@ public BodyInfo insert(BodyInfo bodyInfo){
     try {
         pstmt = conn.prepareStatement(INSERT_STMT);
 
-        // systolic_pressure, diastolic_pressure, heart_rate
+        // height, weight, bmi, bfp
         pstmt.setDouble(1, bodyInfo.getHeight());
         pstmt.setDouble(2, bodyInfo.getWeight());
         if(bodyInfo.getBmi() != null)
             pstmt.setDouble(3, bodyInfo.getBmi());
         else
             pstmt.setNull(3, Types.DECIMAL);
+
         if (bodyInfo.getBfp() != null)
             pstmt.setDouble(4, bodyInfo.getBfp());
         else
@@ -95,6 +98,7 @@ public BodyInfo insert(BodyInfo bodyInfo){
             pstmt.setString(21, bodyInfo.getRuleDescription());
         else
             pstmt.setNull(21, Types.VARCHAR);
+
         pstmt.setString(22, bodyInfo.getUnitId());
         pstmt.setString(23, bodyInfo.getUnitName());
         pstmt.setString(24, bodyInfo.getParentUnitId());
@@ -102,14 +106,14 @@ public BodyInfo insert(BodyInfo bodyInfo){
         pstmt.setString(26, bodyInfo.getDeviceId());
 
 
-//        logger.info("sql => " + pstmt);
+        logger.info("sql => " + pstmt);
         pstmt.executeUpdate();
 //        logger.info("create bodyInfo successful => " + bodyInfo);
 
 
         try (ResultSet rs = pstmt.getGeneratedKeys()) {
             if (rs.next()) {
-                bodyInfo.setSequence(rs.getLong(1));
+                bodyInfo.setSequence(rs.getLong(0));
             }
             rs.close();
         }

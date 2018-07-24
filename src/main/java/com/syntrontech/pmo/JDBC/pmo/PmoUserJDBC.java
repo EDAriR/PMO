@@ -62,7 +62,10 @@ public class PmoUserJDBC {
             pstmt.setString(1, pmoUser.getUserId());
             pstmt.setString(2, pmoUser.getPmoPassword());
             pstmt.setString(3, pmoUser.getPmoStatus().toString());
-            pstmt.setTimestamp(4, new Timestamp(pmoUser.getSynctime().getTime()));
+            if(pmoUser.getSynctime() != null)
+                pstmt.setTimestamp(4, new Timestamp(pmoUser.getSynctime().getTime()));
+            else
+                pstmt.setNull(4,Types.TIMESTAMP);
             pstmt.setString(5, pmoUser.getTenantId());
 
             logger.info(pstmt.toString());
@@ -70,7 +73,7 @@ public class PmoUserJDBC {
             pstmt.executeUpdate();
 
         } catch (SQLException e) {
-            logger.debug("insert  pmoUser fail" + conn + " || " + pstmt);
+            logger.debug("insert  pmoUser fail" + " \n" + pstmt);
         } finally {
 
             try {

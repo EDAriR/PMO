@@ -15,7 +15,7 @@ import java.util.List;
 
 public class PasswordListJDBC {
 
-//    private static Logger logger = LoggerFactory.getLogger(Auth_GET_CONNECTION.class);
+    private static Logger logger = LoggerFactory.getLogger(Auth_GET_CONNECTION.class);
 
     private static final String INSERT_STMT = "INSERT INTO password_list " +
             "(sequence, password, user_id, password_updatetime) "
@@ -69,8 +69,8 @@ public class PasswordListJDBC {
             }
 
         } catch (SQLException e) {
-//            logger.debug("getPasswordListById fail " + pstmt + "||" + conn);
-            System.out.println(Calendar.getInstance().getTime() +" PasswordListJDBC :" + "getPasswordListById fail " + pstmt + "||" + conn);
+            logger.debug("getPasswordListById fail " + pstmt + "||" + conn);
+//            System.out.println(Calendar.getInstance().getTime() +" PasswordListJDBC :" + "getPasswordListById fail " + pstmt + "||" + conn);
         } finally {
 
             try {
@@ -78,8 +78,8 @@ public class PasswordListJDBC {
                     pstmt.close();
                 conn.close();
             } catch (SQLException e) {
-//                logger.debug("conn or pstmt close fail" + conn + " || " + pstmt);
-                System.out.println(Calendar.getInstance().getTime() +" PasswordListJDBC :" + "conn or pstmt close fail" + conn + " || " + pstmt);
+                logger.debug("conn or pstmt close fail "+ pstmt);
+//                System.out.println(Calendar.getInstance().getTime() +" PasswordListJDBC :" + "conn or pstmt close fail" + conn + " || " + pstmt);
                 e.printStackTrace();
             }
 
@@ -150,7 +150,6 @@ public class PasswordListJDBC {
         passwordList.setUserId(userId);
 
         return passwordList;
-        // passwordListRepository.save(passwordList);
     }
 
     protected String getEncryptPassword(String password, Date passwordUpdateTime){

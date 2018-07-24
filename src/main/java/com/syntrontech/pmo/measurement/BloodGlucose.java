@@ -108,7 +108,8 @@ public class BloodGlucose implements Measurement{
 				"subjectId=" + subjectId + ", " +
 				"unitId=" + unitId + ", " +
 				"createTime=" + createTime+ ", " +
-				"deviceId=" + deviceId + ", " +
+				"deviceId=" + deviceId +
+				", tenantId=" + tenantId +
 				"]";
 	}
 

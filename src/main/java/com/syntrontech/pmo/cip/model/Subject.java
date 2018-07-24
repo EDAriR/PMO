@@ -105,6 +105,7 @@ public class Subject {
 	@Override
 	public String toString() {
 		return "Subject:[" +
+				"sequence=" + sequence + ", " +
 				"id=" + id + ", " +
 				"userId=" + userId + ", " +
 				"unitId=" + unitId + ", " +
