@@ -666,7 +666,10 @@ public class Sync {
         abnormalBloodPressureLog.setCaseCreatorUserId("TTSHB");
         abnormalBloodPressureLog.setCaseCreatorUserName("TTSB");
         abnormalBloodPressureLog.setCaseDescription(su.getCaseNote());
-        abnormalBloodPressureLog.setChangeCaseStatusTime(su.getCaseUpdateDate());
+        if(su.getCaseUpdateDate() == null)
+            abnormalBloodPressureLog.setChangeCaseStatusTime(su.getCaseUpdateDate());
+        else
+            abnormalBloodPressureLog.setChangeCaseStatusTime(abnormalBloodPressure.getLastChangeCaseStatusTime());
         abnormalBloodPressureLog.setTenantId(abnormalBloodPressure.getTenantId());
 
         return abnormalBloodPressureLog;
