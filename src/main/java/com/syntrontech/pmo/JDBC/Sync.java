@@ -35,7 +35,7 @@ import java.util.stream.Collectors;
 
 public class Sync {
 
-        private static Logger logger = LoggerFactory.getLogger(Sync.class);
+    private static Logger logger = LoggerFactory.getLogger(Sync.class);
 
     public static void main(String[] args) {
 
@@ -75,72 +75,193 @@ public class Sync {
                 .map(id -> systemUserJDBC.getSystemUserById(id))
                 .collect(Collectors.toList());
 
-                for (SystemUser su:users){
+        for (SystemUser su : users) {
 
-                    logger.info("sync system user :" + su);
-                    if(su.getUserAccount() == null)
-                    {
-                        continue;
-                    }
+            logger.info("sync system user :" + su);
+            if (su.getUserAccount() == null) {
+                continue;
+            }
 
-                    // 新增 user
-                    User user = userJDBC.insertUser(syncSystemUserToUser(su, newrole));
-                    System.out.println("user in new db : " + user);
-                    // 密碼
-                    passwordListJDBC.insertPassword(user, su.getUserPassword());
-                    // 新增 subject
-                    Subject subject = subjectJDBC.insertSubject(syncSystemUserToSubject(su));
-                    // 新增 緊急聯絡人 Alert = Y 為接受緊急通知
-                    if (su.getAlert() == YN.Y && su.getAlertNotifierName() != null)
-                        emergencyContactJDBC.insertEmergencyContact(syncSystemUserToEmergencyContact(su));
+            // 新增 user
+            User user = userJDBC.insertUser(syncSystemUserToUser(su, newrole));
+            System.out.println("user in new db : " + user);
+            // 密碼
+            passwordListJDBC.insertPassword(user, su.getUserPassword());
+            // 新增 subject
+            Subject subject = subjectJDBC.insertSubject(syncSystemUserToSubject(su));
+            // 新增 緊急聯絡人 Alert = Y 為接受緊急通知
+            if (su.getAlert() == YN.Y && su.getAlertNotifierName() != null)
+                emergencyContactJDBC.insertEmergencyContact(syncSystemUserToEmergencyContact(su));
 
-                    // 取出該使用者所有血壓
-                    List<UserValueRecord> userValueRecords = userValueRecordJDBC.getOneBUserValueRecord(su.getUserId());
+            // 取出該使用者所有血壓
+            List<UserValueRecord> userValueRecords = userValueRecordJDBC.getOneBUserValueRecord(su.getUserId());
 
-                    // 同步至 新的血壓心跳 異常追蹤 異常追蹤log
-                    syncMeasurementBloodPressureHeartBeat(userValueRecords, userValueRecordMap, subject, su, userValueRecordJDBC);
+            // 同步至 新的血壓心跳 異常追蹤 異常追蹤log
+            syncMeasurementBloodPressureHeartBeat(userValueRecords, userValueRecordMap, subject, su, userValueRecordJDBC);
 
-                    // 同步新的血糖
-                    syncBloodGlucose(su, userValueRecordMap, subject, userValueRecordJDBC);
+            // 同步新的血糖
+            syncBloodGlucose(su, userValueRecordMap, subject, userValueRecordJDBC);
 
-                    // BodyInfo
-                    BodyInfoJDBC bodyInfoJDBC = new BodyInfoJDBC();
-                    List<UserValueRecord> userBodyInfoValueRecords = userValueRecordJDBC.getOneUserAValueRecord(su.getUserId());
-                    userBodyInfoValueRecords.forEach(record -> {
-                        System.out.println("sync bodyInfo ");
-                        System.out.println("record " + record);
-                        System.out.println("subject " + subject);
-                        BodyInfo bodyInfo = bodyInfoJDBC.insert(turnValueRecordToBodyInfo(record, subject, userValueRecordMap));
-                        // TODO update mapping
-                        userValueRecordJDBC.updateUserValueRecord(record.getBodyValueRecordId());
-                    });
+            // BodyInfo 更新至新的身高體重
+            BodyInfoJDBC bodyInfoJDBC = new BodyInfoJDBC();
+            List<UserValueRecord> userBodyInfoValueRecords = userValueRecordJDBC.getOneUserAValueRecord(su.getUserId());
+            userBodyInfoValueRecords.forEach(record -> {
+                System.out.println("sync bodyInfo ");
+                System.out.println("record " + record);
+                System.out.println("subject " + subject);
+                BodyInfo bodyInfo = bodyInfoJDBC.insert(turnValueRecordToBodyInfo(record, subject, userValueRecordMap));
+                // update mapping / records
+                updateUserValueRecordMapping(userValueRecordMap, record.getBodyValueRecordId());
+                userValueRecordJDBC.updateUserValueRecord(record.getBodyValueRecordId());
+            });
 
-                    // TODO Biochemistry
-                    BiochemistryJDBC biochemistryJDBC = new BiochemistryJDBC();
-                    List<UserValueRecord> userBiochemistryJRecords = userValueRecordJDBC.getOneUserOtherValueRecord(su.getUserId());
-                    userBiochemistryJRecords.forEach(record -> {
-                        Biochemistry biochemistry = biochemistryJDBC.insert(turnValueRecordToBiochemistry(record, subject, userValueRecordMap));
-                        // TODO update mapping
-                        userValueRecordJDBC.updateUserValueRecord(record.getBodyValueRecordId());
-                    });
+            // Biochemistry
+            syncBiochemistry(su, subject, userValueRecordMap, userValueRecordJDBC);
 
-                    // PMO USER RESULT
-                    pmoUserJDBC.insert(turnSystemUserToPmoUser(su));
-                    // update systemUser sync status
-                    systemUserJDBC.updateSystemUser(su.getUserId());
-                    // ↓  不需要
-                    // ALBUM_NAME	varchar(45) NULL
-                    // ALBUM_TYPE	int(11) unsigned [0]	使用者mapping的相本為 -> 1;picasa, 2:無名 .....
-                    // ADVERTISMENT_STATUS 好康報報對於使用者的狀態_1: 此使用者尚未收到"新廣告通知了"(包含修改),2:此使用者已經收到"新廣告通知了
-                    new UserRoleJDBC().updateUserRoles(su.getUserId());
 
-                }
+            // PMO USER RESULT
+            pmoUserJDBC.insert(turnSystemUserToPmoUser(su));
+            // update systemUser sync status
+            systemUserJDBC.updateSystemUser(su.getUserId());
+            // ↓  不需要
+            // ALBUM_NAME	varchar(45) NULL
+            // ALBUM_TYPE	int(11) unsigned [0]	使用者mapping的相本為 -> 1;picasa, 2:無名 .....
+            // ADVERTISMENT_STATUS 好康報報對於使用者的狀態_1: 此使用者尚未收到"新廣告通知了"(包含修改),2:此使用者已經收到"新廣告通知了
+            new UserRoleJDBC().updateUserRoles(su.getUserId());
+
+        }
+    }
+
+    private void syncBiochemistry(SystemUser su, Subject subject, Map<Integer, List<UserValueRecordMapping>> userValueRecordMap, UserValueRecordJDBC userValueRecordJDBC) {
+
+        BiochemistryJDBC biochemistryJDBC = new BiochemistryJDBC();
+        List<UserValueRecord> userBiochemistryJRecords = userValueRecordJDBC.getOneUserOtherValueRecord(su.getUserId());
+        userBiochemistryJRecords.forEach(record -> {
+
+            List<UserValueRecordMapping> values = userValueRecordMap.get(record.getBodyValueRecordId());
+
+            UserValueRecordMapping value = values.get(0);
+
+            Biochemistry biochemistry = new Biochemistry();
+
+            biochemistry.setValue(value.getRecordValue());
+            biochemistry.setGroupId(biochemistryJDBC.getGroupId());
+
+            biochemistry = setMapping(biochemistry, value);
+
+            // recordtime, latitude, longitude
+            biochemistry.setRecordTime(record.getRecordDate());
+            biochemistry.setLatitude("0");
+            biochemistry.setLongitude("0");
+
+            // status, createtime, createby, tenant_id, device_mac_address
+            // private MeasurementStatusType status;
+            biochemistry.setStatus(MeasurementStatusType.EXISTED);
+            biochemistry.setCreateTime(record.getUpdateDate());
+            biochemistry.setCreateBy("TTSB");
+            biochemistry.setTenantId("TTSB");
+
+            // subject_seq, subject_id, subject_name, subject_gender, subject_age, subject_user_id, subject_user_name,
+            biochemistry = setBiochemistrySubjectInfo(biochemistry, subject, record);
+
+            // rule_seq, rule_description, unit_id, unit_name, parent_unit_id, parent_unit_name, device_id
+            biochemistry = setBiochemistryUnitInfo(biochemistry, subject, record);
+
+            Biochemistry newBiochemistry = biochemistryJDBC.insert(biochemistry);
+            // TODO update mapping
+            userValueRecordJDBC.updateUserValueRecord(record.getBodyValueRecordId());
+    });
+}
+
+    private Biochemistry setBiochemistryUnitInfo(Biochemistry biochemistry, Subject subject, UserValueRecord record) {
+
+        UnitJDBC unitJDBC = new UnitJDBC();
+        Unit unit = unitJDBC.getUnitById(subject.getUnitId());
+        if (unit == null || unit.getId() == null) {
+            unit = getOtherUnit(unit);
+            biochemistry.setUnitId(record.getLocationId());
+            biochemistry.setUnitName(record.getLocationName());
+        }
+        biochemistry.setUnitId(unit.getId());
+        biochemistry.setUnitName(unit.getName());
+        biochemistry.setParentUnitId(unit.getParentId());
+        biochemistry.setParentUnitName(unit.getParentName());
+
+        return biochemistry;
+
+    }
+
+    private Biochemistry setBiochemistrySubjectInfo(Biochemistry biochemistry, Subject subject, UserValueRecord record) {
+
+        biochemistry.setSubjectSeq(subject.getSequence());
+        biochemistry.setSubjectId(subject.getId());
+        biochemistry.setSubjectName(subject.getName());
+        biochemistry.setSubjectGender(subject.getGender());
+        biochemistry.setSubjectAge(CalendarUtil.getAgeFromBirthDate(subject.getBirthday(), record.getRecordDate()));
+        biochemistry.setSubjectUserId(subject.getUserId());
+        biochemistry.setSubjectUserName(subject.getName());
+
+        return biochemistry;
+    }
+
+    private Biochemistry setMapping(Biochemistry biochemistry, UserValueRecordMapping value) {
+
+        // HbA1C 新 1 舊 13
+        // Triglyceride 新 2 舊 15
+        // Total_Cholesterol 新 3 舊 14
+        // HDL 新 4 舊 16
+        // LDL 新 5 舊 17
+        // GOT 新 6 舊 18
+        // GPT 新 7 舊 19
+        // Creatinine/RF 新 8 舊 20
+        int mappingTypeId = value.getMapping().getTypeId();
+        long mappingsSeq = 0L;
+
+        BiochemistryMappingsProject pro = null;
+        switch (mappingTypeId) {
+            case 13:
+                pro = BiochemistryMappingsProject.HbA1C;
+                mappingsSeq = 1L;
+                break;
+            case 15:
+                pro = BiochemistryMappingsProject.Triglyceride;
+                mappingsSeq = 2L;
+                break;
+            case 14:
+                mappingsSeq = 3L;
+                pro = BiochemistryMappingsProject.Total_Cholesterol;
+                break;
+            case 16:
+                mappingsSeq = 4L;
+                pro = BiochemistryMappingsProject.HDL_Cholesterol;
+                break;
+            case 17:
+                mappingsSeq = 5L;
+                pro = BiochemistryMappingsProject.LDL_Cholesterol;
+                break;
+            case 18:
+                mappingsSeq = 6L;
+                pro = BiochemistryMappingsProject.GOT;
+                break;
+            case 19:
+                mappingsSeq = 7L;
+                pro = BiochemistryMappingsProject.GPT;
+                break;
+            case 20:
+                mappingsSeq = 8L;
+                pro = BiochemistryMappingsProject.Creatinine;
+                break;
+        }
+        biochemistry.setMappingsSeq(mappingsSeq);
+        biochemistry.setMappingsProject(pro);
+
+        return biochemistry;
     }
 
     private Biochemistry turnValueRecordToBiochemistry(UserValueRecord record, Subject subject, Map<Integer, List<UserValueRecordMapping>> userValueRecordMap) {
 
         List<UserValueRecordMapping> values = userValueRecordMap.get(record.getBodyValueRecordId());
-        if(values.size() == 0)
+        if (values.size() == 0)
             return null;
 
         UserValueRecordMapping value = values.get(0);
@@ -165,7 +286,7 @@ public class Sync {
         long mappingsSeq = 0L;
 
         BiochemistryMappingsProject pro = null;
-        switch (mappingTypeId){
+        switch (mappingTypeId) {
             case 13:
                 pro = BiochemistryMappingsProject.HbA1C;
                 mappingsSeq = 1L;
@@ -227,6 +348,13 @@ public class Sync {
         // rule_seq, rule_description, unit_id, unit_name, parent_unit_id, parent_unit_name, device_id
         UnitJDBC unitJDBC = new UnitJDBC();
         Unit unit = unitJDBC.getUnitById(subject.getUnitId());
+        if (unit == null || unit.getId() == null) {
+            unit = getOtherUnit(unit);
+            biochemistry.setUnitId(record.getLocationId());
+            biochemistry.setUnitName(record.getLocationName());
+        }
+        biochemistry.setUnitId(unit.getId());
+        biochemistry.setUnitName(unit.getName());
         biochemistry.setUnitId(unit.getId());
         biochemistry.setUnitName(unit.getName());
         biochemistry.setParentUnitId(unit.getParentId());
@@ -239,7 +367,7 @@ public class Sync {
     private BodyInfo turnValueRecordToBodyInfo(UserValueRecord record, Subject subject, Map<Integer, List<UserValueRecordMapping>> userValueRecordMap) {
 
         List<UserValueRecordMapping> values = userValueRecordMap.get(record.getBodyValueRecordId());
-        if(values.size() == 0)
+        if (values.size() == 0)
             return null;
 
         Map<Integer, List<UserValueRecordMapping>> value = values.stream().collect(Collectors.groupingBy(v -> v.getMapping().getTypeId()));
@@ -253,7 +381,7 @@ public class Sync {
         Double bmi = null;
         try {
             bmi = getRecordValue(value, 5);
-        }catch (NumberFormatException e){
+        } catch (NumberFormatException e) {
 
         }
         bodyInfo.setBmi(bmi);
@@ -284,7 +412,7 @@ public class Sync {
         // rule_seq, rule_description, unit_id, unit_name, parent_unit_id, parent_unit_name, device_id
         UnitJDBC unitJDBC = new UnitJDBC();
         Unit unit = unitJDBC.getUnitById(subject.getUnitId());
-        if(unit == null || unit.getId() == null){
+        if (unit == null || unit.getId() == null) {
             unit = getOtherUnit(unit);
             bodyInfo.setUnitId(record.getLocationId());
             bodyInfo.setUnitName(record.getLocationName());
@@ -294,7 +422,7 @@ public class Sync {
         bodyInfo.setParentUnitId(unit.getParentId());
         bodyInfo.setParentUnitName(unit.getParentName());
 
-        return bodyInfo; 
+        return bodyInfo;
     }
 
     private Double getRecordValue(Map<Integer, List<UserValueRecordMapping>> value, int type) {
@@ -302,16 +430,16 @@ public class Sync {
         List<UserValueRecordMapping> record = value.get(type);
 
         try {
-            if(record != null || record.size() > 0 ){
+            if (record != null || record.size() > 0) {
                 String v = record.get(0).getRecordValue();
-                if(v != null)
+                if (v != null)
                     return Double.valueOf(v);
                 else
                     return null;
             }
-        }catch (NumberFormatException e){
+        } catch (NumberFormatException e) {
             e.printStackTrace();
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
@@ -332,6 +460,7 @@ public class Sync {
             System.out.println("subject " + subject);
             BloodGlucose bloodGlucose = bloodGlucoseJDBC.insert(turnValueRecordToBloodGlucose(bg, subject, userValueRecordMap));
             userValueRecordJDBC.updateUserValueRecord(bg.getBodyValueRecordId());
+            updateUserValueRecordMapping(userValueRecordMap, bg.getBodyValueRecordId());
 
             // PMO_result
             System.out.println(bloodGlucose);
@@ -343,16 +472,37 @@ public class Sync {
     private BloodGlucose turnValueRecordToBloodGlucose(UserValueRecord bg, Subject subject, Map<Integer, List<UserValueRecordMapping>> userValueRecordMap) {
 
         List<UserValueRecordMapping> values = userValueRecordMap.get(bg.getBodyValueRecordId());
-        if(values.size() == 0)
+        GlucoseType type = GlucoseType.RANDOM_BLOOD_GLUCOSE;
+        Integer glucoseValue = 0;
+        if (values.size() == 0)
             return null;
+
+        if(values.size() > 1){
+            for(UserValueRecordMapping v:values){
+                if(v.getMapping().getTypeId() == 2033){
+                    String value = v.getRecordValue();
+                    if(value.equals("0"))
+                        type = GlucoseType.FASTING_BLOOD_GLUCOSE;
+                    if(value.equals("1"))
+                        type = GlucoseType.FASTING_BLOOD_GLUCOSE;
+                }else if(v.getMapping().getTypeId() == 136){
+                    try {
+                        glucoseValue = Integer.valueOf(v.getRecordValue());
+                    }catch (NumberFormatException e){
+                        logger.warn("turnValueRecordToBloodGlucose : " + e.getMessage());
+                    }
+                }
+
+            }
+        }
 
         UserValueRecordMapping value = values.get(0);
 
-        BloodGlucose testBloodGlucose= new BloodGlucose();
+        BloodGlucose testBloodGlucose = new BloodGlucose();
 
-        testBloodGlucose.setGlucose(Integer.valueOf(value.getRecordValue()));
+        testBloodGlucose.setGlucose(glucoseValue);
         // TODO 舊的沒有量測時間
-        testBloodGlucose.setGlucoseType(GlucoseType.RANDOM_BLOOD_GLUCOSE);
+        testBloodGlucose.setGlucoseType(type);
 
         // recordtime, latitude, longitude
         testBloodGlucose.setRecordTime(bg.getRecordDate());
@@ -380,7 +530,7 @@ public class Sync {
         // rule_seq, rule_description, unit_id, unit_name, parent_unit_id, parent_unit_name, device_id
         UnitJDBC unitJDBC = new UnitJDBC();
         Unit unit = unitJDBC.getUnitById(subject.getUnitId());
-        if(unit == null || unit.getId() == null){
+        if (unit == null || unit.getId() == null) {
             unit = getOtherUnit(unit);
             testBloodGlucose.setUnitId(bg.getLocationId());
             testBloodGlucose.setUnitName(bg.getLocationName());
@@ -405,7 +555,7 @@ public class Sync {
         // 根據使用者身上異常追蹤狀態 例如為 2就醫確診異常
         // 重算後新增的全部異常log 處理狀態為舊資料狀態 2就醫確診異常
         List<BloodPressureHeartBeat> bloodPressureHeartBeats = new ArrayList<>();
-        userValueRecords.stream().map(old -> {
+        userValueRecords.forEach(old -> {
 
             BloodPressureHeartBeat bloodPressureHeartBeat = syncBloodPressureHeartBeat(userValueRecordMap, old, subject);
 
@@ -431,14 +581,22 @@ public class Sync {
 
             }
 
+            pmoResultJDBC.insert(turnOldRecordsToPmoResult(old, bloodPressureHeartBeat.getSubjectId(), bloodPressureHeartBeat.getSequence(), MeasurementPMOType.BloodPressure));
 
-            pmoResultJDBC.insert(turnOldRecordsToPmoResult(old, bloodPressureHeartBeat.getSubjectId(), bloodPressureHeartBeat.getSequence(), MeasurementPMOType.BloodPressure ));
+            updateUserValueRecordMapping(userValueRecordMap, old.getBodyValueRecordId());
 
             bloodPressureHeartBeats.add(bloodPressureHeartBeat);
 
-            return bloodPressureHeartBeat;
         });
     }
+
+    private void updateUserValueRecordMapping(Map<Integer, List<UserValueRecordMapping>> userValueRecordMap, int bodyValueRecordId) {
+
+        List<UserValueRecordMapping> values = userValueRecordMap.get(bodyValueRecordId);
+        values.forEach(v -> new UserValueRecordMappingJDBC().updateUserValueRecordMapping(v.getUserValueRecordMappingId()));
+
+    }
+
 
     private PmoUser turnSystemUserToPmoUser(SystemUser su) {
         PmoUser pmoUser = new PmoUser();
@@ -664,6 +822,11 @@ public class Sync {
         // rule_seq, rule_description, unit_id, unit_name, parent_unit_id, parent_unit_name, device_id
         UnitJDBC unitJDBC = new UnitJDBC();
         Unit unit = unitJDBC.getUnitById(subject.getUnitId());
+        if (unit == null || unit.getId() == null) {
+            unit = getOtherUnit(unit);
+            bloodPressureHeartBeat.setUnitId(old.getLocationId());
+            bloodPressureHeartBeat.setUnitName(old.getLocationName());
+        }
         bloodPressureHeartBeat.setUnitId(unit.getId());
         bloodPressureHeartBeat.setUnitName(unit.getName());
         bloodPressureHeartBeat.setParentUnitId(unit.getParentId());
