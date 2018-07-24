@@ -18,7 +18,6 @@ public class UserValueRecordMappingJDBC {
 
     public static void main(String[] args) throws SQLException {
 
-//        Connection conn = new Syncare1_GET_CONNECTION().getConn();
         UserValueRecordMappingJDBC s = new UserValueRecordMappingJDBC();
 
         Date star_time = new Date();
@@ -66,8 +65,6 @@ public class UserValueRecordMappingJDBC {
                     userValueRecord.setBodyValueRecordId(rs.getInt("USER_VALUE_RECORD_ID"));
                     userValueRecordMapping.setUserValueRecord(userValueRecord);
 
-
-                    System.out.println(userValueRecordMapping);
                     int bodyValueRecordId = userValueRecordMapping.getUserValueRecord().getBodyValueRecordId();
 
                     List<UserValueRecordMapping> userValueRecordMappinglist = map.get(bodyValueRecordId);

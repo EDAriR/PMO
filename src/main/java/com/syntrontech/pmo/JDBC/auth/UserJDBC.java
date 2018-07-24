@@ -13,7 +13,7 @@ import java.util.Date;
 
 public class UserJDBC {
 
-//    private static Logger logger = LoggerFactory.getLogger(Auth_GET_CONNECTION.class);
+    private static Logger logger = LoggerFactory.getLogger(Auth_GET_CONNECTION.class);
 
     private static final String GET_ALL_STMT = "SELECT * FROM users WHERE tenant_id='TTSHB' ORDER BY sequence;";
     private static final String INSERT_STMT = "INSERT INTO users " +
@@ -28,7 +28,7 @@ public class UserJDBC {
             "(account, user_id, map_to_users_field)" +
             "VALUES (?, ?, ?);";
 
-    private static final String GET_ONE = "SELECT * FROM unit WHERE id=? and tenant_id='TTSHB'" +
+    private static final String GET_ONE = "SELECT * FROM users WHERE id=? and tenant_id='TTSHB'" +
             " AND status='ENABLED';";
 // sequence,
 //    sequence, id, name, tenant_id, source, meta
@@ -116,8 +116,8 @@ public class UserJDBC {
             }
 
         } catch (SQLException e) {
-//            logger.debug("getUserById fail =>" + conn + " || " + pstmt + "||" + user);
-            System.out.println(Calendar.getInstance().getTime() + "  UserJDBC:" + "getUserById fail =>" + conn + " || " + pstmt + "||" + user);
+            logger.debug("getUserById fail =>" + conn + " || " + pstmt + "||" + user);
+//            System.out.println(Calendar.getInstance().getTime() + "  UserJDBC:" + "getUserById fail =>" + conn + " || " + pstmt + "||" + user);
         } finally {
 
             try {
@@ -196,14 +196,15 @@ public class UserJDBC {
             pstmt.setString(16, user.getStatus().toString());
 
 //            logger.info(pstmt.toString());
-            System.out.println(Calendar.getInstance().getTime() + "  UserJDBC INSERT:" +pstmt.toString());
+            logger.info("  UserJDBC INSERT:" +pstmt.toString());
             pstmt.executeUpdate();
 
             pstmt = conn.prepareStatement(INSERT_ACCOUNT_STMT);
             pstmt.setString(1, user.getId());
             pstmt.setString(2, user.getId());
             pstmt.setString(3, "ID");
-            System.out.println(Calendar.getInstance().getTime() + "  UserJDBC INSERT ACCOUNT:" +pstmt.toString());
+
+            logger.info("  UserJDBC INSERT ACCOUNT:" +pstmt.toString());
             pstmt.executeUpdate();
 
         } catch (SQLException e) {

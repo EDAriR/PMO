@@ -54,8 +54,14 @@ public BodyInfo insert(BodyInfo bodyInfo){
         // systolic_pressure, diastolic_pressure, heart_rate
         pstmt.setDouble(1, bodyInfo.getHeight());
         pstmt.setDouble(2, bodyInfo.getWeight());
-        pstmt.setDouble(3, bodyInfo.getBmi());
-        pstmt.setDouble(4, bodyInfo.getBfp());
+        if(bodyInfo.getBmi() != null)
+            pstmt.setDouble(3, bodyInfo.getBmi());
+        else
+            pstmt.setNull(3, Types.DECIMAL);
+        if (bodyInfo.getBfp() != null)
+            pstmt.setDouble(4, bodyInfo.getBfp());
+        else
+            pstmt.setNull(4, Types.DECIMAL);
 
         // recordtime, latitude, longitude
         pstmt.setTimestamp(5, new Timestamp(bodyInfo.getRecordTime().getTime()));
@@ -79,8 +85,16 @@ public BodyInfo insert(BodyInfo bodyInfo){
         pstmt.setString(19, bodyInfo.getSubjectUserName());
 
         // rule_seq, rule_description, unit_id, unit_name, parent_unit_id, parent_unit_name, device_id
-        pstmt.setLong(20, bodyInfo.getRuleSeq());
-        pstmt.setString(21, bodyInfo.getRuleDescription());
+
+        if(bodyInfo.getRuleSeq() != null)
+            pstmt.setLong(20, bodyInfo.getRuleSeq());
+        else
+            pstmt.setNull(20, Types.BIGINT);
+
+        if(bodyInfo.getRuleDescription() != null)
+            pstmt.setString(21, bodyInfo.getRuleDescription());
+        else
+            pstmt.setNull(21, Types.VARCHAR);
         pstmt.setString(22, bodyInfo.getUnitId());
         pstmt.setString(23, bodyInfo.getUnitName());
         pstmt.setString(24, bodyInfo.getParentUnitId());

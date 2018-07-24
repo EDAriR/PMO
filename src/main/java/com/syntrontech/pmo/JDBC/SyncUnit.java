@@ -52,7 +52,7 @@ public class SyncUnit {
         });
 
         logger.info("sync unit : " + locations.size() + " successful");
-        System.out.println("sync unit : " + locations.size() + " successful");
+//        System.out.println("sync unit : " + locations.size() + " successful");
 
     }
 
@@ -73,7 +73,7 @@ public class SyncUnit {
         }
 
         unitMeta.setUnitStatus(ModelMgmtStatus.ENABLED); // ModelMgmtStatus
-        unitMeta.setTenantId("DEFAULT_TENANT");
+        unitMeta.setTenantId("TTSHB");
 
         if (unitId.length() > 6 )
             unitMeta.setCategory(getCategory(unitId.substring(0, 7)));

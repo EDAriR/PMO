@@ -86,8 +86,8 @@ public class SubjectJDBC {
                     subject.setHomePhone(rs.getString("home_phone"));
                     subject.setAddress(rs.getString("address"));
 
-                    EthnicityType ethnicityType = rs.getString("gender") != null ? EthnicityType.valueOf(rs.getString("gender")) : null;
-                    subject.setEthnicity(ethnicityType);
+//                    EthnicityType ethnicityType = rs.getString("gender") != null ? EthnicityType.valueOf(rs.getString("gender")) : null;
+//                    subject.setEthnicity(ethnicityType);
 
 //                    personal_history, family_history, smoke, drink
 

@@ -14,7 +14,7 @@ import java.util.List;
 
 public class BloodGlucoseJDBC {
 
-//    private static Logger logger = LoggerFactory.getLogger(BloodGlucoseJDBC.class);
+    private static Logger logger = LoggerFactory.getLogger(BloodGlucoseJDBC.class);
 
     private static final String GET_ALL_STMT = "SELECT * FROM blood_glucose ORDER BY sequence;";
     private static final String INSERT_STMT = "INSERT INTO blood_glucose " +
@@ -128,7 +128,8 @@ public class BloodGlucoseJDBC {
             pstmt.setString(23, bloodGlucose.getParentUnitName());
             pstmt.setString(24, bloodGlucose.getDeviceId());
 
-            System.out.println("sql => " + pstmt);
+//            System.out.println("sql => " + pstmt);
+            logger.info("sql => " + pstmt);
             pstmt.executeUpdate();
 //            logger.info("create bloodGlucose successful => " + bloodGlucose);
 
@@ -141,7 +142,7 @@ public class BloodGlucoseJDBC {
             }
 
         } catch (SQLException e) {
-//            logger.debug("create bloodGlucose fail =>" + bloodGlucose);
+            logger.warn("create bloodGlucose fail =>" + bloodGlucose);
 
             e.printStackTrace();
         } finally {

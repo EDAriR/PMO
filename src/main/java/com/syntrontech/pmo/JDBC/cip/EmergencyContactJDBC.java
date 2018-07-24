@@ -17,7 +17,7 @@ import java.util.List;
 
 public class EmergencyContactJDBC {
 
-//    private static Logger logger = LoggerFactory.getLogger(EmergencyContactJDBC.class);
+    private static Logger logger = LoggerFactory.getLogger(EmergencyContactJDBC.class);
 
     private static final String GET_ALL_STMT = "select * from emergency_contacts order by sequence;";
     private static final String INSERT_STMT = "INSERT INTO emergency_contacts " +
@@ -58,8 +58,8 @@ public class EmergencyContactJDBC {
             pstmt.executeUpdate();
 
         } catch (SQLException e) {
-//            logger.debug("insertEmergencyContact fail" + conn + " || " + pstmt);
-            System.out.println(Calendar.getInstance().getTime() + "  EmergencyContactJDBC:" + "insertEmergencyContact fail" + conn + " || " + pstmt);
+            logger.debug("insertEmergencyContact fail sql \n" +  pstmt);
+//            System.out.println(Calendar.getInstance().getTime() + "  EmergencyContactJDBC:" + "insertEmergencyContact fail" + conn + " || " + pstmt);
         } finally {
 
             try {

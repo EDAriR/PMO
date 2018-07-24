@@ -99,7 +99,19 @@ public class BloodGlucose implements Measurement{
 
     @Column(name = "device_id")
     private String deviceId;
-    
+
+	@Override
+	public String toString() {
+		return "BloodGlucose:[" +
+				"sequence=" + sequence + ", " +
+				"glucose=" + glucose + ", " +
+				"subjectId=" + subjectId + ", " +
+				"unitId=" + unitId + ", " +
+				"createTime=" + createTime+ ", " +
+				"deviceId=" + deviceId + ", " +
+				"]";
+	}
+
 	public Long getSequence() {
 		return sequence;
 	}

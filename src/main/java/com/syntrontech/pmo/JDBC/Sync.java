@@ -80,7 +80,7 @@ public class Sync {
                     // 新增 subject
                     Subject subject = subjectJDBC.insertSubject(syncSystemUserToSubject(su));
                     // 新增 緊急聯絡人 Alert = Y 為接受緊急通知
-                    if (su.getAlert() == YN.Y)
+                    if (su.getAlert() == YN.Y && su.getAlertNotifierName() != null)
                         emergencyContactJDBC.insertEmergencyContact(syncSystemUserToEmergencyContact(su));
 
                     // 取出該使用者所有血壓
@@ -276,7 +276,11 @@ public class Sync {
         List<UserValueRecordMapping> record = value.get(type);
 
         if(record != null || record.size() > 0 ){
-            return Double.valueOf(record.get(0).getRecordValue());
+            String v = record.get(0).getRecordValue();
+            if(v != null)
+                return Double.valueOf(v);
+            else
+                return null;
         }
         return null;
     }
@@ -339,8 +343,11 @@ public class Sync {
         // rule_seq, rule_description, unit_id, unit_name, parent_unit_id, parent_unit_name, device_id
         UnitJDBC unitJDBC = new UnitJDBC();
         Unit unit = unitJDBC.getUnitById(subject.getUnitId());
-        testBloodGlucose.setUnitId(unit.getId());
-        testBloodGlucose.setUnitName(unit.getName());
+        if(unit == null || unit.getId() == null){
+            unit = getOtherUnit(unit);
+            testBloodGlucose.setUnitId(bg.getLocationId());
+            testBloodGlucose.setUnitName(bg.getLocationName());
+        }
         testBloodGlucose.setParentUnitId(unit.getParentId());
         testBloodGlucose.setParentUnitName(unit.getParentName());
 
@@ -392,7 +399,7 @@ public class Sync {
 
             bloodPressureHeartBeats.add(bloodPressureHeartBeat);
 
-            return null;
+            return bloodPressureHeartBeat;
         });
     }
 
@@ -636,6 +643,7 @@ public class Sync {
         emergencyContact.setName(su.getAlertNotifierName());
         emergencyContact.setPhone(su.getAlertNotifierMobilePhone());
         emergencyContact.setEmail(su.getAlertNotifierEmail());
+        emergencyContact.setStatus(ModelStatus.ENABLED);
 
         return emergencyContact;
     }
@@ -814,4 +822,13 @@ public class Sync {
         return subject;
     }
 
+    public Unit getOtherUnit(Unit unit) {
+
+        unit.setId("100140102310");
+        unit.setName("其他");
+        unit.setTenantId("TTSHB");
+        unit.setParentId("1001401");
+        unit.setParentName("台東市");
+        return unit;
+    }
 }

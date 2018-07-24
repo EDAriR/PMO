@@ -13,7 +13,7 @@ import java.util.Date;
 
 public class UnitJDBC {
 
-//    private static Logger logger = LoggerFactory.getLogger(Auth_GET_CONNECTION.class);
+    private static Logger logger = LoggerFactory.getLogger(Auth_GET_CONNECTION.class);
 
     private static final String GET_ALL_STMT = "SELECT * FROM unit WHERE tenant_id='TTSHB' ORDER BY sequence;";
     private static final String INSERT_STMT = "INSERT INTO unit " +
@@ -57,8 +57,8 @@ public class UnitJDBC {
             pstmt = conn.prepareStatement(GET_ONE);
 
             pstmt.setString(1, id);
-//            logger.info(pstmt.toString());
-            System.out.println(Calendar.getInstance().getTime() +" UnitJDBC: " + pstmt.toString());
+            logger.info(pstmt.toString());
+//            System.out.println(Calendar.getInstance().getTime() +" UnitJDBC: " + pstmt.toString());
 
             ResultSet rs = pstmt.executeQuery();
 
@@ -73,8 +73,8 @@ public class UnitJDBC {
             }
 
         } catch (SQLException e) {
-//            logger.debug("insertUnit fail " + pstmt + "||" + conn);
-            System.out.println(Calendar.getInstance().getTime() +" UnitJDBC: " + "insertUnit fail " + pstmt + "||" + conn);
+            logger.debug("getUnitById fail " + pstmt);
+//            System.out.println(Calendar.getInstance().getTime() +" UnitJDBC: " + "insertUnit fail " + pstmt + "||" + conn);
         } finally {
 
             try {
@@ -88,8 +88,8 @@ public class UnitJDBC {
             }
 
         }
-//        logger.info("getUnitById successful ==> " + unit);
-        System.out.println(Calendar.getInstance().getTime() +" UnitJDBC: " + "getUnitById successful ==> " + unit);
+        logger.info("getUnitById successful => " + unit);
+//        System.out.println(Calendar.getInstance().getTime() +" UnitJDBC: " + "getUnitById successful ==> " + unit);
         return unit;
     }
 
