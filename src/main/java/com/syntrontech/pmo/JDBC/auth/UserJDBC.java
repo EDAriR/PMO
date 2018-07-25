@@ -27,10 +27,13 @@ public class UserJDBC {
 
     private static final String INSERT_ACCOUNT_STMT = "INSERT INTO account_list " +
             "(account, user_id, map_to_users_field)" +
-            "VALUES (?, ?, ?);";
+            "VALUES (?, ?, 'CARDS');";
 
     private static final String GET_ONE = "SELECT * FROM users WHERE id=? and tenant_id='TTSHB'" +
             " AND status='ENABLED';";
+
+    private static final String GET_ONE_ACCOUNT = "SELECT * FROM account_list WHERE user_id=? AND account=?";
+
 // sequence,
 //    sequence, id, name, tenant_id, source, meta
 //    unit_ids, role_ids, emails, mobilephones, cards, permission_ids
@@ -84,22 +87,22 @@ public class UserJDBC {
 
                     // unit_ids, role_ids, emails, mobilephones, cards, permission_ids
 
-                    String[] unit_ids = (String[])rs.getArray("unit_ids").getArray();
+                    String[] unit_ids = (String[]) rs.getArray("unit_ids").getArray();
                     user.setUnitIds(unit_ids);
 
-                    String[] roleIds = (String[])rs.getArray("role_ids").getArray();
+                    String[] roleIds = (String[]) rs.getArray("role_ids").getArray();
                     user.setRoleIds(roleIds);
 
-                    String[] emails = (String[])rs.getArray("emails").getArray();
+                    String[] emails = (String[]) rs.getArray("emails").getArray();
                     user.setEmails(emails);
 
-                    String[] mobilePhones = (String[])rs.getArray("mobilephones").getArray();
+                    String[] mobilePhones = (String[]) rs.getArray("mobilephones").getArray();
                     user.setMobilePhones(mobilePhones);
 
-                    String[] cards = (String[])rs.getArray("mobilephones").getArray();
+                    String[] cards = (String[]) rs.getArray("mobilephones").getArray();
                     user.setCards(cards);
 
-                    String[] permissionIds = (String[])rs.getArray("permission_ids").getArray();
+                    String[] permissionIds = (String[]) rs.getArray("permission_ids").getArray();
                     // TODO
                     user.setPermissionIds(permissionIds);
 
@@ -111,13 +114,13 @@ public class UserJDBC {
 
                     ModelUserStatus modelUserStatus = rs.getString("status") != null ? ModelUserStatus.valueOf(rs.getString("status")) : null;
                     user.setStatus(modelUserStatus);
-                    
-                    
+
+
                 }
             }
 
         } catch (SQLException e) {
-            logger.warn("getUserById fail \n"+ pstmt + "\n user =>" + user);
+            logger.warn("getUserById fail \n" + pstmt + "\n user =>" + user);
 //            System.out.println(Calendar.getInstance().getTime() + "  UserJDBC:" + "getUserById fail =>" + conn + " || " + pstmt + "||" + user);
             e.printStackTrace();
         } finally {
@@ -134,17 +137,17 @@ public class UserJDBC {
 
         }
 //        logger.info("get user by id successful =>" + user);
-        System.out.println(Calendar.getInstance().getTime() + "  UserJDBC:" +"get user by id successful =>" + user);
+        System.out.println(Calendar.getInstance().getTime() + "  UserJDBC:" + "get user by id successful =>" + user);
         return user;
     }
 
-    public User insertUser(User user){
+    public User insertUser(User user) {
 
         Connection conn = new Auth_GET_CONNECTION().getConn();
-        PreparedStatement pstmt =null;
+        PreparedStatement pstmt = null;
 
         User old = getUserById(user.getId());
-        if (old != null){
+        if (old != null) {
             if (old.getId() != null && !old.getId().equals(""))
                 return old;
         }
@@ -162,32 +165,32 @@ public class UserJDBC {
 
             // unit_ids, role_ids, emails, mobilephones, cards, permission_ids
             String[] unitIds = {};
-            unitIds = user.getUnitIds() != null ? user.getUnitIds(): unitIds;
+            unitIds = user.getUnitIds() != null ? user.getUnitIds() : unitIds;
             Array unit_ids = conn.createArrayOf("varchar", unitIds);
             pstmt.setArray(6, unit_ids);
 
             String[] roleIds = {};
-            roleIds = user.getRoleIds() != null ? user.getRoleIds(): roleIds;
+            roleIds = user.getRoleIds() != null ? user.getRoleIds() : roleIds;
             Array role_ids = conn.createArrayOf("varchar", roleIds);
             pstmt.setArray(7, role_ids);
 
             String[] emails = {};
-            emails = user.getEmails() != null ? user.getEmails(): emails;
+            emails = user.getEmails() != null ? user.getEmails() : emails;
             Array emailsArray = conn.createArrayOf("varchar", emails);
             pstmt.setArray(8, emailsArray);
 
             String[] mobilePhones = {};
-            mobilePhones = user.getMobilePhones() != null ? user.getMobilePhones(): mobilePhones;
+            mobilePhones = user.getMobilePhones() != null ? user.getMobilePhones() : mobilePhones;
             Array mobilephonesArray = conn.createArrayOf("varchar", mobilePhones);
             pstmt.setArray(9, mobilephonesArray);
 
             String[] cards = {};
-            cards = user.getCards() != null ? user.getCards(): cards;
+            cards = user.getCards() != null ? user.getCards() : cards;
             Array cardsArray = conn.createArrayOf("varchar", cards);
             pstmt.setArray(10, cardsArray);
 
             String[] permissionIds = {};
-            permissionIds = user.getPermissionIds() != null ? user.getPermissionIds(): permissionIds;
+            permissionIds = user.getPermissionIds() != null ? user.getPermissionIds() : permissionIds;
             Array permission_ids = conn.createArrayOf("varchar", permissionIds);
             pstmt.setArray(11, permission_ids);
 
@@ -198,7 +201,7 @@ public class UserJDBC {
             pstmt.setString(16, user.getStatus().toString());
 
 //            logger.info(pstmt.toString());
-            logger.info("  UserJDBC INSERT:" +pstmt.toString());
+            logger.info("  UserJDBC INSERT:" + pstmt.toString());
             pstmt.executeUpdate();
 
             pstmt = conn.prepareStatement(INSERT_ACCOUNT_STMT);
@@ -206,7 +209,7 @@ public class UserJDBC {
             pstmt.setString(2, user.getId());
             pstmt.setString(3, "ID");
 
-            logger.info("  UserJDBC INSERT ACCOUNT:" +pstmt.toString());
+            logger.info("  UserJDBC INSERT ACCOUNT:" + pstmt.toString());
             pstmt.executeUpdate();
 
         } catch (SQLException e) {
@@ -217,18 +220,18 @@ public class UserJDBC {
         } finally {
 
             try {
-                if(pstmt != null)
+                if (pstmt != null)
                     pstmt.close();
                 conn.close();
             } catch (SQLException e) {
 //                logger.info("conn or pstmt close fail" + conn + " || " + pstmt);
-                System.out.println(Calendar.getInstance().getTime() + "  UserJDBC:" +"conn or pstmt close fail" + conn + " || " + pstmt);
+                System.out.println(Calendar.getInstance().getTime() + "  UserJDBC:" + "conn or pstmt close fail" + conn + " || " + pstmt);
                 e.printStackTrace();
             }
 
         }
 //        logger.info("create user successful ==> " + user);
-        System.out.println(Calendar.getInstance().getTime() + "  UserJDBC:" +"create user successful ==> " + user);
+        System.out.println(Calendar.getInstance().getTime() + "  UserJDBC:" + "create user successful ==> " + user);
         return user;
     }
 
@@ -269,7 +272,7 @@ public class UserJDBC {
         return user;
     }
 
-    List<User> getAllUsers(){
+    List<User> getAllUsers() {
 
         Connection conn = new Auth_GET_CONNECTION().getConn();
         List<User> users = new ArrayList<>();
@@ -297,22 +300,22 @@ public class UserJDBC {
 
                     // unit_ids, role_ids, emails, mobilephones, cards, permission_ids
 
-                    String[] unit_ids = (String[])rs.getArray("unit_ids").getArray();
+                    String[] unit_ids = (String[]) rs.getArray("unit_ids").getArray();
                     user.setUnitIds(unit_ids);
 
-                    String[] roleIds = (String[])rs.getArray("role_ids").getArray();
+                    String[] roleIds = (String[]) rs.getArray("role_ids").getArray();
                     user.setRoleIds(roleIds);
 
-                    String[] emails = (String[])rs.getArray("emails").getArray();
+                    String[] emails = (String[]) rs.getArray("emails").getArray();
                     user.setEmails(emails);
 
-                    String[] mobilePhones = (String[])rs.getArray("mobilephones").getArray();
+                    String[] mobilePhones = (String[]) rs.getArray("mobilephones").getArray();
                     user.setMobilePhones(mobilePhones);
 
-                    String[] cards = (String[])rs.getArray("mobilephones").getArray();
+                    String[] cards = (String[]) rs.getArray("mobilephones").getArray();
                     user.setCards(cards);
 
-                    String[] permissionIds = (String[])rs.getArray("permission_ids").getArray();
+                    String[] permissionIds = (String[]) rs.getArray("permission_ids").getArray();
                     // TODO
                     user.setPermissionIds(permissionIds);
 
@@ -332,11 +335,11 @@ public class UserJDBC {
         } finally {
 
             try {
-                if(pstmt != null)
+                if (pstmt != null)
                     pstmt.close();
                 conn.close();
             } catch (SQLException e) {
-                System.out.println(Calendar.getInstance().getTime() + "  UserJDBC:" +"conn or pstmt close fail" + conn + " || " + pstmt);
+                System.out.println(Calendar.getInstance().getTime() + "  UserJDBC:" + "conn or pstmt close fail" + conn + " || " + pstmt);
                 e.printStackTrace();
             }
 
@@ -345,21 +348,70 @@ public class UserJDBC {
         return users;
     }
 
-    public void InsertAccountList(String account, String userId) throws SQLException {
+    public AccountList InsertAccountList(String userId, String account) throws SQLException {
 
-        //TODO
+        AccountList accountList = getAccountListByUserId(userId, account);
+
+        if (accountList != null || accountList.getUserId() != null || accountList.getAccount() != null)
+            return accountList;
+
         Connection conn = new Auth_GET_CONNECTION().getConn();
-        List<User> users = new ArrayList<>();
 
         PreparedStatement pstmt = null;
-        ResultSet rs;
 
-        pstmt = conn.prepareStatement(INSERT_ACCOUNT_STMT);
-        pstmt.setString(1, account);
-        pstmt.setString(2, userId);
-        pstmt.setString(3, "CARD");
+        try {
+            pstmt = conn.prepareStatement(INSERT_ACCOUNT_STMT);
+            pstmt.setString(1, account);
+            pstmt.setString(2, userId);
 
-        logger.info("  UserJDBC INSERT ACCOUNT:" +pstmt.toString());
-        pstmt.executeUpdate();
+            logger.info("INSERT ACCOUNT:" + pstmt.toString());
+            pstmt.executeUpdate();
+
+            accountList.setUserId(userId);
+            accountList.setAccount(account);
+        } catch (SQLException e) {
+            logger.warn("Insert  AccountList fail");
+            throw e;
+        }
+
+        return accountList;
+    }
+
+
+    private AccountList getAccountListByUserId(String id, String account) throws SQLException {
+        Connection conn = new Auth_GET_CONNECTION().getConn();
+        PreparedStatement pstmt = null;
+
+        AccountList user = new AccountList();
+
+        try {
+            pstmt = conn.prepareStatement(GET_ONE);
+
+            pstmt.setString(1, id);
+
+            logger.info(pstmt.toString());
+//            System.out.println(Calendar.getInstance().getTime() + "  UserJDBC:" + pstmt.toString());
+
+            ResultSet rs = pstmt.executeQuery();
+
+            if (rs != null) {
+                while (rs.next()) {
+                    // sequence, id, name, tenant_id, source, meta
+                    user.setAccount(rs.getString("account"));
+                    user.setUserId(rs.getString("user_id"));
+                }
+            }
+
+        } catch (SQLException e) {
+            logger.warn("get AccountList fail ");
+            throw e;
+        } finally {
+
+            if (pstmt != null)
+                pstmt.close();
+            conn.close();
+        }
+
+        return user;
     }
 }

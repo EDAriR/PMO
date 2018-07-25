@@ -23,6 +23,8 @@ public class SystemUserJDBC {
     private static final String GET_ONE = "SELECT * FROM system_user WHERE USER_ID=?";
     private static final String UPDATE = "UPDATE system_user SET sync_status= 'Y' WHERE USER_ID=? ;";
 
+
+
     public static void main( String[] args ) throws SQLException
     {
 
@@ -289,6 +291,4 @@ public class SystemUserJDBC {
                 : null;
     }
 
-    public void getOne(int userId) {
-    }
 }

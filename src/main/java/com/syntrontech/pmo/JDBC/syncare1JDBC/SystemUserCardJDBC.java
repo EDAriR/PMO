@@ -21,6 +21,8 @@ public class SystemUserCardJDBC {
     private static final String GET_ALL_STMT = "SELECT * FROM system_user_card WHERE sync_status = 'N' ORDER BY id;";
     private static final String UPDATE = "UPDATE card SET sync_status= 'Y' WHERE id=? ;";
 
+
+
     public static void main(String[] args) {
 
         SystemUserCardJDBC cardJDBC = new SystemUserCardJDBC();
@@ -31,7 +33,7 @@ public class SystemUserCardJDBC {
         } catch (SQLException e) {
         }
 
-        Map<String, List<SystemUserCard>> cardMap = cards.stream()
+        Map<Integer, List<SystemUserCard>> cardMap = cards.stream()
                 .collect(Collectors.groupingBy(SystemUserCard::getSystemUser));
         System.out.println(cardMap);
 
@@ -59,7 +61,7 @@ public class SystemUserCardJDBC {
                     card.setId(rs.getInt("id"));
                     card.setCardId(rs.getString("card_id"));
                     card.setCardName(rs.getString("card_name"));
-                    card.setSystemUser(rs.getString("user_id"));
+                    card.setSystemUser(rs.getInt("user_id"));
 
 //                    System.out.println("cardJDBC ==>" + card);
                     cards.add(card);
