@@ -1,61 +1,35 @@
 package com.syntrontech.pmo.auth.model;
 
+import com.syntrontech.pmo.model.common.ModelStatus;
+
 import java.util.Arrays;
 import java.util.Date;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Table;
 
-import com.syntrontech.pmo.model.TO.TO;
-import com.syntrontech.pmo.model.common.ModelStatus;
-import org.hibernate.annotations.Type;
 
 //store in Postgres
-@Entity
-@Table(name = "role")
 public class Role {
 	
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "sequence", nullable = false)
 	private Long sequence;
 	
-	@Column(name = "id", nullable = false)
 	private String id;
 	
-	@Column(name = "name", nullable = false)
 	private String name;
 	
-	@Column(name = "tenant_id", nullable = false)
 	private String tenantId;
 	
-	@Column(name = "meta")
 	private String meta;
 	
-	@Column(name = "permission_ids", nullable = false)
-//	@Type(type = "com.syntrontech.auth.model.common.StringArrayType")
 	private String[] permissionIds;
 	
-	@Column(name = "createtime", nullable = false)
 	private Date createTime;
 	
-	@Column(name = "createby", nullable = false)
 	private String createBy;
 	
-	@Column(name = "updatetime", nullable = false)
 	private Date updateTime;
 	
-	@Column(name = "updateby", nullable = false)
 	private String updateBy;
 	
-	@Column(name = "status", nullable = false)
-	@Enumerated(EnumType.STRING)
 	private ModelStatus status;
 
 	public Long getSequence() {
@@ -144,10 +118,6 @@ public class Role {
 
 	public void setStatus(ModelStatus status) {
 		this.status = status;
-	}
-	
-	public TO<Role> convertToTO(TO<Role> to){
-		return to.convertFrom(this);
 	}
 	
 	@Override

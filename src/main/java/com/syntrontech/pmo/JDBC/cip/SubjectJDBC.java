@@ -307,7 +307,7 @@ public class SubjectJDBC {
                 long seq = rs.getLong(1);
                 subject.setSequence(seq );
             }else{
-                subject = getOneSubject(subject.getId(),subject.getUserId());
+                subject = getOneSubject(subject.getId(), subject.getUserId());
 
             }
 

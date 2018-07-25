@@ -2,39 +2,22 @@ package com.syntrontech.pmo.auth.model;
 
 import java.util.Date;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Table;
 
 //store in Postgres
-@Entity
-@Table(name = "login_log")
 public class LoginLog {
 	
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "sequence", nullable = false)
 	private Long sequence;
 	
-	@Column(name = "user_agent")
 	private String userAgent;
 	
-	@Column(name = "createtime", nullable = false)
 	private Date createTime;
 
-	@Column(name = "account", nullable = false)
 	private String account;
 	
-	@Column(name = "user_id", nullable = false)
 	private String userId;
 	
-	@Column(name = "token", nullable = false)
 	private String token;
 	
-	@Column(name = "remote_address", nullable = false)
 	private String remoteAddress;
 
 	public Long getSequence() {

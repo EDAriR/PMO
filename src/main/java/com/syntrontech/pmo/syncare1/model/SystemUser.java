@@ -617,11 +617,6 @@ public class SystemUser{
 		this.cards = cards;
 	}
 
-	public SystemUserCard addCard(SystemUserCard card) {
-		getCards().add(card);
-		card.setSystemUser(this);
-		return card;
-	}
 
 	public SystemUserCard removeCard(SystemUserCard card) {
 		getCards().remove(card);

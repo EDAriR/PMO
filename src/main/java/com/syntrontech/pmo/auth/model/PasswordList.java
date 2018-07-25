@@ -2,33 +2,18 @@ package com.syntrontech.pmo.auth.model;
 
 import java.util.Date;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Table;
 
 //store in Postgres
-@Entity
-@Table(name = "password_list")
 public class PasswordList {
 	
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "sequence", nullable = false)
 	private Long sequence;
 	
-	@Column(name = "password", nullable = false)
 	private String password;
 	
-	@Column(name = "password_updatetime", nullable = false)
 	private Date passwordUpdateTime;
 	
-	@Column(name = "account")
 	private String account;
 	
-	@Column(name = "user_id", nullable = false)
 	private String userId;
 
 	public Long getSequence() {

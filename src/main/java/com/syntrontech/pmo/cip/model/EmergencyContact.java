@@ -10,34 +10,22 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 
-@Table
-@Entity(name = "emergency_contacts")
 public class EmergencyContact {
 	
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "sequence")
 	private Long sequence;
 	
-	@Column(name = "subject_id", nullable = false)
 	private String subjectId;
 	
-	@Column(name = "user_id", nullable = false)
 	private String userId;
 	
-	@Column(name = "tenant_id", nullable = false)
 	private String tenantId;
 	
-	@Column(name = "name", nullable = false)
 	private String name;
 	
-	@Column(name = "phone", nullable = false)
 	private String phone;
 	
-	@Column(name = "email")
 	private String email;
 	
-	@Column(name = "status", nullable = false)
 	private ModelStatus status;
 
 	@Override

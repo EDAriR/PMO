@@ -2,7 +2,6 @@ package com.syntrontech.pmo.JDBC.auth;
 
 import com.syntrontech.pmo.auth.Encrypt;
 import com.syntrontech.pmo.auth.model.PasswordList;
-import com.syntrontech.pmo.auth.model.Role;
 import com.syntrontech.pmo.auth.model.User;
 import com.syntrontech.pmo.model.common.ModelStatus;
 import org.slf4j.Logger;

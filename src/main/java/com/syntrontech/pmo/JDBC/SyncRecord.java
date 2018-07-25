@@ -55,23 +55,28 @@ public class SyncRecord {
             RecordType type = valueOf(record.getColumnType());
 
             try {
-                switch (type) {
-                    case A:
-                        break;
-                    case B:
+                try {
+                    switch (type) {
+                        case A:
+                            break;
+                        case B:
 
-                        insertBP(record, systemUser, valueMappingJDBC);
+                            insertBP(record, systemUser, valueMappingJDBC);
 
-                        break;
-                    case BG:
-                        break;
+                            break;
+                        case BG:
+                            break;
+                    }
+
+                    valueRecordJDBC.updateUserValueRecord(record.getBodyValueRecordId());
+
+                } catch (SQLException e) {
+                    e.printStackTrace();
                 }
-            } catch (SQLException e) {
-                e.printStackTrace();
+
+            }catch (NullPointerException e){
+
             }
-
-
-            valueRecordJDBC.updateUserValueRecord(record.getBodyValueRecordId());
 
         }
     }
@@ -101,6 +106,9 @@ public class SyncRecord {
             subjectJDBC.insertSubject(subject);
         }
 
+        if(subject.getSequence() == null){
+            throw new NullPointerException();
+        }
 
         BloodPressureHeartBeat bloodPressureHeartBeat = new BloodPressureHeartBeat();
 

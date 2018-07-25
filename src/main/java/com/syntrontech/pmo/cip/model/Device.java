@@ -5,59 +5,32 @@ import com.syntrontech.pmo.model.common.ModelStatus;
 
 import java.util.Date;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Table;
 
-
-@Table
-@Entity(name = "device")
 public class Device {
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "sequence")
 	private Long sequence;
 	
-	@Column(name = "id", nullable = false)
 	private String id;
 	
-	@Column(name = "name")
 	private String name;
 	
-	@Column(name = "mac_address", nullable = false)
 	private String macAddress;
 	
-	@Column(name = "serial_number")
 	private String serialNumber;
 	
-	@Column(name = "unit_id")
 	private String unitId;
 	
-	@Column(name = "unit_name")
 	private String unitName;
 	
-	@Column(name = "tenant_id", nullable = false)
 	private String tenantId;
 	
-	@Column(name = "createtime", nullable = false)
 	private Date createTime;
 	
-	@Column(name = "createby", nullable = false)
 	private String createBy;
 	
-	@Column(name = "updatetime", nullable = false)
 	private Date updateTime;
 	
-	@Column(name = "updateby", nullable = false)
 	private String updateBy;
 	
-	@Column(name = "status", nullable = false)
-	@Enumerated(EnumType.STRING)
 	private ModelStatus status;
 
 	@Override

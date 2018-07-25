@@ -31,7 +31,7 @@ public class SyncJob implements Job {
         new SyncAnswers().syncAnswers();
 //
         SendPUTRequest sendPUTRequestApp = new SendPUTRequest();
-        sendPUTRequestApp.sendSyncRequest();
+        sendPUTRequestApp.sendPUTcRequest();
 
         System.out.println("sync successful");
     }
