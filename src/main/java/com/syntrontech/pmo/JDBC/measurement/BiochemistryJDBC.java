@@ -129,8 +129,8 @@ public class BiochemistryJDBC {
             pstmt.setString(19, biochemistry.getSubjectUserName());
 
             // rule_seq, rule_description, unit_id, unit_name, parent_unit_id, parent_unit_name, device_id
-            pstmt.setLong(20, biochemistry.getRuleSeq());
-            pstmt.setString(21, biochemistry.getRuleDescription());
+            pstmt.setNull(20, Types.BIGINT);
+            pstmt.setNull(21, Types.VARCHAR);
             pstmt.setString(22, biochemistry.getUnitId());
             pstmt.setString(23, biochemistry.getUnitName());
             pstmt.setString(24, biochemistry.getParentUnitId());

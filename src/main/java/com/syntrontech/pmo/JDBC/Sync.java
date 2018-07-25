@@ -813,16 +813,41 @@ public class Sync {
         // 7 收縮壓 8 舒張壓 9 心跳
         // systolic_pressure, diastolic_pressure, heart_rate
         List<UserValueRecordMapping> systolicPressure = values.get(7);
-        if (systolicPressure.size() > 0)
-            bloodPressureHeartBeat.setSystolicPressure(Integer.valueOf(systolicPressure.get(0).getRecordValue()));
-        List<UserValueRecordMapping> diastolicPressure = values.get(8);
-        if (diastolicPressure.size() > 0)
-            bloodPressureHeartBeat.setDiastolicPressure(Integer.valueOf(diastolicPressure.get(0).getRecordValue()));
-        // constraints:nullable: false
-        List<UserValueRecordMapping> heartRate = values.get(9);
-        if (heartRate.size() > 0)
-            bloodPressureHeartBeat.setHeartRate(Integer.valueOf(heartRate.get(0).getRecordValue()));
+        Integer systolicvalue = 0;
+        if (systolicPressure.size() > 0){
+            String systolicPressureValue = systolicPressure.get(0).getRecordValue();
+            try {
+                systolicvalue = Double.valueOf(systolicPressureValue).intValue();
+            }catch (NumberFormatException e){
+                logger.warn("systolicPressure NumberFormatException" + e.getMessage());
+            }
+        }
+        bloodPressureHeartBeat.setSystolicPressure(systolicvalue);
 
+        List<UserValueRecordMapping> diastolicPressures = values.get(8);
+        Integer diastolic = 0;
+        if (diastolicPressures.size() > 0){
+            String diastolicStr = diastolicPressures.get(0).getRecordValue();
+            try {
+                diastolic = Double.valueOf(diastolicStr).intValue();
+            }catch (NumberFormatException e){
+                logger.warn("diastolicPressures NumberFormatException" + e.getMessage());
+            }
+        }
+            bloodPressureHeartBeat.setDiastolicPressure(diastolic);
+        // constraints:nullable: false
+        List<UserValueRecordMapping> heartRates = values.get(9);
+        int hearBeat = 0;
+        if (heartRates.size() > 0){
+            String heartRate = heartRates.get(0).getRecordValue();
+            try {
+                hearBeat = Double.valueOf(heartRate).intValue();
+            }catch (NumberFormatException e){
+                logger.warn("diastolicPressures NumberFormatException" + e.getMessage());
+            }
+        }
+
+        bloodPressureHeartBeat.setHeartRate(hearBeat);
 
         // recordtime, latitude, longitude
         bloodPressureHeartBeat.setRecordTime(old.getRecordDate());

@@ -90,11 +90,21 @@ public enum ServiceName implements GetUrl{
         public String geturl() {
             return "http://localhost:8083/cip/sync/emergencyContact";
         }
+    },
+
+
+
+    Questionnaire{
+        @Override
+        public String geturl() {
+            return "http://localhost:/questionnair/sync/questionnaireReply";
+        }
+
     }
 
 }
 
-@FunctionalInterface
+
 interface GetUrl{
     String geturl();
 }

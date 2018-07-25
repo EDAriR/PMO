@@ -28,21 +28,21 @@ public class Application {
 
     public static void main(String[] args) throws SchedulerException, InterruptedException, ParseException, SQLException {
 
-
-
-
-        System.out.println("args = " + args.length);
-        if (args.length > 0) {
-            if (args[0].equals(2)) {
-                MysqlAlertTableAddCloumSyncStatus msq = new MysqlAlertTableAddCloumSyncStatus();
-
-                msq.alertTable();
-            }else if(args[0].equals(1)){
-                QuartzTest qt = new QuartzTest();
-                qt.startScheduler();
-            }
-        }
-        System.out.println(args[0]);
+//        System.out.println("args = " + args.length);
+        SendPUTRequest sendPUTRequestApp = new SendPUTRequest();
+//        if (args.length > 0) {
+//            if (args[0].equals(2)) {
+//                MysqlAlertTableAddCloumSyncStatus msq = new MysqlAlertTableAddCloumSyncStatus();
+//
+//                msq.alertTable();
+//            }else if(args[0].equals(1)){
+//                QuartzTest qt = new QuartzTest();
+//                qt.startScheduler();
+//            }else if(args[0].equals(3)){
+//                sendPUTRequestApp.sendSyncRequest();
+//            }
+//        }
+//        System.out.println(args[0]);
 
         System.out.println("Start sync syncare1 data fireTime:" + new Date().toInstant());
 
@@ -51,7 +51,6 @@ public class Application {
         new Sync().syncSystemUserToUserAndSubject();
         new SyncAnswers().syncAnswers();
 //
-        SendPUTRequest sendPUTRequestApp = new SendPUTRequest();
         sendPUTRequestApp.sendSyncRequest();
 
     }
