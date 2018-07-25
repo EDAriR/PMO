@@ -289,4 +289,6 @@ public class SystemUserJDBC {
                 : null;
     }
 
+    public void getOne(int userId) {
+    }
 }

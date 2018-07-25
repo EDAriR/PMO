@@ -1,5 +1,6 @@
 package com.syntrontech.pmo.JDBC.auth;
 
+import com.syntrontech.pmo.auth.model.AccountList;
 import com.syntrontech.pmo.auth.model.User;
 import com.syntrontech.pmo.model.common.ModelStatus;
 import com.syntrontech.pmo.model.common.ModelUserStatus;
@@ -342,5 +343,23 @@ public class UserJDBC {
         }
 
         return users;
+    }
+
+    public void InsertAccountList(String account, String userId) throws SQLException {
+
+        //TODO
+        Connection conn = new Auth_GET_CONNECTION().getConn();
+        List<User> users = new ArrayList<>();
+
+        PreparedStatement pstmt = null;
+        ResultSet rs;
+
+        pstmt = conn.prepareStatement(INSERT_ACCOUNT_STMT);
+        pstmt.setString(1, account);
+        pstmt.setString(2, userId);
+        pstmt.setString(3, "CARD");
+
+        logger.info("  UserJDBC INSERT ACCOUNT:" +pstmt.toString());
+        pstmt.executeUpdate();
     }
 }

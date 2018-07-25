@@ -28,7 +28,7 @@ public class SystemUserCard{
 	
 	@ManyToOne
 	@JoinColumn(name="user_id")
-	private SystemUser systemUser;
+	private String systemUser;
 
 	public int getId() {
 		return id;
@@ -42,7 +42,7 @@ public class SystemUserCard{
 		return cardName;
 	}
 
-	public SystemUser getSystemUser() {
+	public String getSystemUser() {
 		return systemUser;
 	}
 
@@ -58,13 +58,13 @@ public class SystemUserCard{
 		this.cardName = cardName;
 	}
 
-	public void setSystemUser(SystemUser systemUser) {
+	public void setSystemUser(String systemUser) {
 		this.systemUser = systemUser;
 	}
 
 	@Override
 	public String toString() {
-		return "SystemUserCard [id=" + id + ", cardId=" + cardId
+		return "SystemUserCard [id=" + id + ", cardId=" + cardId  + ", userId=" + systemUser
 				+ ", cardName=" + cardName + "]";
 	}
 

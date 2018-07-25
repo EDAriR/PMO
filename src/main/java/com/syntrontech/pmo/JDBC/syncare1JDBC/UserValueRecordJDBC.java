@@ -1,6 +1,7 @@
 package com.syntrontech.pmo.JDBC.syncare1JDBC;
 
 import com.syntrontech.pmo.syncare1.model.Device;
+import com.syntrontech.pmo.syncare1.model.SystemUser;
 import com.syntrontech.pmo.syncare1.model.UserValueRecord;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -394,8 +395,8 @@ public class UserValueRecordJDBC {
 
 
         } catch (SQLException e) {
-            logger.debug("update user value record fail" + conn + " || " + pstmt);
-
+            logger.debug("update user value record fail\n " + pstmt);
+            e.printStackTrace();
         } catch (Exception e) {
             logger.debug("update user value record fail" + conn + " || " + pstmt);
 
@@ -603,7 +604,9 @@ public class UserValueRecordJDBC {
     }
 
 
-    public List<UserValueRecord> getAllUserValueRecord(Connection conn) {
+    public List<UserValueRecord> getAllUserValueRecord() {
+
+        Connection conn = new Syncare1_GET_CONNECTION().getConn();
 
         List<UserValueRecord> userValueRecordlist = new ArrayList<>();
 
@@ -642,9 +645,10 @@ public class UserValueRecordJDBC {
 
                     userValueRecord.setUserAccountSerial(rs.getLong("user_account_serial"));
 
-                    System.out.println("USER_ID :" + rs.getString("USER_ID"));
 
-                    System.out.println(userValueRecord);
+                    SystemUser user = new SystemUser();
+                    user.setUserId(rs.getInt("USER_ID"));
+                    userValueRecord.setSystemUser(user);
 
                     userValueRecordlist.add(userValueRecord);
                 }
