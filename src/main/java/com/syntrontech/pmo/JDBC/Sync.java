@@ -84,55 +84,66 @@ public class Sync {
             }
             try {
 
-            // 新增 user
-            User user = userJDBC.insertUser(syncSystemUserToUser(su, newrole));
+                // 新增 user
+                User user = userJDBC.insertUser(syncSystemUserToUser(su, newrole));
 
-            logger.info("user in new db : " + user);
-            // 密碼
-            passwordListJDBC.insertPassword(user, su.getUserPassword());
-            // 新增 subject
-            Subject subject = subjectJDBC.insertSubject(syncSystemUserToSubject(su));
-            // 新增 緊急聯絡人 Alert = Y 為接受緊急通知
-            if (su.getAlert() == YN.Y && su.getAlertNotifierName() != null)
-                emergencyContactJDBC.insertEmergencyContact(syncSystemUserToEmergencyContact(su));
+                logger.info("user in new db : " + user);
+                // 密碼
+                passwordListJDBC.insertPassword(user, su.getUserPassword());
+                // 新增 subject
+                Subject subject = subjectJDBC.insertSubject(syncSystemUserToSubject(su));
+                // 新增 緊急聯絡人 Alert = Y 為接受緊急通知
+                if (su.getAlert() == YN.Y && su.getAlertNotifierName() != null)
+                    emergencyContactJDBC.insertEmergencyContact(syncSystemUserToEmergencyContact(su));
 
-            // 取出該使用者所有血壓
-            List<UserValueRecord> userValueRecords = userValueRecordJDBC.getOneBUserValueRecord(su.getUserId());
+                // 取出該使用者所有血壓
+                List<UserValueRecord> userValueRecords = userValueRecordJDBC.getOneBUserValueRecord(su.getUserId());
 
-            // 同步至 新的血壓心跳 異常追蹤 異常追蹤log
-            syncMeasurementBloodPressureHeartBeat(userValueRecords, userValueRecordMap, subject, su, userValueRecordJDBC);
+                // 同步至 新的血壓心跳 異常追蹤 異常追蹤log
+                syncMeasurementBloodPressureHeartBeat(userValueRecords, userValueRecordMap, subject, su, userValueRecordJDBC);
 
-            // 同步新的血糖
-            syncBloodGlucose(su, userValueRecordMap, subject, userValueRecordJDBC);
+                // 同步新的血糖
+                syncBloodGlucose(su, userValueRecordMap, subject, userValueRecordJDBC);
 
-            // BodyInfo 更新至新的身高體重
-            BodyInfoJDBC bodyInfoJDBC = new BodyInfoJDBC();
-            List<UserValueRecord> userBodyInfoValueRecords = userValueRecordJDBC.getOneUserAValueRecord(su.getUserId());
-            userBodyInfoValueRecords.forEach(record -> {
-                BodyInfo bodyInfo = bodyInfoJDBC.insert(turnValueRecordToBodyInfo(record, subject, userValueRecordMap));
-                // update mapping / records
-                updateUserValueRecordMapping(userValueRecordMap, record.getBodyValueRecordId());
-                userValueRecordJDBC.updateUserValueRecord(record.getBodyValueRecordId());
-            });
+                // BodyInfo 更新至新的身高體重
+                synBodyInfo(userValueRecordJDBC, su, subject, userValueRecordMap);
 
-            // Biochemistry
-            syncBiochemistry(su, subject, userValueRecordMap, userValueRecordJDBC);
+                // Biochemistry
+                syncBiochemistry(su, subject, userValueRecordMap, userValueRecordJDBC);
 
 
-            // PMO USER RESULT
-            pmoUserJDBC.insert(turnSystemUserToPmoUser(su));
-            // update systemUser sync status
-            systemUserJDBC.updateSystemUser(su.getUserId());
-            // ↓  不需要
-            // ALBUM_NAME	varchar(45) NULL
-            // ALBUM_TYPE	int(11) unsigned [0]	使用者mapping的相本為 -> 1;picasa, 2:無名 .....
-            // ADVERTISMENT_STATUS 好康報報對於使用者的狀態_1: 此使用者尚未收到"新廣告通知了"(包含修改),2:此使用者已經收到"新廣告通知了
-            new UserRoleJDBC().updateUserRoles(su.getUserId());
+                // PMO USER RESULT
+                pmoUserJDBC.insert(turnSystemUserToPmoUser(su));
+                // update systemUser sync status
+                systemUserJDBC.updateSystemUser(su.getUserId());
+                // ↓  不需要
+                // ALBUM_NAME	varchar(45) NULL
+                // ALBUM_TYPE	int(11) unsigned [0]	使用者mapping的相本為 -> 1;picasa, 2:無名 .....
+                // ADVERTISMENT_STATUS 好康報報對於使用者的狀態_1: 此使用者尚未收到"新廣告通知了"(包含修改),2:此使用者已經收到"新廣告通知了
+                new UserRoleJDBC().updateUserRoles(su.getUserId());
             } catch (SQLException e) {
                 e.printStackTrace();
             }
 
         }
+    }
+
+    private void synBodyInfo(UserValueRecordJDBC userValueRecordJDBC, SystemUser su, Subject subject, Map<Integer, List<UserValueRecordMapping>> userValueRecordMap) {
+
+        BodyInfoJDBC bodyInfoJDBC = new BodyInfoJDBC();
+        List<UserValueRecord> userBodyInfoValueRecords = userValueRecordJDBC.getOneUserAValueRecord(su.getUserId());
+        userBodyInfoValueRecords.forEach(record -> {
+
+            try {
+                BodyInfo bodyInfo = bodyInfoJDBC.insert(turnValueRecordToBodyInfo(record, subject, userValueRecordMap));
+                // update mapping / records
+                updateUserValueRecordMapping(userValueRecordMap, record.getBodyValueRecordId());
+                userValueRecordJDBC.updateUserValueRecord(record.getBodyValueRecordId());
+
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        });
     }
 
     private void syncBiochemistry(SystemUser su, Subject subject, Map<Integer, List<UserValueRecordMapping>> userValueRecordMap, UserValueRecordJDBC userValueRecordJDBC) {
@@ -141,42 +152,25 @@ public class Sync {
         List<UserValueRecord> userBiochemistryJRecords = userValueRecordJDBC.getOneUserOtherValueRecord(su.getUserId());
         userBiochemistryJRecords.forEach(record -> {
 
-            List<UserValueRecordMapping> values = userValueRecordMap.get(record.getBodyValueRecordId());
+            try {
+                List<UserValueRecordMapping> values = userValueRecordMap.get(record.getBodyValueRecordId());
 
-            UserValueRecordMapping value = values.get(0);
+                UserValueRecordMapping value = values.get(0);
 
-            Biochemistry biochemistry = new Biochemistry();
+                Biochemistry biochemistry = null;
 
-            biochemistry.setValue(value.getRecordValue());
-            biochemistry.setGroupId(biochemistryJDBC.getGroupId());
+                biochemistry = turnValueRecordToBiochemistry(record, subject, userValueRecordMap);
 
-            biochemistry = setMapping(biochemistry, value);
+                Biochemistry newBiochemistry = biochemistryJDBC.insert(biochemistry);
+                // TODO update mapping
+                userValueRecordJDBC.updateUserValueRecord(record.getBodyValueRecordId());
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        });
+    }
 
-            // recordtime, latitude, longitude
-            biochemistry.setRecordTime(record.getRecordDate());
-            biochemistry.setLatitude("0");
-            biochemistry.setLongitude("0");
-
-            // status, createtime, createby, tenant_id, device_mac_address
-            // private MeasurementStatusType status;
-            biochemistry.setStatus(MeasurementStatusType.EXISTED);
-            biochemistry.setCreateTime(record.getUpdateDate());
-            biochemistry.setCreateBy("TTSB");
-            biochemistry.setTenantId("TTSB");
-
-            // subject_seq, subject_id, subject_name, subject_gender, subject_age, subject_user_id, subject_user_name,
-            biochemistry = setBiochemistrySubjectInfo(biochemistry, subject, record);
-
-            // rule_seq, rule_description, unit_id, unit_name, parent_unit_id, parent_unit_name, device_id
-            biochemistry = setBiochemistryUnitInfo(biochemistry, subject, record);
-
-            Biochemistry newBiochemistry = biochemistryJDBC.insert(biochemistry);
-            // TODO update mapping
-            userValueRecordJDBC.updateUserValueRecord(record.getBodyValueRecordId());
-    });
-}
-
-    private Biochemistry setBiochemistryUnitInfo(Biochemistry biochemistry, Subject subject, UserValueRecord record) {
+    private Biochemistry setBiochemistryUnitInfo(Biochemistry biochemistry, Subject subject, UserValueRecord record) throws SQLException {
 
         UnitJDBC unitJDBC = new UnitJDBC();
         Unit unit = unitJDBC.getUnitById(subject.getUnitId());
@@ -261,7 +255,7 @@ public class Sync {
         return biochemistry;
     }
 
-    private Biochemistry turnValueRecordToBiochemistry(UserValueRecord record, Subject subject, Map<Integer, List<UserValueRecordMapping>> userValueRecordMap) {
+    private Biochemistry turnValueRecordToBiochemistry(UserValueRecord record, Subject subject, Map<Integer, List<UserValueRecordMapping>> userValueRecordMap) throws SQLException {
 
         List<UserValueRecordMapping> values = userValueRecordMap.get(record.getBodyValueRecordId());
         if (values.size() == 0)
@@ -277,54 +271,7 @@ public class Sync {
         biochemistry.setValue(value.getRecordValue());
         biochemistry.setGroupId(biochemistryJDBC.getGroupId());
 
-        // HbA1C 新 1 舊 13
-        // Triglyceride 新 2 舊 15
-        // Total_Cholesterol 新 3 舊 14
-        // HDL 新 4 舊 16
-        // LDL 新 5 舊 17
-        // GOT 新 6 舊 18
-        // GPT 新 7 舊 19
-        // Creatinine/RF 新 8 舊 20
-        int mappingTypeId = value.getMapping().getTypeId();
-        long mappingsSeq = 0L;
-
-        BiochemistryMappingsProject pro = null;
-        switch (mappingTypeId) {
-            case 13:
-                pro = BiochemistryMappingsProject.HbA1C;
-                mappingsSeq = 1L;
-                break;
-            case 15:
-                pro = BiochemistryMappingsProject.Triglyceride;
-                mappingsSeq = 2L;
-                break;
-            case 14:
-                mappingsSeq = 3L;
-                pro = BiochemistryMappingsProject.Total_Cholesterol;
-                break;
-            case 16:
-                mappingsSeq = 4L;
-                pro = BiochemistryMappingsProject.HDL_Cholesterol;
-                break;
-            case 17:
-                mappingsSeq = 5L;
-                pro = BiochemistryMappingsProject.LDL_Cholesterol;
-                break;
-            case 18:
-                mappingsSeq = 6L;
-                pro = BiochemistryMappingsProject.GOT;
-                break;
-            case 19:
-                mappingsSeq = 7L;
-                pro = BiochemistryMappingsProject.GPT;
-                break;
-            case 20:
-                mappingsSeq = 8L;
-                pro = BiochemistryMappingsProject.Creatinine;
-                break;
-        }
-        biochemistry.setMappingsSeq(mappingsSeq);
-        biochemistry.setMappingsProject(pro);
+        biochemistry = setMapping(biochemistry, value);
 
         // recordtime, latitude, longitude
         biochemistry.setRecordTime(record.getRecordDate());
@@ -339,35 +286,16 @@ public class Sync {
         biochemistry.setTenantId("TTSB");
 
         // subject_seq, subject_id, subject_name, subject_gender, subject_age, subject_user_id, subject_user_name,
-        biochemistry.setSubjectSeq(subject.getSequence());
-        biochemistry.setSubjectId(subject.getId());
-        biochemistry.setSubjectName(subject.getName());
-        biochemistry.setSubjectGender(subject.getGender());
-        biochemistry.setSubjectAge(CalendarUtil.getAgeFromBirthDate(subject.getBirthday(), record.getRecordDate()));
-        biochemistry.setSubjectUserId(subject.getUserId());
-        biochemistry.setSubjectUserName(subject.getName());
-
+        biochemistry = setBiochemistrySubjectInfo(biochemistry, subject, record);
 
         // rule_seq, rule_description, unit_id, unit_name, parent_unit_id, parent_unit_name, device_id
-        UnitJDBC unitJDBC = new UnitJDBC();
-        Unit unit = unitJDBC.getUnitById(subject.getUnitId());
-        if (unit == null || unit.getId() == null) {
-            unit = getOtherUnit(unit);
-            biochemistry.setUnitId(record.getLocationId());
-            biochemistry.setUnitName(record.getLocationName());
-        }
-        biochemistry.setUnitId(unit.getId());
-        biochemistry.setUnitName(unit.getName());
-        biochemistry.setUnitId(unit.getId());
-        biochemistry.setUnitName(unit.getName());
-        biochemistry.setParentUnitId(unit.getParentId());
-        biochemistry.setParentUnitName(unit.getParentName());
+        biochemistry = setBiochemistryUnitInfo(biochemistry, subject, record);
 
         return biochemistry;
 
     }
 
-    private BodyInfo turnValueRecordToBodyInfo(UserValueRecord record, Subject subject, Map<Integer, List<UserValueRecordMapping>> userValueRecordMap) {
+    private BodyInfo turnValueRecordToBodyInfo(UserValueRecord record, Subject subject, Map<Integer, List<UserValueRecordMapping>> userValueRecordMap) throws SQLException {
 
         List<UserValueRecordMapping> values = userValueRecordMap.get(record.getBodyValueRecordId());
         if (values.size() == 0)
@@ -458,21 +386,23 @@ public class Sync {
 
         List<UserValueRecord> userBGValueRecords = userValueRecordJDBC.getOneBGUserValueRecord(su.getUserId());
         userBGValueRecords.forEach(bg -> {
-            System.out.println("sync BloodGlucose");
-            System.out.println("BloodGlucose " + bg);
-            System.out.println("subject " + subject);
-            BloodGlucose bloodGlucose = bloodGlucoseJDBC.insert(turnValueRecordToBloodGlucose(bg, subject, userValueRecordMap));
-            userValueRecordJDBC.updateUserValueRecord(bg.getBodyValueRecordId());
-            updateUserValueRecordMapping(userValueRecordMap, bg.getBodyValueRecordId());
+            try {
+                System.out.println("subject " + subject);
+                BloodGlucose bloodGlucose = bloodGlucoseJDBC.insert(turnValueRecordToBloodGlucose(bg, subject, userValueRecordMap));
+                userValueRecordJDBC.updateUserValueRecord(bg.getBodyValueRecordId());
+                updateUserValueRecordMapping(userValueRecordMap, bg.getBodyValueRecordId());
 
-            // PMO_result
-            System.out.println(bloodGlucose);
-            pmoResultJDBC.insert(turnOldRecordsToPmoResult(bg, bloodGlucose.getSubjectId(), bloodGlucose.getSequence(), MeasurementPMOType.BloodGlucose));
+                // PMO_result
+                System.out.println(bloodGlucose);
+                pmoResultJDBC.insert(turnOldRecordsToPmoResult(bg, bloodGlucose.getSubjectId(), bloodGlucose.getSequence(), MeasurementPMOType.BloodGlucose));
 
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
         });
     }
 
-    private BloodGlucose turnValueRecordToBloodGlucose(UserValueRecord bg, Subject subject, Map<Integer, List<UserValueRecordMapping>> userValueRecordMap) {
+    private BloodGlucose turnValueRecordToBloodGlucose(UserValueRecord bg, Subject subject, Map<Integer, List<UserValueRecordMapping>> userValueRecordMap) throws SQLException {
 
         List<UserValueRecordMapping> values = userValueRecordMap.get(bg.getBodyValueRecordId());
         GlucoseType type = GlucoseType.RANDOM_BLOOD_GLUCOSE;
@@ -480,18 +410,19 @@ public class Sync {
         if (values.size() == 0)
             return null;
 
-        if(values.size() > 1){
-            for(UserValueRecordMapping v:values){
-                if(v.getMapping().getTypeId() == 2033){
-                    String value = v.getRecordValue();
-                    if(value.equals("0"))
-                        type = GlucoseType.FASTING_BLOOD_GLUCOSE;
-                    if(value.equals("1"))
-                        type = GlucoseType.FASTING_BLOOD_GLUCOSE;
-                }else if(v.getMapping().getTypeId() == 136){
+        if (values.size() > 1) {
+            for (UserValueRecordMapping v : values) {
+                if (v.getMapping().getTypeId() == 2033) {
+                    // 全部都是飯後??
+//                    String value = v.getRecordValue();
+//                    if (value.equals("0"))   // 飯前??
+//                        type = GlucoseType.FASTING_BLOOD_GLUCOSE;
+//                    if (value.equals("1"))   // 飯後??
+//                        type = GlucoseType.FASTING_BLOOD_GLUCOSE;
+                } else if (v.getMapping().getTypeId() == 136) {
                     try {
                         glucoseValue = Integer.valueOf(v.getRecordValue());
-                    }catch (NumberFormatException e){
+                    } catch (NumberFormatException e) {
                         logger.warn("turnValueRecordToBloodGlucose : " + e.getMessage());
                     }
                 }
@@ -505,7 +436,7 @@ public class Sync {
 
         testBloodGlucose.setGlucose(glucoseValue);
         // type_id = 2033
-        testBloodGlucose.setGlucoseType(type);
+        testBloodGlucose.setGlucoseType(GlucoseType.RANDOM_BLOOD_GLUCOSE);
 
         // recordtime, latitude, longitude
         testBloodGlucose.setRecordTime(bg.getRecordDate());
@@ -560,39 +491,44 @@ public class Sync {
         List<BloodPressureHeartBeat> bloodPressureHeartBeats = new ArrayList<>();
         userValueRecords.forEach(old -> {
 
-            BloodPressureHeartBeat bloodPressureHeartBeat = syncBloodPressureHeartBeat(userValueRecordMap, old, subject);
+            try {
+                BloodPressureHeartBeat bloodPressureHeartBeat = syncBloodPressureHeartBeat(userValueRecordMap, old, subject);
 
-            if(bloodPressureHeartBeat != null){
-                // 更新舊 UserValueRecord 資料狀態
-                userValueRecordJDBC.updateUserValueRecord(old.getBodyValueRecordId());
+                if (bloodPressureHeartBeat != null) {
+                    // 更新舊 UserValueRecord 資料狀態
+                    userValueRecordJDBC.updateUserValueRecord(old.getBodyValueRecordId());
 
-                // 連續兩筆紀錄為異常 做異常紀錄
-                if (bloodPressureHeartBeats.size() > 0) {
-                    BloodPressureHeartBeat oldBloodPressureHeartBeat = bloodPressureHeartBeats.get(bloodPressureHeartBeats.size() - 1);
+                    // 連續兩筆紀錄為異常 做異常紀錄
+                    if (bloodPressureHeartBeats.size() > 0) {
+                        BloodPressureHeartBeat oldBloodPressureHeartBeat = bloodPressureHeartBeats.get(bloodPressureHeartBeats.size() - 1);
 
-                    // 判斷是否為異常
-                    if (isBloodPressureAbnormal(oldBloodPressureHeartBeat) && isBloodPressureAbnormal(bloodPressureHeartBeat)) {
-                        AbnormalBloodPressure abnormalBloodPressure = abnormalBloodPressureJDBC
-                                .insertAbnormalBloodPressure(
-                                        turnNoarmalToAbnormal(bloodPressureHeartBeat, su));
-
-                        // 尚未處理不需存log
-                        if (su.getCaseStatus() != 0 || su.getCaseNote() != null)
-                            abnormalBloodPressureLogJDBC
+                        // 判斷是否為異常
+                        if (isBloodPressureAbnormal(oldBloodPressureHeartBeat) && isBloodPressureAbnormal(bloodPressureHeartBeat)) {
+                            AbnormalBloodPressure abnormalBloodPressure = abnormalBloodPressureJDBC
                                     .insertAbnormalBloodPressure(
-                                            turnBloodPressureAbnormalToLog(abnormalBloodPressure, su));
+                                            turnNoarmalToAbnormal(bloodPressureHeartBeat, su));
+
+                            // 尚未處理不需存log
+                            if (su.getCaseStatus() != 0 || su.getCaseNote() != null)
+                                abnormalBloodPressureLogJDBC
+                                        .insertAbnormalBloodPressure(
+                                                turnBloodPressureAbnormalToLog(abnormalBloodPressure, su));
+                        }
+
                     }
+
+                    System.out.println(old);
+                    System.out.println(bloodPressureHeartBeat);
+                    pmoResultJDBC.insert(turnOldRecordsToPmoResult(old, bloodPressureHeartBeat.getSubjectId(), bloodPressureHeartBeat.getSequence(), MeasurementPMOType.BloodPressure));
+
+                    updateUserValueRecordMapping(userValueRecordMap, old.getBodyValueRecordId());
+
+                    bloodPressureHeartBeats.add(bloodPressureHeartBeat);
 
                 }
 
-                System.out.println(old);
-                System.out.println(bloodPressureHeartBeat);
-                pmoResultJDBC.insert(turnOldRecordsToPmoResult(old, bloodPressureHeartBeat.getSubjectId(), bloodPressureHeartBeat.getSequence(), MeasurementPMOType.BloodPressure));
-
-                updateUserValueRecordMapping(userValueRecordMap, old.getBodyValueRecordId());
-
-                bloodPressureHeartBeats.add(bloodPressureHeartBeat);
-
+            } catch (SQLException e) {
+                e.printStackTrace();
             }
 
         });
@@ -674,7 +610,7 @@ public class Sync {
         abnormalBloodPressureLog.setCaseDescription(su.getCaseNote());
         System.out.println(su);
 
-        if(su.getCaseUpdateDate() == null)
+        if (su.getCaseUpdateDate() == null)
             abnormalBloodPressureLog.setChangeCaseStatusTime(su.getCaseUpdateDate());
         else
             abnormalBloodPressureLog.setChangeCaseStatusTime(abnormalBloodPressure.getLastChangeCaseStatusTime());
@@ -734,7 +670,7 @@ public class Sync {
         abnormalBloodPressure.setCaseStatus(casetStatus);
 
 //        private Date lastChangeCaseStatusTime;
-        if(systemUser.getCaseUpdateDate() != null)
+        if (systemUser.getCaseUpdateDate() != null)
             abnormalBloodPressure.setLastChangeCaseStatusTime(systemUser.getCaseUpdateDate());
         else
             abnormalBloodPressure.setLastChangeCaseStatusTime(bloodPressureHeartBeat.getCreateTime());
@@ -767,7 +703,7 @@ public class Sync {
     }
 
     private boolean isSystolicAbnormal(Integer age, Integer systolic) {
-        if (systolic > 150 || systolic == 150 || (age < 80 && systolic > 140 && systolic == 140)) {
+        if (systolic > 150 || systolic == 150 || (age < 80 && systolic > 140 || systolic == 140)) {
             return true;
         }
         return false;
@@ -781,7 +717,7 @@ public class Sync {
     }
 
     private BloodPressureHeartBeat syncBloodPressureHeartBeat(
-            Map<Integer, List<UserValueRecordMapping>> userValueRecordMap, UserValueRecord old, Subject subject) {
+            Map<Integer, List<UserValueRecordMapping>> userValueRecordMap, UserValueRecord old, Subject subject) throws SQLException {
 
         // 取出該筆紀錄的值
         List<UserValueRecordMapping> recordValues = userValueRecordMap.get(old.getBodyValueRecordId());
@@ -792,12 +728,12 @@ public class Sync {
         BloodPressureHeartBeatJDBC bloodPressureHeartBeatJDBC = new BloodPressureHeartBeatJDBC();
 
         System.out.println("UserValueRecord sync => " + old);
-        if(values.keySet().size() < 3){
+        if (values.keySet().size() < 3) {
             return null;
         }
-            BloodPressureHeartBeat bph = turnOldRecordsToBloodPressureHeartBeat(old, values, subject);
-            BloodPressureHeartBeat bloodPressureHeartBeat = bloodPressureHeartBeatJDBC
-                    .insertBloodPressureHeartBeat(bph);
+        BloodPressureHeartBeat bph = turnOldRecordsToBloodPressureHeartBeat(old, values, subject);
+        BloodPressureHeartBeat bloodPressureHeartBeat = bloodPressureHeartBeatJDBC
+                .insertBloodPressureHeartBeat(bph);
 
         // 更新舊 UserValueRecordMapping 資料狀態
         recordValues.forEach(mapping -> new UserValueRecordMappingJDBC()
@@ -807,7 +743,7 @@ public class Sync {
     }
 
     private BloodPressureHeartBeat turnOldRecordsToBloodPressureHeartBeat(
-            UserValueRecord old, Map<Integer, List<UserValueRecordMapping>> values, Subject subject) {
+            UserValueRecord old, Map<Integer, List<UserValueRecordMapping>> values, Subject subject) throws SQLException {
 
         BloodPressureHeartBeat bloodPressureHeartBeat = new BloodPressureHeartBeat();
 
@@ -817,11 +753,11 @@ public class Sync {
         // systolic_pressure, diastolic_pressure, heart_rate
         List<UserValueRecordMapping> systolicPressure = values.get(7);
         Integer systolicvalue = 0;
-        if (systolicPressure.size() > 0){
+        if (systolicPressure.size() > 0) {
             String systolicPressureValue = systolicPressure.get(0).getRecordValue();
             try {
                 systolicvalue = Double.valueOf(systolicPressureValue).intValue();
-            }catch (NumberFormatException e){
+            } catch (NumberFormatException e) {
                 logger.warn("systolicPressure NumberFormatException" + e.getMessage());
             }
         }
@@ -829,23 +765,23 @@ public class Sync {
 
         List<UserValueRecordMapping> diastolicPressures = values.get(8);
         Integer diastolic = 0;
-        if (diastolicPressures.size() > 0){
+        if (diastolicPressures.size() > 0) {
             String diastolicStr = diastolicPressures.get(0).getRecordValue();
             try {
                 diastolic = Double.valueOf(diastolicStr).intValue();
-            }catch (NumberFormatException e){
+            } catch (NumberFormatException e) {
                 logger.warn("diastolicPressures NumberFormatException" + e.getMessage());
             }
         }
-            bloodPressureHeartBeat.setDiastolicPressure(diastolic);
+        bloodPressureHeartBeat.setDiastolicPressure(diastolic);
         // constraints:nullable: false
         List<UserValueRecordMapping> heartRates = values.get(9);
         int hearBeat = 0;
-        if (heartRates.size() > 0){
+        if (heartRates.size() > 0) {
             String heartRate = heartRates.get(0).getRecordValue();
             try {
                 hearBeat = Double.valueOf(heartRate).intValue();
-            }catch (NumberFormatException e){
+            } catch (NumberFormatException e) {
                 logger.warn("diastolicPressures NumberFormatException" + e.getMessage());
             }
         }

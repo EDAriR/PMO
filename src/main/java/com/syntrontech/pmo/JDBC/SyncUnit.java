@@ -12,10 +12,8 @@ import com.syntrontech.pmo.syncare1.model.Location;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.sql.SQLException;
+import java.util.*;
 
 public class SyncUnit {
 
@@ -25,7 +23,7 @@ public class SyncUnit {
         new SyncUnit().syncLocationToUnit();
     }
 
-    public void syncLocationToUnit(){
+    public void syncLocationToUnit() {
 
         LocationJDBC locationJDBC = new LocationJDBC();
         UnitJDBC unitJDBC = new UnitJDBC();
@@ -33,30 +31,55 @@ public class SyncUnit {
 
         List<Location> locations = locationJDBC.getAllLocation();
 
-        logger.info(" locations need sync" + locations.size());
+        logger.info(" locations " + locations.size() + " need sync");
 //        System.out.println(" locations need sync" + locations.size());
+
+        List<String> errors = new ArrayList<>();
         locations.forEach(l -> {
-//            logger.info(l.toString());
-            System.out.println(l.toString());
-            if (l.getId().equals("") || l.getId() == null){
+            try {
+                logger.info(l.toString());
+                if (l.getId() == null || l.getId().equals("")) {
 
-            }else{
+                } else {
 
-                if(unitJDBC.getUnitById(l.getId()).getId() == null)
-                    unitJDBC.insertUnit(convertLocationToUnit(l));
-                if(unitMetaJDBC.getUnitMetaById(l.getId()).getUnitId() == null)
-                    unitMetaJDBC.insertUnitMeta(convertLocationToUnitMeta(l));
+                    String locationId = l.getId();
 
-                locationJDBC.updateLocation(l.getId());
+                    Unit unit = unitJDBC.getUnitById(locationId);
+                    Unit parent = unitJDBC.getUnitByName(l.getCity());
+
+                    if (unit == null && parent == null) {
+
+                        unit = convertLocationToUnit(l);
+                        unitJDBC.insertUnit(unit);
+
+                    } else if (unit == null) {
+                        unit = convertLocationToUnit(l, parent);
+                        unitJDBC.insertUnit(unit);
+                    }
+
+                    UnitMeta unitMeta = unitMetaJDBC.getUnitMetaById(locationId);
+
+                    if (unitMeta == null && parent == null)
+                        unitMetaJDBC.insertUnitMeta(convertLocationToUnitMeta(l));
+                    else if (unitMeta == null)
+                        unitMetaJDBC.insertUnitMeta(convertLocationToUnitMeta(l, parent));
+
+                    locationJDBC.updateLocation(locationId);
+                }
+            } catch (SQLException e) {
+                errors.add("sync unit fail " + l + e.getMessage());
+                e.printStackTrace();
             }
         });
 
-        logger.info("sync unit : " + locations.size() + " successful");
-//        System.out.println("sync unit : " + locations.size() + " successful");
+        if (errors.size() > 0)
+            errors.forEach(e -> System.out.println(e));
+        else
+            logger.info("sync unit : " + locations.size() + " successful");
 
     }
 
-    private UnitMeta convertLocationToUnitMeta(Location location) {
+    private UnitMeta convertLocationToUnitMeta(Location location) throws SQLException {
 
         UnitJDBC unitJDBC = new UnitJDBC();
         UnitMeta unitMeta = new UnitMeta();
@@ -66,16 +89,20 @@ public class SyncUnit {
         unitMeta.setUnitId(unitId);
         unitMeta.setUnitName(location.getName());
 
-        if(unitId.length() > 7) {
-            Unit parentUnit = unitJDBC.getUnitById(unitId.substring(0, 7));
-            unitMeta.setUnitParentId(parentUnit.getId());
-            unitMeta.setUnitParentName(parentUnit.getName());
-        }
-
         unitMeta.setUnitStatus(ModelMgmtStatus.ENABLED); // ModelMgmtStatus
         unitMeta.setTenantId("TTSHB");
 
-        if (unitId.length() > 6 )
+        if (unitId.length() > 6) {
+
+            Unit parentUnit = unitJDBC.getUnitById(unitId.substring(0, 7));
+            if (parentUnit != null) {
+                unitMeta.setUnitParentId(parentUnit.getId());
+                unitMeta.setUnitParentName(parentUnit.getName());
+            }
+
+        }
+
+        if (unitId.length() > 6)
             unitMeta.setCategory(getCategory(unitId.substring(0, 7)));
         else
             unitMeta.setCategory("台東市");
@@ -91,45 +118,77 @@ public class SyncUnit {
         return unitMeta;
     }
 
-    private String getCategory(String category){
+    private UnitMeta convertLocationToUnitMeta(Location location, Unit parent) {
+
+        UnitJDBC unitJDBC = new UnitJDBC();
+        UnitMeta unitMeta = new UnitMeta();
+
+
+        String unitId = location.getId();
+        unitMeta.setUnitId(unitId);
+        unitMeta.setUnitName(location.getName());
+
+        unitMeta.setUnitParentId(parent.getId());
+        unitMeta.setUnitParentName(parent.getName());
+
+        unitMeta.setUnitStatus(ModelMgmtStatus.ENABLED); // ModelMgmtStatus
+        unitMeta.setTenantId("TTSHB");
+
+        unitMeta.setCategory(getCategory(parent.getId()));
+        unitMeta.setUnitParentId(parent.getId());
+        unitMeta.setUnitParentName(parent.getName());
+
+        unitMeta.setContact(location.getContact());
+        unitMeta.setAddress(location.getAddress());
+        unitMeta.setHomePhone(location.getPhone());
+        unitMeta.setMobilePhone(location.getPhone());
+        Date date = new Date();
+        unitMeta.setCreateTime(date); // Date
+        unitMeta.setCreateBy("TTSHB");
+        unitMeta.setUpdateTime(date); // Date
+        unitMeta.setUpdateBy("TTSHB");
+        return unitMeta;
+    }
+
+    private String getCategory(String category) {
 
         Map<String, String> map = new HashMap<>();
         //        離島 : [1001411, 1001416]
         //        離島 : [綠島鄉, 蘭嶼鄉]
-        map.put("1001411","離島");
-        map.put("1001416","離島");
+        map.put("1001411", "離島");
+        map.put("1001416", "離島");
 
         //        台東市 : [1001401, 1001404]
         //        台東市 : [卑南鄉, 台東市]
-        map.put("1001401","台東市");
+        map.put("1001401", "台東市");
 
         //        南迴線 : [太麻里鄉, 卑南鄉, 金峰鄉, 大武鄉, 達仁鄉]
         //        南迴線 : [1001414, 1001410, 1001409, 1001415, 1001404]
-        map.put("1001404","南迴線");
-        map.put("1001410","南迴線");
-        map.put("1001409","南迴線");
-        map.put("1001415","南迴線");
-        map.put("1001404","南迴線");
+        map.put("1001404", "南迴線");
+        map.put("1001410", "南迴線");
+        map.put("1001409", "南迴線");
+        map.put("1001415", "南迴線");
+        map.put("1001404", "南迴線");
 
         //        海線 : [長濱鄉, 東河鄉, 成功鎮]
         //        海線 : [1001402, 1001408, 1001407]
-        map.put("1001402","海線");
-        map.put("1001408","海線");
-        map.put("1001407","海線");
+        map.put("1001402", "海線");
+        map.put("1001408", "海線");
+        map.put("1001407", "海線");
 
         //        縱谷線 : [關山鎮, 海端鄉, 延平鄉, 鹿野鄉, 池上鄉]
         //        縱谷線 : [1001412, 1001403, 1001413, 1001405, 1001406]
-        map.put("1001412","縱谷線");
-        map.put("1001403","縱谷線");
-        map.put("1001413","縱谷線");
-        map.put("1001405","縱谷線");
-        map.put("1001406","縱谷線");
+        map.put("1001412", "縱谷線");
+        map.put("1001403", "縱谷線");
+        map.put("1001413", "縱谷線");
+        map.put("1001405", "縱谷線");
+        map.put("1001406", "縱谷線");
 
-        return  map.get(category);
+        return map.get(category);
 
     }
 
-    private Unit convertLocationToUnit(Location location) {
+    private Unit convertLocationToUnit(Location location) throws SQLException {
 
         UnitJDBC unitJDBC = new UnitJDBC();
         Unit unit = new Unit();
@@ -137,13 +196,40 @@ public class SyncUnit {
         String unitId = location.getId();
         unit.setId(unitId);
         unit.setName(location.getName());
-        if(unitId.length() > 7){
+
+        if (unitId.length() > 6) {
 
             Unit parentUnit = unitJDBC.getUnitById(unitId.substring(0, 7));
-            unit.setParentId(parentUnit.getId());
-            unit.setParentName(parentUnit.getName());
+            if (parentUnit != null) {
+                unit.setParentId(parentUnit.getId());
+                unit.setParentName(parentUnit.getName());
+            }
 
         }
+
+        unit.setTenantId("TTSHB");
+        unit.setMeta(null);
+        unit.setCreateTime(new Date());
+        unit.setCreateBy("TTSHB");
+        unit.setUpdateTime(new Date());
+        unit.setUpdateBy("TTSHB");
+        unit.setStatus(ModelStatus.ENABLED);
+
+        return unit;
+    }
+
+    private Unit convertLocationToUnit(Location location, Unit parent) {
+
+        UnitJDBC unitJDBC = new UnitJDBC();
+        Unit unit = new Unit();
+
+        String unitId = location.getId();
+        unit.setId(unitId);
+        unit.setName(location.getName());
+
+        unit.setParentId(parent.getId());
+        unit.setParentName(parent.getName());
+
         unit.setTenantId("TTSHB");
         unit.setMeta(null);
         unit.setCreateTime(new Date());

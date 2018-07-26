@@ -3,6 +3,7 @@ package com.syntrontech.pmo;
 
 import java.sql.SQLException;
 import java.text.ParseException;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Properties;
 
@@ -31,21 +32,21 @@ public class Application {
 //                QuartzTest qt = new QuartzTest();
 //                qt.startScheduler();
 
-        System.out.println("Start sync syncare1 data fireTime:" + new Date().toInstant());
+        System.out.println("Start sync syncare1 data fireTime:" + Calendar.getInstance().getTime());
 
-//        new SyncUnit().syncLocationToUnit();
+        new SyncUnit().syncLocationToUnit();
 
-//        new SyncDevice().syncDevice();
+        new SyncDevice().syncDevice();
 
-//        new Sync().syncSystemUserToUserAndSubject();
+        new Sync().syncSystemUserToUserAndSubject();
 
-//        new SyncAnswers().syncAnswers();
+        new SyncAnswers().syncAnswers();
 
         sendPUTRequestApp.sendPUTcRequest();
 
-//        sendPUTRequestApp.sendPUTcRequest(ServiceName.User);
+        sendPUTRequestApp.sendPUTcRequest(ServiceName.User);
 
-//        new SyncRecord().sync();
+        new SyncRecord().sync();
 
         new SyncUserCard().syncCard();
 

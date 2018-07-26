@@ -16,7 +16,7 @@ import static java.util.stream.Collectors.toSet;
 
 public class UnitMetaJDBC {
 
-//    private static Logger logger = LoggerFactory.getLogger(UnitMetaJDBC.class);
+    private static Logger logger = LoggerFactory.getLogger(UnitMetaJDBC.class);
 
     private static final String GET_ALL_STMT = "select * from unit_meta WHERE tenant_id='TTSHB' AND unit_status='ENABLED' order by sequence;";
     private static final String INSERT_STMT = "INSERT INTO unit_meta " +
@@ -36,7 +36,7 @@ public class UnitMetaJDBC {
 
     private static final String GET_ONE = "SELECT * FROM unit_meta WHERE unit_id=? and tenant_id='TTSHB' AND unit_status='ENABLED';";
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws SQLException {
 
         UnitMetaJDBC s = new UnitMetaJDBC();
 
@@ -48,7 +48,7 @@ public class UnitMetaJDBC {
 
     }
 
-    public UnitMeta getUnitMetaById(String id) {
+    public UnitMeta getUnitMetaById(String id) throws SQLException {
         Connection conn = new CIP_GET_CONNECTION().getConn();
         PreparedStatement pstmt = null;
 
@@ -58,8 +58,8 @@ public class UnitMetaJDBC {
             pstmt = conn.prepareStatement(GET_ONE);
 
             pstmt.setString(1, id);
-//            logger.info(pstmt.toString());
-            System.out.println(Calendar.getInstance().getTime() + "  UnitMetaJDBC:" + pstmt.toString());
+            logger.info(pstmt.toString());
+//            System.out.println(Calendar.getInstance().getTime() + "  UnitMetaJDBC:" + pstmt.toString());
 
             ResultSet rs = pstmt.executeQuery();
 
@@ -71,9 +71,8 @@ public class UnitMetaJDBC {
             }
 
         } catch (SQLException e) {
-            System.out.println(Calendar.getInstance().getTime() + "  UnitMetaJDBC:" + "getOneSubject fail " + conn + " || " + pstmt);
-
-            e.printStackTrace();
+            logger.info("UnitMetaJDBC getOne UnitMeta fail " + pstmt);
+            throw e;
         } finally {
 
             try {
@@ -81,20 +80,20 @@ public class UnitMetaJDBC {
                     pstmt.close();
                 conn.close();
             } catch (SQLException e) {
-//                logger.info("conn or pstmt close fail" + conn + " || " + pstmt);
-                System.out.println(Calendar.getInstance().getTime() + "  UnitMetaJDBC:" + "conn or pstmt close fail" + conn + " || " + pstmt);
+                logger.info("conn or pstmt close fail " + pstmt);
+//                System.out.println(Calendar.getInstance().getTime() + "  UnitMetaJDBC:" + "conn or pstmt close fail" + conn + " || " + pstmt);
             }
         }
 
         return unit;
     }
 
-    public UnitMeta insertUnitMeta(UnitMeta unitMeta){
+    public UnitMeta insertUnitMeta(UnitMeta unitMeta) throws SQLException {
 
         UnitMeta old = getUnitMetaById(unitMeta.getUnitId());
         if (old != null){
-//            logger.info("UnitMeta = " + old);
-            System.out.println(Calendar.getInstance().getTime() + "  UnitMetaJDBC:" + "UnitMeta = " + old);
+            logger.info("UnitMeta = " + old);
+//            System.out.println(Calendar.getInstance().getTime() + "  UnitMetaJDBC:" + "UnitMeta = " + old);
             if (old.getUnitId() != null && !old.getUnitId().equals(""))
                 return old;
         }
@@ -127,14 +126,13 @@ public class UnitMetaJDBC {
             pstmt.setTimestamp(15, new java.sql.Timestamp(unitMeta.getUpdateTime().getTime()));
             pstmt.setString(16, unitMeta.getUpdateBy());
 
-//            logger.info(pstmt.toString());
-            System.out.println(Calendar.getInstance().getTime() + "  UnitMetaJDBC:" + pstmt.toString());
+            logger.info(pstmt.toString());
 
             pstmt.executeUpdate();
 
         } catch (SQLException e) {
-//            logger.debug("insertUnitMeta fail" + conn + " || " + pstmt);
-            System.out.println(Calendar.getInstance().getTime() + "  UnitMetaJDBC:" + "insertUnitMeta fail" + conn + " || " + pstmt);
+            logger.error("insert UnitMeta fail " + pstmt);
+            throw e;
         } finally {
 
             try {
@@ -142,14 +140,13 @@ public class UnitMetaJDBC {
                     pstmt.close();
                 conn.close();
             } catch (SQLException e) {
-//                logger.debug("conn or pstmt close fail" + conn + " || " + pstmt);
-                System.out.println(Calendar.getInstance().getTime() + "  UnitMetaJDBC:" + "conn or pstmt close fail" + conn + " || " + pstmt);
+                logger.debug("conn or pstmt close fail " + pstmt);
                 e.printStackTrace();
             }
 
         }
-//        logger.info("create unitMeta successful ==> " + unitMeta);
-        System.out.println(Calendar.getInstance().getTime() + "  UnitMetaJDBC:" + "create unitMeta successful ==> " + unitMeta);
+        logger.info("create unitMeta successful ==> " + unitMeta);
+//        System.out.println(Calendar.getInstance().getTime() + "  UnitMetaJDBC:" + "create unitMeta successful ==> " + unitMeta);
         return unitMeta;
     }
 

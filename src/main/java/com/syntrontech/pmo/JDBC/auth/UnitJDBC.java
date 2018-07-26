@@ -23,13 +23,16 @@ public class UnitJDBC {
 
     private static final String GET_ONE = "SELECT * FROM unit WHERE id=? and tenant_id='TTSHB'" +
             " AND status='ENABLED';";
+
+    private static final String GET_ONE_BY_NAME = "SELECT * FROM unit WHERE name=? and tenant_id='TTSHB'" +
+            " AND status='ENABLED';";
 // sequence,
 // id, name, parent_id,
 // parent_name, tenant_id,
 // meta, createtime, createby,
 // updatetime, updateby, status
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws SQLException {
 
         UnitJDBC s = new UnitJDBC();
 
@@ -47,23 +50,46 @@ public class UnitJDBC {
 
     }
 
-    public Unit getUnitById(String id) {
+    public Unit getUnitByName(String name) throws SQLException {
+
+        if(name == null)
+            return null;
+        name = name.trim();
+
         Connection conn = new Auth_GET_CONNECTION().getConn();
-        PreparedStatement pstmt = null;
+
+        PreparedStatement pstmt = conn.prepareStatement(GET_ONE_BY_NAME);
+
+        return getOne(conn, pstmt, name);
+
+    }
+
+    public Unit getUnitById(String id) throws SQLException {
+
+        if(id == null)
+            return null;
+        id = id.trim();
+
+        Connection conn = new Auth_GET_CONNECTION().getConn();
+
+        PreparedStatement pstmt = conn.prepareStatement(GET_ONE);
+
+        return getOne(conn, pstmt, id);
+    }
+
+    private Unit getOne(Connection conn, PreparedStatement pstmt, String id) throws SQLException {
 
         Unit unit = new Unit();
 
         try {
-            pstmt = conn.prepareStatement(GET_ONE);
 
             pstmt.setString(1, id);
             logger.info(pstmt.toString());
-//            System.out.println(Calendar.getInstance().getTime() +" UnitJDBC: " + pstmt.toString());
-
             ResultSet rs = pstmt.executeQuery();
 
             if (rs != null) {
                 while (rs.next()) {
+                    unit.setSequence(rs.getLong("sequence"));
                     unit.setId(rs.getString("id"));
                     unit.setName(rs.getString("name"));
                     unit.setParentId(rs.getString("parent_id"));
@@ -73,8 +99,8 @@ public class UnitJDBC {
             }
 
         } catch (SQLException e) {
-            logger.debug("getUnitById fail " + pstmt);
-//            System.out.println(Calendar.getInstance().getTime() +" UnitJDBC: " + "insertUnit fail " + pstmt + "||" + conn);
+            logger.debug("get Unit  fail " + pstmt);
+            throw e;
         } finally {
 
             try {
@@ -82,18 +108,21 @@ public class UnitJDBC {
                     pstmt.close();
                 conn.close();
             } catch (SQLException e) {
-//                logger.info("conn or pstmt close fail" + conn + " || " + pstmt);
-                System.out.println(Calendar.getInstance().getTime() +" UnitJDBC: " + "conn or pstmt close fail" + conn + " || " + pstmt);
+                logger.info("conn or pstmt close fail " + pstmt);
                 e.printStackTrace();
             }
 
         }
         logger.info("getUnitById successful => " + unit);
-//        System.out.println(Calendar.getInstance().getTime() +" UnitJDBC: " + "getUnitById successful ==> " + unit);
         return unit;
     }
 
-    public Unit insertUnit(Unit unit){
+
+
+    public Unit insertUnit(Unit unit) throws SQLException {
+
+        if(unit == null || unit.getId() == null)
+            return null;
 
         Connection conn = new Auth_GET_CONNECTION().getConn();
         PreparedStatement pstmt =null;
@@ -109,8 +138,8 @@ public class UnitJDBC {
             pstmt = conn.prepareStatement(INSERT_STMT);
 
             // id, name, parent_id,
-            pstmt.setString(1, unit.getId());
-            pstmt.setString(2, unit.getName());
+            pstmt.setString(1, unit.getId().trim());
+            pstmt.setString(2, unit.getName().trim());
             pstmt.setString(3, unit.getParentId());
             // parent_name, tenant_id,
             pstmt.setString(4, unit.getParentName());
@@ -125,13 +154,13 @@ public class UnitJDBC {
             pstmt.setString(11, unit.getStatus().toString());
 
 //            logger.info(pstmt.toString());
-            System.out.println(" UnitJDBC: " + pstmt.toString());
+            logger.info(" UnitJDBC: " + pstmt.toString());
 
             pstmt.executeUpdate();
 
         } catch (SQLException e) {
-//            logger.debug("insertUnit fail " + pstmt + "||" + conn);
-            System.out.println(Calendar.getInstance().getTime() +" UnitJDBC: " + "insertUnit fail " + pstmt + "||" + conn);
+            logger.debug("insertUnit fail " + pstmt + "||" + conn);
+            throw e;
         } finally {
 
             try {
@@ -139,14 +168,13 @@ public class UnitJDBC {
                     pstmt.close();
                 conn.close();
             } catch (SQLException e) {
-//                logger.info("conn or pstmt close fail" + conn + " || " + pstmt);
-                System.out.println(Calendar.getInstance().getTime() +" UnitJDBC: " + "conn or pstmt close fail" + conn + " || " + pstmt);
+                logger.info("conn or pstmt close fail " + pstmt);
                 e.printStackTrace();
             }
 
         }
-//        logger.info("create unit successful ==> " + unit);
-        System.out.println(Calendar.getInstance().getTime() +" UnitJDBC: " + "create unit successful ==> " + unit);
+        logger.info("create unit successful ==> " + unit);
+//        System.out.println(Calendar.getInstance().getTime() +" UnitJDBC: " + "create unit successful ==> " + unit);
         return unit;
     }
 
