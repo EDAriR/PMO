@@ -34,6 +34,8 @@ public class UserJDBC {
 
     private static final String GET_ONE_ACCOUNT = "SELECT * FROM account_list WHERE user_id=? AND account=?";
 
+    private static final String UPDATE_CARDS = "UPDATE users SET  cards=? WHERE user_id=? ";
+
 // sequence,
 //    sequence, id, name, tenant_id, source, meta
 //    unit_ids, role_ids, emails, mobilephones, cards, permission_ids
@@ -350,6 +352,12 @@ public class UserJDBC {
 
     public AccountList InsertAccountList(String userId, String account) throws SQLException {
 
+        User user = getUserById(userId);
+
+        if(user == null || user.getId() == null){
+            return null;
+        }
+
         AccountList accountList = getAccountListByUserId(userId, account);
 
         if (accountList != null || accountList.getUserId() != null || accountList.getAccount() != null)
@@ -367,6 +375,17 @@ public class UserJDBC {
             logger.info("INSERT ACCOUNT:" + pstmt.toString());
             pstmt.executeUpdate();
 
+            pstmt = conn.prepareStatement(UPDATE_CARDS);
+
+            String[] cards = user.getCards();
+
+            cards = append(cards, account);
+
+            Array cardsArray = conn.createArrayOf("VARCHAR", cards);
+            pstmt.setArray(1, cardsArray);
+            pstmt.setString(2, userId);
+            pstmt.executeUpdate();
+
             accountList.setUserId(userId);
             accountList.setAccount(account);
         } catch (SQLException e) {
@@ -375,6 +394,13 @@ public class UserJDBC {
         }
 
         return accountList;
+    }
+
+    <T> T[] append(T[] arr, T element) {
+        final int N = arr.length;
+        arr = Arrays.copyOf(arr, N + 1);
+        arr[N] = element;
+        return arr;
     }
 
 
