@@ -88,6 +88,8 @@ public class SyncRecord {
         List<UserValueRecordMapping> values = valueMappingJDBC.getUserValueRecordMappingByRecordId(record.getBodyValueRecordId());
 
         BloodPressureHeartBeat bloodPressureHeartBeat = getBloodPressureHeartBeat(record, systemUser, values);
+        if(bloodPressureHeartBeat == null )
+            return null;
         bloodPressureHeartBeat = jdbc.insertBloodPressureHeartBeat(bloodPressureHeartBeat);
 
         values.forEach(v -> valueMappingJDBC.updateUserValueRecordMapping(v.getUserValueRecordMappingId()));
@@ -107,7 +109,7 @@ public class SyncRecord {
         }
 
         if(subject.getSequence() == null){
-            throw new NullPointerException();
+            return null;
         }
 
         BloodPressureHeartBeat bloodPressureHeartBeat = new BloodPressureHeartBeat();

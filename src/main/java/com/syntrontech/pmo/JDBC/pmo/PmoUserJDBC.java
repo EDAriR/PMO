@@ -62,10 +62,12 @@ public class PmoUserJDBC {
             pstmt.setString(1, pmoUser.getUserId());
             pstmt.setString(2, pmoUser.getPmoPassword());
             pstmt.setString(3, pmoUser.getPmoStatus().toString());
+
             if(pmoUser.getSynctime() != null)
                 pstmt.setTimestamp(4, new Timestamp(pmoUser.getSynctime().getTime()));
             else
                 pstmt.setNull(4,Types.TIMESTAMP);
+
             pstmt.setString(5, pmoUser.getTenantId());
 
             logger.info(pstmt.toString());
@@ -92,6 +94,11 @@ public class PmoUserJDBC {
     }
 
     private PmoUser getPmoUserById(String userId) {
+
+        if(userId == null)
+            return null;
+
+        userId = userId.toUpperCase().trim();
 
 
         Connection conn = new PMO_GET_CONNECTION().getConn();

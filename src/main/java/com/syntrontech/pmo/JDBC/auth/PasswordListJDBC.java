@@ -23,7 +23,7 @@ public class PasswordListJDBC {
     private static final String GET_ONE = "SELECT * FROM password_list WHERE user_id=?";
 
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws SQLException {
 
         PasswordListJDBC s = new PasswordListJDBC();
 
@@ -36,9 +36,13 @@ public class PasswordListJDBC {
         System.out.println(passwordList);
     }
 
-    public PasswordList getPasswordListById(String id) {
+    public PasswordList getPasswordListById(String id) throws SQLException {
 
-//        DEFAULT_TENANT_ADMIN
+        if(id == null)
+            return null;
+
+        id = id.toUpperCase().trim();
+
 //        DEFAULT_USER
         Connection conn = new Auth_GET_CONNECTION().getConn();
         PreparedStatement pstmt = null;
@@ -68,8 +72,8 @@ public class PasswordListJDBC {
             }
 
         } catch (SQLException e) {
-            logger.debug("getPasswordListById fail " + pstmt + "||" + conn);
-//            System.out.println(Calendar.getInstance().getTime() +" PasswordListJDBC :" + "getPasswordListById fail " + pstmt + "||" + conn);
+            logger.error("getPassword ListById fail " + pstmt);
+            throw e;
         } finally {
 
             try {
@@ -77,8 +81,7 @@ public class PasswordListJDBC {
                     pstmt.close();
                 conn.close();
             } catch (SQLException e) {
-                logger.debug("conn or pstmt close fail "+ pstmt);
-//                System.out.println(Calendar.getInstance().getTime() +" PasswordListJDBC :" + "conn or pstmt close fail" + conn + " || " + pstmt);
+                logger.warn("conn or pstmt close fail "+ pstmt);
                 e.printStackTrace();
             }
 
@@ -87,7 +90,11 @@ public class PasswordListJDBC {
         return passwordList;
     }
 
-    public PasswordList insertPassword(User user, String password){
+    public PasswordList insertPassword(User user, String password) throws SQLException {
+
+        if(user == null || user.getId() == null || password == null)
+            return null;
+//        password = password.toUpperCase().trim();
 
         PasswordList old = getPasswordListById(user.getId());
         if(old != null && old.getUserId() != null)
@@ -106,8 +113,7 @@ public class PasswordListJDBC {
             pstmt.setString(2, passwordList.getUserId());
             pstmt.setTimestamp(3, new Timestamp(passwordList.getPasswordUpdateTime().getTime()));
 
-//            logger.info(pstmt.toString());
-            System.out.println(Calendar.getInstance().getTime() +" PasswordListJDBC insertPassword:" + pstmt.toString());
+            logger.info(pstmt.toString());
             pstmt.executeUpdate();
 
             try (ResultSet rs = pstmt.getGeneratedKeys()) {
@@ -118,9 +124,8 @@ public class PasswordListJDBC {
             }
 
         } catch (SQLException e) {
-//            logger.debug("insertPassword fail " + pstmt + "||" + conn);
-            System.out.println(Calendar.getInstance().getTime() +" PasswordListJDBC :" + "insertPassword fail " + pstmt + "||" + conn);
-
+            logger.debug("insert Password fail " + pstmt);
+            throw e;
         } finally {
 
             try {
@@ -128,18 +133,17 @@ public class PasswordListJDBC {
                     pstmt.close();
                 conn.close();
             } catch (SQLException e) {
-//                logger.debug("conn or pstmt close fail" + conn + " || " + pstmt);
-                System.out.println(Calendar.getInstance().getTime() +" PasswordListJDBC :" + "conn or pstmt close fail" + conn + " || " + pstmt);
-                e.printStackTrace();
+                logger.debug("conn or pstmt close fail " + pstmt);
             }
 
         }
-//        logger.info("create successful ==> " + pstmt);
-        System.out.println(Calendar.getInstance().getTime() +" PasswordListJDBC :" + "create successful ==> " + pstmt);
+        logger.info("create Password successful ==> " + pstmt);
         return passwordList;
     }
 
     PasswordList insert(String userId, String password, Date passwordUpdateTime){
+
+        userId = userId.toUpperCase().trim();
 
         String encryptPassword = getEncryptPassword(password, passwordUpdateTime);
 

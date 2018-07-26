@@ -40,17 +40,6 @@ public class UnitMetaJDBC {
 
         UnitMetaJDBC s = new UnitMetaJDBC();
 
-//        Date star_time = new Date(new java.util.Date().getTime());
-//        List<UnitMeta> ss = s.getAllUnitMetas();
-//        Date end_time = new Date(new java.util.Date().getTime());
-//        Map<String, List<UnitMeta>> map = ss.stream()
-//                .collect(Collectors.groupingBy(UnitMeta::getCategory));
-
-
-//        System.out.println("star_time:" + star_time.toInstant());
-//        System.out.println("end_time:" + end_time.toInstant());
-//        System.out.println("ss size:" + ss.size());
-
         UnitMeta umu = s.insertUnitMeta(s.getTestUnitMeta());
 
         System.out.println(umu);

@@ -41,7 +41,7 @@ public class UserJDBC {
 //    unit_ids, role_ids, emails, mobilephones, cards, permission_ids
 //    createtime, createby, updatetime, updateby, status
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws SQLException {
 
         UserJDBC s = new UserJDBC();
 
@@ -60,9 +60,15 @@ public class UserJDBC {
 //        logger.info(user.getId() == null);
     }
 
-    public User getUserById(String id) {
+    public User getUserById(String id) throws SQLException {
+
+        if (id == null)
+            return null;
+
         Connection conn = new Auth_GET_CONNECTION().getConn();
         PreparedStatement pstmt = null;
+
+        id = id.toUpperCase().trim();
 
         User user = new User();
 
@@ -79,6 +85,7 @@ public class UserJDBC {
             if (rs != null) {
                 while (rs.next()) {
                     // sequence, id, name, tenant_id, source, meta
+                    user.setSequence(rs.getLong("sequence"));
                     user.setId(rs.getString("id"));
                     user.setName(rs.getString("name"));
                     user.setTenantId(rs.getString("tenant_id"));
@@ -105,7 +112,7 @@ public class UserJDBC {
                     user.setCards(cards);
 
                     String[] permissionIds = (String[]) rs.getArray("permission_ids").getArray();
-                    // TODO
+
                     user.setPermissionIds(permissionIds);
 
                     // createtime, createby, updatetime, updateby, status
@@ -125,6 +132,8 @@ public class UserJDBC {
             logger.warn("getUserById fail \n" + pstmt + "\n user =>" + user);
 //            System.out.println(Calendar.getInstance().getTime() + "  UserJDBC:" + "getUserById fail =>" + conn + " || " + pstmt + "||" + user);
             e.printStackTrace();
+
+            throw e;
         } finally {
 
             try {
@@ -138,29 +147,41 @@ public class UserJDBC {
             }
 
         }
-//        logger.info("get user by id successful =>" + user);
-        System.out.println(Calendar.getInstance().getTime() + "  UserJDBC:" + "get user by id successful =>" + user);
+        logger.info("get user by id successful =>" + user);
+//        logger.debug("UserJDBC:" + "get user by id successful =>" + user);
         return user;
     }
 
-    public User insertUser(User user) {
+    public User insertUser(User user) throws SQLException {
+
+        if (user == null || user.getId() == null)
+            return null;
 
         Connection conn = new Auth_GET_CONNECTION().getConn();
         PreparedStatement pstmt = null;
 
-        User old = getUserById(user.getId());
+        // id/ account 全部轉大寫 去空格
+        String id = user.getId().toUpperCase().trim();
+
+        User old = getUserById(id);
+
         if (old != null) {
             if (old.getId() != null && !old.getId().equals(""))
                 return old;
         }
 
+        user.setId(id);
 
         try {
             pstmt = conn.prepareStatement(INSERT_STMT);
 
             //  id, name, tenant_id, source, meta
             pstmt.setString(1, user.getId());
-            pstmt.setString(2, user.getName());
+
+            String name = user.getName();
+            if (name != null)
+                name = name.trim();
+            pstmt.setString(2, name);
             pstmt.setString(3, user.getTenantId());
             pstmt.setString(4, user.getSource().toString());
             pstmt.setString(5, user.getMeta());
@@ -203,7 +224,7 @@ public class UserJDBC {
             pstmt.setString(16, user.getStatus().toString());
 
 //            logger.info(pstmt.toString());
-            logger.info("  UserJDBC INSERT:" + pstmt.toString());
+            logger.info("  UserJDBC INSERT user:" + pstmt.toString());
             pstmt.executeUpdate();
 
             pstmt = conn.prepareStatement(INSERT_ACCOUNT_STMT);
@@ -211,14 +232,15 @@ public class UserJDBC {
             pstmt.setString(2, user.getId());
             pstmt.setString(3, "ID");
 
-            logger.info("  UserJDBC INSERT ACCOUNT:" + pstmt.toString());
+            logger.info("  UserJDBC INSERT account list:" + pstmt.toString());
             pstmt.executeUpdate();
 
         } catch (SQLException e) {
-            logger.warn("insert user fail =>" + pstmt + "\n" + user);
+            logger.error("insert user fail =>" + pstmt + "\n" + user);
 //            System.out.println(Calendar.getInstance().getTime() + "  UserJDBC:" +"getUserById fail =>" + conn + " || " + pstmt + "||" + user);
 
             e.printStackTrace();
+            throw e;
         } finally {
 
             try {
@@ -227,13 +249,13 @@ public class UserJDBC {
                 conn.close();
             } catch (SQLException e) {
 //                logger.info("conn or pstmt close fail" + conn + " || " + pstmt);
-                System.out.println(Calendar.getInstance().getTime() + "  UserJDBC:" + "conn or pstmt close fail" + conn + " || " + pstmt);
+                logger.error("UserJDBC Unsert User conn or pstmt close fail" + conn + " || " + pstmt);
                 e.printStackTrace();
             }
 
         }
 //        logger.info("create user successful ==> " + user);
-        System.out.println(Calendar.getInstance().getTime() + "  UserJDBC:" + "create user successful ==> " + user);
+        logger.info("UserJDBC Unsert User UserJDBC create user successful ==> " + user);
         return user;
     }
 
@@ -261,7 +283,6 @@ public class UserJDBC {
         user.setCards(cards);
 
         String[] permissionIds = {};
-        // TODO
         user.setPermissionIds(permissionIds);
 
         // createtime, createby, updatetime, updateby, status
@@ -318,7 +339,6 @@ public class UserJDBC {
                     user.setCards(cards);
 
                     String[] permissionIds = (String[]) rs.getArray("permission_ids").getArray();
-                    // TODO
                     user.setPermissionIds(permissionIds);
 
                     // createtime, createby, updatetime, updateby, status
@@ -352,15 +372,21 @@ public class UserJDBC {
 
     public AccountList InsertAccountList(String userId, String account) throws SQLException {
 
+        if (userId == null || account == null)
+            return null;
+
+        userId = userId.toUpperCase().trim();
+        account = account.toUpperCase().trim();
+
         User user = getUserById(userId);
 
-        if(user == null || user.getId() == null){
+        if (user == null || user.getId() == null) {
             return null;
         }
 
         AccountList accountList = getAccountListByUserId(userId, account);
 
-        if (accountList != null || accountList.getUserId() != null || accountList.getAccount() != null)
+        if (accountList != null && accountList.getUserId() != null && accountList.getAccount() != null)
             return accountList;
 
         Connection conn = new Auth_GET_CONNECTION().getConn();
@@ -405,6 +431,13 @@ public class UserJDBC {
 
 
     private AccountList getAccountListByUserId(String id, String account) throws SQLException {
+
+        if (id == null || account == null)
+            return null;
+
+        id = id.toUpperCase().trim();
+        account = account.toUpperCase().trim();
+
         Connection conn = new Auth_GET_CONNECTION().getConn();
         PreparedStatement pstmt = null;
 

@@ -32,7 +32,7 @@ public class SubjectJDBC {
 
     private static final String GET_ONE = "SELECT * FROM subject WHERE id=? AND user_id=? AND tenant_id='TTSHB' AND status='ENABLED';";
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws SQLException {
 
 
         SubjectJDBC s = new SubjectJDBC();
@@ -55,7 +55,13 @@ public class SubjectJDBC {
 
     }
 
-    public Subject getOneSubject(String id, String user_id) {
+    public Subject getOneSubject(String id, String user_id) throws SQLException {
+
+        if(id == null || user_id == null)
+            return null;
+
+        id = id.toUpperCase().trim();
+        user_id = user_id.toUpperCase().trim();
 
         Connection conn = new CIP_GET_CONNECTION().getConn();
 
@@ -133,21 +139,22 @@ public class SubjectJDBC {
                 }
             }
         } catch (SQLException e) {
-//            logger.debug("getOneSubject fail " + conn + " || " + pstmt);
-            System.out.println(Calendar.getInstance().getTime() + "  SubjectJDBC:" + "getOneSubject fail " + conn + " || " + pstmt);
+            logger.error("getOneSubject fail " + pstmt);
+            throw e;
+//            System.out.println(Calendar.getInstance().getTime() + "  SubjectJDBC:" + "getOneSubject fail " + conn + " || " + pstmt);
         }finally {
             try {
                 if (pstmt != null)
                     pstmt.close();
                 conn.close();
             } catch (SQLException e) {
-                logger.debug("conn or pstmt close fail" + conn + " || " + pstmt);
+                logger.error("conn or pstmt close fail" + pstmt);
                 e.printStackTrace();
             }
         }
 
 //        logger.info("getOneSubject successful ==> " + subject);
-        System.out.println(Calendar.getInstance().getTime() + "  SubjectJDBC:" + "getOneSubject successful ==> " + subject);
+        logger.info("SubjectJDBC get One Subject successful ==> " + subject);
 
         return subject;
     }
@@ -248,11 +255,14 @@ public class SubjectJDBC {
     }
 
 
-    public Subject insertSubject(Subject subject) {
+    public Subject insertSubject(Subject subject) throws SQLException {
+
+        if(subject.getId() == null || subject.getUserId() == null)
+            return null;
 
         Subject old = getOneSubject(subject.getId(), subject.getUserId());
 
-        if(Objects.nonNull(old))
+        if(Objects.nonNull(old) && old.getId() != null && old.getSequence() != null)
             return old;
 
         Connection conn = new CIP_GET_CONNECTION().getConn();
@@ -263,7 +273,7 @@ public class SubjectJDBC {
             pstmt = conn.prepareStatement(INSERT_STMT);
 
             //    sequence, id, name, gender, birthday,
-            pstmt.setString(1, subject.getId());
+            pstmt.setString(1, subject.getId().toUpperCase().trim());
             pstmt.setString(2, subject.getName());
             pstmt.setString(3, subject.getGender().toString());
             pstmt.setTimestamp(4, new java.sql.Timestamp(subject.getBirthday().getTime()));
@@ -284,7 +294,7 @@ public class SubjectJDBC {
 
             // chewing_areca, user_id, unit_id, unit_name
             pstmt.setString(12, subject.getChewingAreca().toString());
-            pstmt.setString(13, subject.getUserId());
+            pstmt.setString(13, subject.getUserId().toUpperCase().trim());
             pstmt.setString(14, subject.getUnitId());
             pstmt.setString(15, subject.getUnitName());
 
@@ -301,31 +311,34 @@ public class SubjectJDBC {
 //            System.out.println(Calendar.getInstance().getTime() + "  SubjectJDBC:" + pstmt.toString());
 
             pstmt.executeUpdate();
-            System.out.println(pstmt);
+            logger.info("insert Subject " + pstmt);
+
             ResultSet rs = pstmt.getGeneratedKeys();
             if (rs.next()) {
                 long seq = rs.getLong(1);
                 subject.setSequence(seq );
             }else{
                 subject = getOneSubject(subject.getId(), subject.getUserId());
-
             }
+            if(subject.getSequence() == null)
+                subject = getOneSubject(subject.getId(), subject.getUserId());
 
             rs.close();
 
 //            System.out.println(Calendar.getInstance().getTime() + "  SubjectJDBC:" + "create successful ==> " + subject);
 
         } catch (SQLException e) {
-            logger.debug("create subject fail" + conn + " || " + pstmt);
+            logger.error("create subject fail " + pstmt);
 //            System.out.println(Calendar.getInstance().getTime() + "  SubjectJDBC:" + "create subject fail" + conn + " || " + pstmt);
             e.printStackTrace();
+            throw e;
         }finally {
             try {
                 if (pstmt != null)
                     pstmt.close();
                 conn.close();
             } catch (SQLException e) {
-                logger.debug("conn or pstmt close fail" + conn + " || " + pstmt);
+                logger.error("conn or pstmt close fail " + pstmt);
                 e.printStackTrace();
             }
         }

@@ -27,7 +27,7 @@ public class EmergencyContactJDBC {
 
     private static final String GET_ONE = "SELECT * FROM emergency_contacts WHERE name=? and tenant_id='TTSHB' AND status='ENABLED';";
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws SQLException {
 
         EmergencyContactJDBC s = new EmergencyContactJDBC();
 
@@ -36,30 +36,33 @@ public class EmergencyContactJDBC {
         System.out.println(emt);
     }
 
-    public EmergencyContact insertEmergencyContact(EmergencyContact emergencyContact){
+    public EmergencyContact insertEmergencyContact(EmergencyContact emergencyContact) throws SQLException {
+
+        if(emergencyContact.getUserId() == null || emergencyContact.getSubjectId() == null || emergencyContact.getName() == null)
+            return null;
 
         Connection conn = new CIP_GET_CONNECTION().getConn();
         PreparedStatement pstmt =null;
+
 
         try {
             pstmt = conn.prepareStatement(INSERT_STMT);
 
             // subject_id, user_id, tenant_id, name, phone, email, status
-            pstmt.setString(1, emergencyContact.getSubjectId());
-            pstmt.setString(2, emergencyContact.getUserId());
+            pstmt.setString(1, emergencyContact.getSubjectId().toUpperCase().trim());
+            pstmt.setString(2, emergencyContact.getUserId().toUpperCase().trim());
             pstmt.setString(3, emergencyContact.getTenantId());
-            pstmt.setString(4, emergencyContact.getName());
+            pstmt.setString(4, emergencyContact.getName().toUpperCase().trim());
             pstmt.setString(5, emergencyContact.getPhone());
             pstmt.setString(6, emergencyContact.getEmail());
             pstmt.setString(7, emergencyContact.getStatus().toString());
 
-//            logger.info(pstmt.toString());
-            System.out.println(Calendar.getInstance().getTime() + "  EmergencyContactJDBC:" + pstmt.toString());
+            logger.info("insert EmergencyContact " + pstmt);
             pstmt.executeUpdate();
 
         } catch (SQLException e) {
-            logger.debug("insertEmergencyContact fail sql \n" +  pstmt);
-//            System.out.println(Calendar.getInstance().getTime() + "  EmergencyContactJDBC:" + "insertEmergencyContact fail" + conn + " || " + pstmt);
+            logger.error("insert EmergencyContact fail sql \n" +  pstmt);
+            throw e;
         } finally {
 
             try {
@@ -67,14 +70,12 @@ public class EmergencyContactJDBC {
                     pstmt.close();
                 conn.close();
             } catch (SQLException e) {
-//                logger.debug("conn or pstmt close fail" + conn + " || " + pstmt);
-                System.out.println(Calendar.getInstance().getTime() + "  EmergencyContactJDBC:" + "conn or pstmt close fail" + conn + " || " + pstmt);
+                logger.error("EmergencyContactJDBC conn or pstmt close fail " + pstmt);
                 e.printStackTrace();
             }
 
         }
-//        logger.info("create emergencyContact successful ==> " + emergencyContact);
-        System.out.println(Calendar.getInstance().getTime() + "  EmergencyContactJDBC:" + "create emergencyContact successful ==> " + emergencyContact);
+        logger.info("EmergencyContactJDBC: create emergencyContact successful ==> " + emergencyContact);
 
         return emergencyContact;
     }

@@ -30,6 +30,7 @@ import com.syntrontech.pmo.util.CalendarUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.sql.SQLException;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -81,10 +82,12 @@ public class Sync {
             if (su.getUserAccount() == null) {
                 continue;
             }
+            try {
 
             // 新增 user
             User user = userJDBC.insertUser(syncSystemUserToUser(su, newrole));
-            System.out.println("user in new db : " + user);
+
+            logger.info("user in new db : " + user);
             // 密碼
             passwordListJDBC.insertPassword(user, su.getUserPassword());
             // 新增 subject
@@ -106,9 +109,6 @@ public class Sync {
             BodyInfoJDBC bodyInfoJDBC = new BodyInfoJDBC();
             List<UserValueRecord> userBodyInfoValueRecords = userValueRecordJDBC.getOneUserAValueRecord(su.getUserId());
             userBodyInfoValueRecords.forEach(record -> {
-                System.out.println("sync bodyInfo ");
-                System.out.println("record " + record);
-                System.out.println("subject " + subject);
                 BodyInfo bodyInfo = bodyInfoJDBC.insert(turnValueRecordToBodyInfo(record, subject, userValueRecordMap));
                 // update mapping / records
                 updateUserValueRecordMapping(userValueRecordMap, record.getBodyValueRecordId());
@@ -128,6 +128,9 @@ public class Sync {
             // ALBUM_TYPE	int(11) unsigned [0]	使用者mapping的相本為 -> 1;picasa, 2:無名 .....
             // ADVERTISMENT_STATUS 好康報報對於使用者的狀態_1: 此使用者尚未收到"新廣告通知了"(包含修改),2:此使用者已經收到"新廣告通知了
             new UserRoleJDBC().updateUserRoles(su.getUserId());
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
 
         }
     }
