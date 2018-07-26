@@ -25,6 +25,9 @@ public class UserJDBC {
             "?, ?, ?, ?, ?, ?," +
             "?, ?, ?, ?, ?);";
 
+    private static final String UPDATE = "UPDATE users SET cards= ? WHERE id=? ;";
+
+
     private static final String INSERT_ACCOUNT_STMT = "INSERT INTO account_list " +
             "(account, user_id, map_to_users_field)" +
             "VALUES (?, ?, 'CARDS');";
@@ -34,7 +37,7 @@ public class UserJDBC {
 
     private static final String GET_ONE_ACCOUNT = "SELECT * FROM account_list WHERE user_id=? AND account=?";
 
-    private static final String UPDATE_CARDS = "UPDATE users SET  cards=? WHERE user_id=? ";
+    private static final String UPDATE_CARDS = "UPDATE users SET  cards=? WHERE id=? ";
 
 // sequence,
 //    sequence, id, name, tenant_id, source, meta
@@ -101,7 +104,7 @@ public class UserJDBC {
                     String[] mobilePhones = (String[]) rs.getArray("mobilephones").getArray();
                     user.setMobilePhones(mobilePhones);
 
-                    String[] cards = (String[]) rs.getArray("mobilephones").getArray();
+                    String[] cards = (String[]) rs.getArray("cards").getArray();
                     user.setCards(cards);
 
                     String[] permissionIds = (String[]) rs.getArray("permission_ids").getArray();
@@ -139,7 +142,7 @@ public class UserJDBC {
 
         }
 //        logger.info("get user by id successful =>" + user);
-        System.out.println(Calendar.getInstance().getTime() + "  UserJDBC:" + "get user by id successful =>" + user);
+        logger.info("UserJDBC: get user by id successful =>" + user);
         return user;
     }
 
@@ -360,7 +363,7 @@ public class UserJDBC {
 
         AccountList accountList = getAccountListByUserId(userId, account);
 
-        if (accountList != null || accountList.getUserId() != null || accountList.getAccount() != null)
+        if (accountList != null && accountList.getUserId() != null && accountList.getAccount() != null)
             return accountList;
 
         Connection conn = new Auth_GET_CONNECTION().getConn();
@@ -388,9 +391,24 @@ public class UserJDBC {
 
             accountList.setUserId(userId);
             accountList.setAccount(account);
+
+            logger.info("INSERT ACCOUNT:" + pstmt.toString());
+
+
         } catch (SQLException e) {
-            logger.warn("Insert  AccountList fail");
+            logger.warn("Insert  AccountList fail " + e.getMessage());
             throw e;
+        } finally {
+
+            try {
+                if (pstmt != null)
+                    pstmt.close();
+                conn.close();
+            } catch (SQLException e) {
+                logger.warn("Insert  AccountList conn or pstmt close fail" + conn + " || " + pstmt);
+                throw e;
+            }
+
         }
 
         return accountList;
@@ -411,9 +429,10 @@ public class UserJDBC {
         AccountList user = new AccountList();
 
         try {
-            pstmt = conn.prepareStatement(GET_ONE);
+            pstmt = conn.prepareStatement(GET_ONE_ACCOUNT);
 
             pstmt.setString(1, id);
+            pstmt.setString(2, account);
 
             logger.info(pstmt.toString());
 //            System.out.println(Calendar.getInstance().getTime() + "  UserJDBC:" + pstmt.toString());

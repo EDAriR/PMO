@@ -43,9 +43,9 @@ public class Application {
 
 //        sendPUTRequestApp.sendPUTcRequest();
 
-        sendPUTRequestApp.sendPUTcRequest(ServiceName.User);
+//        sendPUTRequestApp.sendPUTcRequest(ServiceName.User);
 
-        new SyncRecord().sync();
+//        new SyncRecord().sync();
 
         new SyncUserCard().syncCard();
 

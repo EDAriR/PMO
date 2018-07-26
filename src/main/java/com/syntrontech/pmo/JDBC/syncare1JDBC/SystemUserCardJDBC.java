@@ -19,7 +19,7 @@ public class SystemUserCardJDBC {
 
 
     private static final String GET_ALL_STMT = "SELECT * FROM system_user_card WHERE sync_status = 'N' ORDER BY id;";
-    private static final String UPDATE = "UPDATE card SET sync_status= 'Y' WHERE id=? ;";
+    private static final String UPDATE = "UPDATE system_user_card SET sync_status= 'Y' WHERE id=? ;";
 
 
 

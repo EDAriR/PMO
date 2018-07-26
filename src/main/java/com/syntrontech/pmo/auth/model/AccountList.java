@@ -14,6 +14,15 @@ public class AccountList {
 	
 	private MapToUserField mapToUserField;
 
+	@Override
+	public String toString() {
+		return "AccountList:[" +
+				"account=" + account + ", " +
+				"userId=" + userId + ", " +
+				"mapToUserField=" + mapToUserField +
+				"]";
+	}
+
 	public String getAccount() {
 		return account;
 	}
