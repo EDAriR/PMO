@@ -41,7 +41,7 @@ public class Application {
 
 //        new SyncAnswers().syncAnswers();
 
-//        sendPUTRequestApp.sendPUTcRequest();
+        sendPUTRequestApp.sendPUTcRequest();
 
 //        sendPUTRequestApp.sendPUTcRequest(ServiceName.User);
 
