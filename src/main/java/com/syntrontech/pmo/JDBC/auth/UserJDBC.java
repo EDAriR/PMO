@@ -25,9 +25,9 @@ public class UserJDBC {
             "?, ?, ?, ?, ?, ?," +
             "?, ?, ?, ?, ?);";
 
-    private static final String UPDATE = "UPDATE users SET cards= ? WHERE id=? ;";
-
-
+    private static final String INSERT_ACCOUNT_USER = "INSERT INTO account_list " +
+            "(account, user_id, map_to_users_field)" +
+            "VALUES (?, ?, ?);";
     private static final String INSERT_ACCOUNT_STMT = "INSERT INTO account_list " +
             "(account, user_id, map_to_users_field)" +
             "VALUES (?, ?, 'CARDS');";
@@ -152,10 +152,10 @@ public class UserJDBC {
         PreparedStatement pstmt = null;
 
         User old = getUserById(user.getId());
-        if (old != null) {
-            if (old.getId() != null && !old.getId().equals(""))
-                return old;
-        }
+//        if (old != null) {
+//            if (old.getId() != null && !old.getId().equals(""))
+//                return old;
+//        }
 
 
         try {
@@ -209,7 +209,7 @@ public class UserJDBC {
             logger.info("  UserJDBC INSERT:" + pstmt.toString());
             pstmt.executeUpdate();
 
-            pstmt = conn.prepareStatement(INSERT_ACCOUNT_STMT);
+            pstmt = conn.prepareStatement(INSERT_ACCOUNT_USER);
             pstmt.setString(1, user.getId());
             pstmt.setString(2, user.getId());
             pstmt.setString(3, "ID");
