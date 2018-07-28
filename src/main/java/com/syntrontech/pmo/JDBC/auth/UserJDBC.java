@@ -74,8 +74,8 @@ public class UserJDBC {
 
             pstmt.setString(1, id);
 
-//            logger.info(pstmt.toString());
-            System.out.println(Calendar.getInstance().getTime() + "  UserJDBC:" + pstmt.toString());
+            logger.info(pstmt.toString());
+//            System.out.println(Calendar.getInstance().getTime() + "  UserJDBC:" + pstmt.toString());
 
             ResultSet rs = pstmt.executeQuery();
 
@@ -108,7 +108,7 @@ public class UserJDBC {
                     user.setCards(cards);
 
                     String[] permissionIds = (String[]) rs.getArray("permission_ids").getArray();
-                    // TODO
+                    //
                     user.setPermissionIds(permissionIds);
 
                     // createtime, createby, updatetime, updateby, status
@@ -141,7 +141,6 @@ public class UserJDBC {
             }
 
         }
-//        logger.info("get user by id successful =>" + user);
         logger.info("UserJDBC: get user by id successful =>" + user);
         return user;
     }
@@ -152,10 +151,10 @@ public class UserJDBC {
         PreparedStatement pstmt = null;
 
         User old = getUserById(user.getId());
-//        if (old != null) {
-//            if (old.getId() != null && !old.getId().equals(""))
-//                return old;
-//        }
+        if (old != null) {
+            if (old.getId() != null && !old.getId().equals(""))
+                return old;
+        }
 
 
         try {

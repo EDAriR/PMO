@@ -1,4 +1,0 @@
-databaseChangeLog:
-  - include: 
-      file: postgres-pmo-createTable.yml
-      relativeToChangelogFile: true

@@ -50,14 +50,7 @@
         </dependency>
         <!-- jetty end -->
 
-        <!--<dependency>-->
-        <!--<groupId>commons-httpclient</groupId>-->
-        <!--<artifactId>commons-httpclient</artifactId>-->
-        <!--<version>3.1</version>-->
-        <!--</dependency>-->
-
-
-        <!-- jpa start -->
+   <!-- jpa start -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-jpa</artifactId>
@@ -155,18 +148,8 @@
 
 
     </dependencies>
-    <!--<build>-->
-    <!--<plugins>-->
-    <!--<plugin>-->
-    <!--<groupId>org.springframework.boot</groupId>-->
-    <!--<artifactId>spring-boot-maven-plugin</artifactId>-->
-    <!--&lt;!&ndash; <configuration>-->
-    <!--<source>${javac.compile.level}</source>-->
-    <!--<target>${javac.compile.level}</target>-->
-    <!--</configuration> &ndash;&gt;-->
-    <!--</plugin>-->
-    <!--</plugins>-->
-    <!--</build>-->
+
+
     <build>
         <plugins>
             <plugin>

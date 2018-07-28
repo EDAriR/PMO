@@ -162,7 +162,7 @@ public class Sync {
                 biochemistry = turnValueRecordToBiochemistry(record, subject, userValueRecordMap);
 
                 Biochemistry newBiochemistry = biochemistryJDBC.insert(biochemistry);
-                // TODO update mapping
+                // update mapping
                 userValueRecordJDBC.updateUserValueRecord(record.getBodyValueRecordId());
             } catch (SQLException e) {
                 e.printStackTrace();
