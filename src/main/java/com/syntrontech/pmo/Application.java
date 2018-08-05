@@ -22,7 +22,7 @@ public class Application {
 
         System.out.println("Start sync syncare1 data fireTime:" + Calendar.getInstance().getTime());
 
-        // TODO 確認PMO規格 量測資料同步
+        // 確認PMO規格 量測資料同步
         new SyncUnit().syncLocationToUnit();
 
         new SyncDevice().syncDevice();
