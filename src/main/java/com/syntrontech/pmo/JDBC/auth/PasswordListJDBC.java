@@ -94,7 +94,9 @@ public class PasswordListJDBC {
 
         if(user == null || user.getId() == null || password == null)
             return null;
-//        password = password.toUpperCase().trim();
+
+        // 密碼全部轉大寫
+        password = password.toUpperCase().trim();
 
         PasswordList old = getPasswordListById(user.getId());
         if(old != null && old.getUserId() != null)
