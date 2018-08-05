@@ -1,0 +1,54 @@
+postgresql:
+  driver: org.postgresql.Driver
+  user: postgres
+  password: 1qaz2wsx
+
+mysql:
+  driver: com.mysql.cj.jdbc.Driver
+  user:
+  password:
+
+syncare1:
+  db: jdbc:mysql://localhost:3307/SynCare?user=root&password=1qaz2wsx&useUnicode=true&characterEncoding=UTF8
+auth:
+  url: jdbc:postgresql://localhost:5432/frienddb
+  db: jdbc:postgresql://127.0.0.1:5432/authdb
+  protocol: http
+  host: localhost
+  port: 8080
+  sync:
+    - aaa/forSystem/sync/unit
+    - aaa/forSystem/sync/user
+
+measurement:
+  url:
+  db: jdbc:postgresql://127.0.0.1:5432/measurementdb
+  protocol: http
+  host: localhost
+  port: 8084
+  sync:
+    - measurement/sync/BodyInfo
+    - measurement/sync/BloodPressureHeartBeat
+    - measurement/sync/BloodGlucose
+    - measurement/sync/Biochemistry
+    - measurement/sync/AbnormalBloodPressure
+    - measurement/sync/AbnormalBloodPressureLog
+
+# cip
+syncare-service:
+  url:
+  db: jdbc:postgresql://127.0.0.1:5432/cipdb
+  protocol: http
+  host: localhost
+  port: 8083
+  sync:
+    - cip/sync/device
+    - cip/sync/subject
+
+#pmo
+pmo:
+  url: http://service.telecare.com.tw/MHWS_Test/
+  db: jdbc:postgresql://127.0.0.1:5432/pmodb
+  protocol: http
+  host: localhost
+  port: 8087
