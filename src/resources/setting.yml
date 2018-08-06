@@ -5,14 +5,14 @@ postgresql:
 
 mysql:
   driver: com.mysql.cj.jdbc.Driver
-  user:
-  password:
+  user: root
+  password: 1qaz2wsx
 
 syncare1:
   db: jdbc:mysql://localhost:3307/SynCare?user=root&password=1qaz2wsx&useUnicode=true&characterEncoding=UTF8
 
 auth:
-  url: jdbc:postgresql://localhost:5432/frienddb
+  url:
   db: jdbc:postgresql://127.0.0.1:5432/authdb
   protocol: http
   host: localhost
@@ -45,6 +45,17 @@ syncare-service:
   sync:
     - cip/sync/device
     - cip/sync/subject
+    - cip/sync/unitMeta
+    - cip/sync/emergencyContact
+
+syncare-service:
+  url:
+  db: jdbc:postgresql://127.0.0.1:5432/cipdb
+  protocol: http
+  host: localhost
+  port: 8083
+  sync:
+    - cip/sync/device
 
 #pmo
 pmo:
