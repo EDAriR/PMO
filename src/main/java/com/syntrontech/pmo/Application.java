@@ -8,7 +8,6 @@ import java.util.Calendar;
 import com.syntrontech.pmo.JDBC.*;
 import com.syntrontech.pmo.scheduler.QuartzTest;
 import com.syntrontech.pmo.sync.SendPUTRequest;
-import com.syntrontech.pmo.sync.ServiceName;
 import org.quartz.*;
 
 public class Application {

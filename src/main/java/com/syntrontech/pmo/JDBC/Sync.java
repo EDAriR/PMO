@@ -436,7 +436,7 @@ public class Sync {
 
         testBloodGlucose.setGlucose(glucoseValue);
         // type_id = 2033
-        testBloodGlucose.setGlucoseType(GlucoseType.RANDOM_BLOOD_GLUCOSE);
+        testBloodGlucose.setGlucoseType(GlucoseType.POSTPRANDIAL_BLOOD_GLUCOSE);
 
         // recordtime, latitude, longitude
         testBloodGlucose.setRecordTime(bg.getRecordDate());
@@ -469,6 +469,8 @@ public class Sync {
             testBloodGlucose.setUnitId(bg.getLocationId());
             testBloodGlucose.setUnitName(bg.getLocationName());
         }
+        testBloodGlucose.setUnitId(unit.getId());
+        testBloodGlucose.setUnitName(unit.getName());
         testBloodGlucose.setParentUnitId(unit.getParentId());
         testBloodGlucose.setParentUnitName(unit.getParentName());
 
