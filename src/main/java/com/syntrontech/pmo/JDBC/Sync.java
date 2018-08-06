@@ -511,8 +511,7 @@ public class Sync {
                             // 尚未處理不需存log
                             if (su.getCaseStatus() != 0 || su.getCaseNote() != null)
                                 abnormalBloodPressureLogJDBC
-                                        .insertAbnormalBloodPressure(
-                                                turnBloodPressureAbnormalToLog(abnormalBloodPressure, su));
+                                        .insert(turnBloodPressureAbnormalToLog(abnormalBloodPressure, su));
                         }
 
                     }

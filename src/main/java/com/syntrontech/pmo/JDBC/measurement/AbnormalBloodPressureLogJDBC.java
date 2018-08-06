@@ -33,7 +33,7 @@ public class AbnormalBloodPressureLogJDBC {
 
         System.out.println("ss size:" + ss.size());
 
-        abnormalBloodPressureLogJDBC.insertAbnormalBloodPressure(abnormalBloodPressureLogJDBC.getTestAbnormalBloodPressureLog());
+        abnormalBloodPressureLogJDBC.insert(abnormalBloodPressureLogJDBC.getTestAbnormalBloodPressureLog());
     }
 
     AbnormalBloodPressureLog getTestAbnormalBloodPressureLog(){
@@ -56,7 +56,7 @@ public class AbnormalBloodPressureLogJDBC {
         return abnormalBloodPressureLog;
     }
 
-    public AbnormalBloodPressureLog insertAbnormalBloodPressure(AbnormalBloodPressureLog abnormalBloodPressureLog){
+    public AbnormalBloodPressureLog insert(AbnormalBloodPressureLog abnormalBloodPressureLog){
 
         Connection conn = new MEASUREMENT_GET_CONNECTION().getConn();
         PreparedStatement pstmt = null;
