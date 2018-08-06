@@ -52,7 +52,7 @@ public class QuartzTest {
 
         Trigger trigger = TriggerBuilder.newTrigger()
                 .withIdentity("helloTrigger", Scheduler.DEFAULT_GROUP)
-                .withSchedule(CronScheduleBuilder.cronSchedule(new CronExpression("0 0/5 * * * ?")))
+                .withSchedule(CronScheduleBuilder.cronSchedule(new CronExpression("0 0/5 2 * * ?")))
                 .build();
 
         scheduler.scheduleJob(jobDetail, trigger);

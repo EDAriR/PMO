@@ -29,7 +29,7 @@ public class SyncJob implements Job {
         new SyncDevice().syncDevice();
         new Sync().syncSystemUserToUserAndSubject();
         new SyncAnswers().syncAnswers();
-//
+
         SendPUTRequest sendPUTRequestApp = new SendPUTRequest();
         sendPUTRequestApp.sendPUTcRequest();
 

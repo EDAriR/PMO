@@ -17,8 +17,8 @@ public class Application {
 
         SendPUTRequest sendPUTRequestApp = new SendPUTRequest();
 
-//                QuartzTest qt = new QuartzTest();
-//                qt.startScheduler();
+        QuartzTest qt = new QuartzTest();
+        qt.startScheduler();
 
         System.out.println("Start sync syncare1 data fireTime:" + Calendar.getInstance().getTime());
 
@@ -31,13 +31,13 @@ public class Application {
 
         new SyncAnswers().syncAnswers();
 
-//        sendPUTRequestApp.sendPUTcRequest();
-
 //        sendPUTRequestApp.sendPUTcRequest(ServiceName.User);
 
         new SyncRecord().sync();
 
         new SyncUserCard().syncCard();
+
+        sendPUTRequestApp.sendPUTcRequest();
 
     }
 
