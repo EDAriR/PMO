@@ -48,14 +48,14 @@ syncare-service:
     - cip/sync/unitMeta
     - cip/sync/emergencyContact
 
-syncare-service:
+questionnaire:
   url:
-  db: jdbc:postgresql://127.0.0.1:5432/cipdb
+  db: jdbc:postgresql://127.0.0.1:5432/questionnairdb
   protocol: http
   host: localhost
-  port: 8083
+  port: 9003
   sync:
-    - cip/sync/device
+    - sync/questionnaireReply
 
 #pmo
 pmo:
