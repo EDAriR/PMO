@@ -198,6 +198,7 @@
                 </executions>
             </plugin>
         </plugins>
+        <!--<finalName>MysqlAlertTableAddCloumSyncStatus</finalName>-->
         <finalName>dbsync_syncare1</finalName>
     </build>
 
