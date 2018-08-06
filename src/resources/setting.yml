@@ -22,7 +22,7 @@ auth:
     - aaa/forSystem/sync/user
 
 measurement:
-  url:
+  url: http://localhost:8084/measurement/sync/BloodPressureHeartBeat
   db: jdbc:postgresql://127.0.0.1:5432/measurementdb
   protocol: http
   host: localhost
