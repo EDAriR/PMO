@@ -96,7 +96,12 @@ public class PasswordListJDBC {
             return null;
 
         // 密碼全部轉大寫
-        password = password.toUpperCase().trim();
+        password = password.toUpperCase();
+
+        System.out.println("xxxxxxxxxxxxxxxxxxxxxxxxxx");
+        System.out.println("user:" + user);
+        System.out.println("password:" + password);
+        System.out.println("xxxxxxxxxxxxxxxxxxxxxxxxxx");
 
         PasswordList old = getPasswordListById(user.getId());
         if(old != null && old.getUserId() != null)
@@ -144,6 +149,8 @@ public class PasswordListJDBC {
     }
 
     PasswordList insert(String userId, String password, Date passwordUpdateTime){
+
+        logger.debug("userId:[" + userId + "], password:[" + password + "], passwordUpdateTime:[" + passwordUpdateTime + "]");
 
         userId = userId.toUpperCase().trim();
 
