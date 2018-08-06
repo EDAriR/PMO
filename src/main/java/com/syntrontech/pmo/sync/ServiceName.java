@@ -5,14 +5,20 @@ public enum ServiceName implements GetUrl{
     Unit {
         @Override
         public String geturl() {
-            return "http://localhost:8080/aaa/forSystem/sync/unit";
+            return "http://localhost:8000/aaa/forSystem/sync/unit";
         }
+//        public String geturl() {
+//            return "http://localhost:8080/aaa/forSystem/sync/unit";
+//        }
     },
     User {
         @Override
         public String geturl() {
-            return "http://localhost:8080/aaa/forSystem/sync/user";
+            return "http://localhost:8000/aaa/forSystem/sync/user";
         }
+//        public String geturl() {
+//            return "http://localhost:8080/aaa/forSystem/sync/user";
+//        }
     },
 
 
@@ -20,37 +26,40 @@ public enum ServiceName implements GetUrl{
     BodyInfo{
         @Override
         public String geturl() {
-            return "http://localhost:8084/measurement/sync/BodyInfo";
+            return "http://localhost:8000/measurement/sync/BodyInfo";
         }
+//        public String geturl() {
+//            return "http://localhost:8084/measurement/sync/BodyInfo";
+//        }
     },
     BloodPressureHeartBeat{
         @Override
         public String geturl() {
-            return "http://localhost:8084/measurement/sync/BloodPressureHeartBeat";
+            return "http://localhost:8000/measurement/sync/BloodPressureHeartBeat";
         }
     },
     BloodGlucose{
         @Override
         public String geturl() {
-            return "http://localhost:8084/measurement/sync/BloodGlucose";
+            return "http://localhost:8000/measurement/sync/BloodGlucose";
         }
     },
     Biochemistry{
         @Override
         public String geturl() {
-            return "http://localhost:8084/measurement/sync/Biochemistry";
+            return "http://localhost:8000/measurement/sync/Biochemistry";
         }
     },
     AbnormalBloodPressure{
         @Override
         public String geturl() {
-            return "http://localhost:8084/measurement/sync/AbnormalBloodPressure";
+            return "http://localhost:8000/measurement/sync/AbnormalBloodPressure";
         }
     },
     AbnormalBloodPressureLog{
         @Override
         public String geturl() {
-            return "http://localhost:8084/measurement/sync/AbnormalBloodPressureLog";
+            return "http://localhost:8000/measurement/sync/AbnormalBloodPressureLog";
         }
     },
 
@@ -58,32 +67,35 @@ public enum ServiceName implements GetUrl{
     Device{
         @Override
         public String geturl() {
-            return "http://localhost:8083/cip/sync/device";
+            return "http://localhost:8000/cip/sync/device";
         }
+//        public String geturl() {
+//            return "http://localhost:8083/cip/sync/device";
+//        }
     },
     Subject{
         @Override
         public String geturl() {
-            return "http://localhost:8083/cip/sync/subject";
+            return "http://localhost:8000/cip/sync/subject";
         }
     },
     UnitMeta{
         @Override
         public String geturl() {
-            return "http://localhost:8083/cip/sync/unitMeta";
+            return "http://localhost:8000/cip/sync/unitMeta";
         }
     },
     EmergencyContact{
         @Override
         public String geturl() {
-            return "http://localhost:8083/cip/sync/emergencyContact";
+            return "http://localhost:8000/cip/sync/emergencyContact";
         }
     },
 
     Questionnaire{
         @Override
         public String geturl() {
-            return "http://localhost:/questionnair/sync/questionnaireReply";
+            return "http://localhost:8000/questionnair/sync/questionnaireReply";
         }
 
     }

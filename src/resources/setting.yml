@@ -10,6 +10,7 @@ mysql:
 
 syncare1:
   db: jdbc:mysql://localhost:3307/SynCare?user=root&password=1qaz2wsx&useUnicode=true&characterEncoding=UTF8
+
 auth:
   url: jdbc:postgresql://localhost:5432/frienddb
   db: jdbc:postgresql://127.0.0.1:5432/authdb

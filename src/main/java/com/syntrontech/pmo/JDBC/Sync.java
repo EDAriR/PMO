@@ -552,12 +552,12 @@ public class Sync {
         // status
 
         PmoStatus pmoStatus = PmoStatus.NotSync;
-        SystemUser.SystemUserPmoStatus ss = su.getPmoStatus();
-        if (ss == SystemUser.SystemUserPmoStatus.Sync)
+        SystemUser.SystemUserPmoStatus status = su.getPmoStatus();
+        if (status == SystemUser.SystemUserPmoStatus.Sync)
             pmoStatus = PmoStatus.Sync;
-        if (ss == SystemUser.SystemUserPmoStatus.NotSync)
+        if (status == SystemUser.SystemUserPmoStatus.NotSync)
             pmoStatus = PmoStatus.NotSync;
-        if (ss == SystemUser.SystemUserPmoStatus.Error)
+        if (status == SystemUser.SystemUserPmoStatus.Error)
             pmoStatus = PmoStatus.Error;
         pmoUser.setPmoStatus(pmoStatus);
 
