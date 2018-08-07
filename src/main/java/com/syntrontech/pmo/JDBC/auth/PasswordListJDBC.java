@@ -30,7 +30,7 @@ public class PasswordListJDBC {
 
 //        List<PasswordList> ss = s.getAllPasswordLists();
 
-        s.insertPassword(new UserJDBC().getTestUser(), "1qaz2wsx");
+//        s.insertPassword(new UserJDBC().getTestUser(), "1qaz2wsx");
 
         PasswordList passwordList = s.getPasswordListById(new UserJDBC().getTestUser().getId());
 
