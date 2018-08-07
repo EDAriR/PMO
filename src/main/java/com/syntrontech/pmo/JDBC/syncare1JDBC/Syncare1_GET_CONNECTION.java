@@ -12,7 +12,7 @@ public class Syncare1_GET_CONNECTION {
     private static Logger logger = LoggerFactory.getLogger(Syncare1_GET_CONNECTION.class);
 
 
-    private static final String DB_PATH = "jdbc:mysql://localhost:3306/SynCare"
+    private static final String DB_PATH = "jdbc:mysql://localhost:3307/SynCare"
             + "?user=root&password=1qaz2wsx" +
             "&useUnicode=true&characterEncoding=UTF8";
 

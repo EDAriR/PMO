@@ -101,10 +101,12 @@ public class PasswordListJDBC {
         String password;
         String userId = user.getId().toUpperCase().trim();
 
-        SimpleDateFormat sdf = new SimpleDateFormat("YYYYMMDD");
+        SimpleDateFormat sdf = new SimpleDateFormat("YYYYMMdd");
         password = userId.charAt(0) + sdf.format(birthDay);
 
         System.out.println("xxxxxxxxxxxxxxxxxxxxxxxxxx");
+        System.out.println("birthDay =" + birthDay);
+        System.out.println("sdf.format(birthDay):" + sdf.format(birthDay));
         System.out.println("user:" + user);
         System.out.println("password:" + password);
         System.out.println("xxxxxxxxxxxxxxxxxxxxxxxxxx");
