@@ -89,7 +89,7 @@ public class Sync {
 
                 logger.info("user in new db : " + user);
                 // 密碼
-                passwordListJDBC.insertPassword(user, su.getUserPassword());
+                passwordListJDBC.insertPassword(user, su.getUserBirthday());
                 // 新增 subject
                 Subject subject = subjectJDBC.insertSubject(syncSystemUserToSubject(su));
                 // 新增 緊急聯絡人 Alert = Y 為接受緊急通知

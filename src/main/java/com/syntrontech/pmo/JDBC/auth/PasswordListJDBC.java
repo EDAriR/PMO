@@ -8,6 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.sql.*;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -90,13 +91,18 @@ public class PasswordListJDBC {
         return passwordList;
     }
 
-    public PasswordList insertPassword(User user, String password) throws SQLException {
+    public PasswordList insertPassword(User user, Date birthDay) throws SQLException {
 
-        if(user == null || user.getId() == null || password == null)
+        if(user == null || user.getId() == null || birthDay == null)
             return null;
 
-        // 密碼全部轉大寫
-        password = password.toUpperCase();
+        // 2018/08/07 密碼全改為預設 規則為 身分證第一個字大寫+西元年生日
+        // ex A20180807
+        String password;
+        String userId = user.getId().toUpperCase().trim();
+
+        SimpleDateFormat sdf = new SimpleDateFormat("YYYYMMDD");
+        password = userId.charAt(0) + sdf.format(birthDay);
 
         System.out.println("xxxxxxxxxxxxxxxxxxxxxxxxxx");
         System.out.println("user:" + user);
@@ -114,7 +120,7 @@ public class PasswordListJDBC {
         try {
             pstmt = conn.prepareStatement(INSERT_STMT);
 
-            passwordList =  insert(user.getId(), password, user.getUpdateTime());
+            passwordList =  insert(userId, password, user.getUpdateTime());
 
             pstmt.setString(1, passwordList.getPassword());
             pstmt.setString(2, passwordList.getUserId());
@@ -151,8 +157,6 @@ public class PasswordListJDBC {
     PasswordList insert(String userId, String password, Date passwordUpdateTime){
 
         logger.debug("userId:[" + userId + "], password:[" + password + "], passwordUpdateTime:[" + passwordUpdateTime + "]");
-
-        userId = userId.toUpperCase().trim();
 
         String encryptPassword = getEncryptPassword(password, passwordUpdateTime);
 
