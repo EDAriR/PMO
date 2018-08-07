@@ -405,7 +405,6 @@ public class Sync {
     private BloodGlucose turnValueRecordToBloodGlucose(UserValueRecord bg, Subject subject, Map<Integer, List<UserValueRecordMapping>> userValueRecordMap) throws SQLException {
 
         List<UserValueRecordMapping> values = userValueRecordMap.get(bg.getBodyValueRecordId());
-        GlucoseType type = GlucoseType.RANDOM_BLOOD_GLUCOSE;
         Integer glucoseValue = 0;
         if (values.size() == 0)
             return null;
@@ -413,12 +412,7 @@ public class Sync {
         if (values.size() > 1) {
             for (UserValueRecordMapping v : values) {
                 if (v.getMapping().getTypeId() == 2033) {
-                    // 全部都是飯後??
-//                    String value = v.getRecordValue();
-//                    if (value.equals("0"))   // 飯前??
-//                        type = GlucoseType.FASTING_BLOOD_GLUCOSE;
-//                    if (value.equals("1"))   // 飯後??
-//                        type = GlucoseType.FASTING_BLOOD_GLUCOSE;
+                    // 全部都是飯後
                 } else if (v.getMapping().getTypeId() == 136) {
                     try {
                         glucoseValue = Integer.valueOf(v.getRecordValue());
@@ -429,8 +423,6 @@ public class Sync {
 
             }
         }
-
-        UserValueRecordMapping value = values.get(0);
 
         BloodGlucose testBloodGlucose = new BloodGlucose();
 
@@ -459,7 +451,6 @@ public class Sync {
         testBloodGlucose.setSubjectAge(CalendarUtil.getAgeFromBirthDate(subject.getBirthday(), bg.getRecordDate()));
         testBloodGlucose.setSubjectUserId(subject.getUserId());
         testBloodGlucose.setSubjectUserName(subject.getName());
-
 
         // rule_seq, rule_description, unit_id, unit_name, parent_unit_id, parent_unit_name, device_id
         UnitJDBC unitJDBC = new UnitJDBC();
@@ -518,8 +509,6 @@ public class Sync {
 
                     }
 
-                    System.out.println(old);
-                    System.out.println(bloodPressureHeartBeat);
                     pmoResultJDBC.insert(turnOldRecordsToPmoResult(old, bloodPressureHeartBeat.getSubjectId(), bloodPressureHeartBeat.getSequence(), MeasurementPMOType.BloodPressure));
 
                     updateUserValueRecordMapping(userValueRecordMap, old.getBodyValueRecordId());

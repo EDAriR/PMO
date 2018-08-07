@@ -116,7 +116,7 @@ public class PasswordListJDBC {
         Connection conn = new Auth_GET_CONNECTION().getConn();
         PreparedStatement pstmt = null;
 
-        PasswordList passwordList = null;
+        PasswordList passwordList;
         try {
             pstmt = conn.prepareStatement(INSERT_STMT);
 
