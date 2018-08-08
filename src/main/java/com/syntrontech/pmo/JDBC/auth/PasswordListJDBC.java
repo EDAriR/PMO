@@ -8,10 +8,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.sql.*;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.TimeZone;
 
 public class PasswordListJDBC {
 
@@ -96,6 +98,11 @@ public class PasswordListJDBC {
         if(user == null || user.getId() == null || birthDay == null)
             return null;
 
+        PasswordList old = getPasswordListById(user.getId());
+        if(old != null && old.getUserId() != null)
+            return old.toString();
+
+
         // 2018/08/07 密碼全改為預設 規則為 身分證第一個字大寫+西元年生日
         // ex A20180807
         String password;
@@ -106,14 +113,12 @@ public class PasswordListJDBC {
         password = userId.charAt(0) + birthDayStr;
 
         Date update = new Date();
+
         String pwd = "userId=[" + user.getId() + "], " +
                 "password=["+ password +"], " +
                 "birthDay=["+ birthDay +"], " +
+                "Time=["+ update.getTime() +"], " +
                 "UpdateTime=["+ update +"]    ";
-
-        PasswordList old = getPasswordListById(user.getId());
-        if(old != null && old.getUserId() != null)
-            return old.toString();
 
         Connection conn = new Auth_GET_CONNECTION().getConn();
         PreparedStatement pstmt = null;
@@ -154,6 +159,9 @@ public class PasswordListJDBC {
 
         }
         logger.info("create Password successful ==> " + pstmt);
+
+        System.out.println(getPasswordListById(user.getId()));
+
         return pwd;
     }
 

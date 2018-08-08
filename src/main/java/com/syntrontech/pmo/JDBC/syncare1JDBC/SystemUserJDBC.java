@@ -157,8 +157,6 @@ public class SystemUserJDBC {
                     Area area = new Area();
                     area.setCode(rs.getString("area"));
                     systemUser.setArea(area);
-                    System.out.println(systemUser);
-                    System.out.println("area ===>" + area);
                     systemUserslist.add(systemUser);
 
                 }
@@ -196,7 +194,6 @@ public class SystemUserJDBC {
             pstmt = conn.prepareStatement(GET_ONE);
             pstmt.setString(1, id);
 
-            System.out.println(pstmt);
             rs = pstmt.executeQuery();
 
             if (rs != null) {
@@ -261,8 +258,6 @@ public class SystemUserJDBC {
                     Area area = new Area();
                     area.setCode(rs.getString("area"));
                     systemUser.setArea(area);
-                    System.out.println(systemUser);
-
 
                 }
             }

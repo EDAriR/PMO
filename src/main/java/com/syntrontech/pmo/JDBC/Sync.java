@@ -72,17 +72,19 @@ public class Sync {
         Map<Integer, List<UserValueRecordMapping>> userValueRecordMap = new UserValueRecordMappingJDBC()
                 .getAllUserValueRecordMapping();
 
-        List<SystemUser> users = userIds.stream()   // 找出未同步systemuser
-                .map(id -> systemUserJDBC.getSystemUserById(id))
-                .collect(Collectors.toList());
 
         List<String> pwds = new ArrayList<>();
-        for (SystemUser su : users) {
+        for (String id : userIds) {
+
+            // 找出未同步systemuser
+            SystemUser su = systemUserJDBC.getSystemUserById(id);
+            System.out.println("unsync SystemUser" + su);
 
             logger.info("sync system user :" + su);
             if (su.getUserAccount() == null) {
                 continue;
             }
+
             try {
 
                 // 新增 user
@@ -133,6 +135,7 @@ public class Sync {
             }
 
         }
+        pwds.forEach(w -> System.out.println(w));
     }
 
     private void synBodyInfo(UserValueRecordJDBC userValueRecordJDBC, SystemUser su, Subject subject, Map<Integer, List<UserValueRecordMapping>> userValueRecordMap) {
