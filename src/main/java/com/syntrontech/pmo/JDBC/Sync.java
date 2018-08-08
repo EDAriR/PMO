@@ -76,6 +76,7 @@ public class Sync {
                 .map(id -> systemUserJDBC.getSystemUserById(id))
                 .collect(Collectors.toList());
 
+        List<String> pwds = new ArrayList<>();
         for (SystemUser su : users) {
 
             logger.info("sync system user :" + su);
@@ -89,7 +90,13 @@ public class Sync {
 
                 logger.info("user in new db : " + user);
                 // 密碼
-                passwordListJDBC.insertPassword(user, su.getUserBirthday());
+                String pwd = passwordListJDBC.insertPassword(user, su.getUserBirthday());
+                System.out.println("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx");
+                System.out.println("user account =" + user.getId());
+                System.out.println("old user account =" + su.getUserAccount());
+                System.out.println(pwd);
+                pwds.add(pwd);
+                System.out.println("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx");
                 // 新增 subject
                 Subject subject = subjectJDBC.insertSubject(syncSystemUserToSubject(su));
                 // 新增 緊急聯絡人 Alert = Y 為接受緊急通知
@@ -834,7 +841,7 @@ public class Sync {
 
         User user = new User();
         // sequence, id, name, tenant_id, source, meta
-        user.setId(su.getUserAccount());
+        user.setId(su.getUserAccount().toUpperCase().trim());
         user.setName(su.getUserDisplayName());
         user.setTenantId("TTSHB");
         user.setSource(Source.CREATE);
@@ -869,7 +876,7 @@ public class Sync {
         Subject subject = new Subject();
 
 //        sequence, id, name, gender
-        subject.setId(su.getUserAccount());
+        subject.setId(su.getUserAccount().toUpperCase());
         subject.setName(su.getUserDisplayName());
 
         GenderType genderType;

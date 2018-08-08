@@ -16,8 +16,8 @@ public class Application {
 
         SendPUTRequest sendPUTRequestApp = new SendPUTRequest();
 
-        QuartzTest qt = new QuartzTest();
-        qt.startScheduler();
+//        QuartzTest qt = new QuartzTest();
+//        qt.startScheduler();
 
         System.out.println("Start sync syncare1 data fireTime:" + Calendar.getInstance().getTime());
 

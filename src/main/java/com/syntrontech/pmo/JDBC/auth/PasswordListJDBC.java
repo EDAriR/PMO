@@ -15,7 +15,7 @@ import java.util.List;
 
 public class PasswordListJDBC {
 
-    private static Logger logger = LoggerFactory.getLogger(Auth_GET_CONNECTION.class);
+    private static Logger logger = LoggerFactory.getLogger(PasswordListJDBC.class);
 
     private static final String INSERT_STMT = "INSERT INTO password_list " +
             "(sequence, password, user_id, password_updatetime) "
@@ -91,7 +91,7 @@ public class PasswordListJDBC {
         return passwordList;
     }
 
-    public PasswordList insertPassword(User user, Date birthDay) throws SQLException {
+    public String insertPassword(User user, Date birthDay) throws SQLException {
 
         if(user == null || user.getId() == null || birthDay == null)
             return null;
@@ -102,18 +102,18 @@ public class PasswordListJDBC {
         String userId = user.getId().toUpperCase().trim();
 
         SimpleDateFormat sdf = new SimpleDateFormat("YYYYMMdd");
-        password = userId.charAt(0) + sdf.format(birthDay);
+        String birthDayStr = sdf.format(birthDay);
+        password = userId.charAt(0) + birthDayStr;
 
-        System.out.println("xxxxxxxxxxxxxxxxxxxxxxxxxx");
-        System.out.println("birthDay =" + birthDay);
-        System.out.println("sdf.format(birthDay):" + sdf.format(birthDay));
-        System.out.println("user:" + user);
-        System.out.println("password:" + password);
-        System.out.println("xxxxxxxxxxxxxxxxxxxxxxxxxx");
+        Date update = new Date();
+        String pwd = "userId=[" + user.getId() + "], " +
+                "password=["+ password +"], " +
+                "birthDay=["+ birthDay +"], " +
+                "UpdateTime=["+ update +"]    ";
 
         PasswordList old = getPasswordListById(user.getId());
         if(old != null && old.getUserId() != null)
-            return old;
+            return old.toString();
 
         Connection conn = new Auth_GET_CONNECTION().getConn();
         PreparedStatement pstmt = null;
@@ -122,7 +122,7 @@ public class PasswordListJDBC {
         try {
             pstmt = conn.prepareStatement(INSERT_STMT);
 
-            passwordList =  insert(userId, password, user.getUpdateTime());
+            passwordList =  insert(userId, password, update);
 
             pstmt.setString(1, passwordList.getPassword());
             pstmt.setString(2, passwordList.getUserId());
@@ -138,6 +138,7 @@ public class PasswordListJDBC {
                 rs.close();
             }
 
+            pwd = pwd + passwordList;
         } catch (SQLException e) {
             logger.debug("insert Password fail " + pstmt);
             throw e;
@@ -153,7 +154,7 @@ public class PasswordListJDBC {
 
         }
         logger.info("create Password successful ==> " + pstmt);
-        return passwordList;
+        return pwd;
     }
 
     PasswordList insert(String userId, String password, Date passwordUpdateTime){
