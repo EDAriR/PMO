@@ -14,22 +14,12 @@ public class YAMLReader {
 
         Yaml yaml = new Yaml();
         InputStream in = YAMLReader.class.getResourceAsStream("/setting.yml");
-        Object obj = yaml.load(in);
+        Map<String, Map<String, String>> obj = (LinkedHashMap<String, Map<String, String>>) yaml.load(in);
         System.out.println("Loaded object type:" + obj.getClass());
-        System.out.println(obj instanceof LinkedHashMap);
 
-        Map map;
-        if(obj instanceof LinkedHashMap) {
-            map = (LinkedHashMap) obj;
-        }else {
-            map = new LinkedHashMap();
+        for (String s:obj.keySet()){
+            System.out.println(obj.get(s));
         }
-        Map pg;
-        if(map.get("postgresql") instanceof LinkedHashMap)
-            pg = (LinkedHashMap)map.get("postgresql");
-        else
-            pg = new LinkedHashMap();
-        System.out.println(pg.get("driver"));
     }
 
     public void getSetting(){
