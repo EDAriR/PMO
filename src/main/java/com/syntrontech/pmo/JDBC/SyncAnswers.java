@@ -2,9 +2,11 @@ package com.syntrontech.pmo.JDBC;
 
 import com.syntrontech.pmo.JDBC.questionnair.QuestionnairReplyJDBC;
 import com.syntrontech.pmo.JDBC.syncare1JDBC.SynCareQuestionnaireAnswersJDBC;
+import com.syntrontech.pmo.JDBC.syncare1JDBC.SystemUserJDBC;
 import com.syntrontech.pmo.model.common.UnmodifiableDataStatus;
 import com.syntrontech.pmo.questionnair.QuestionnairReply;
 import com.syntrontech.pmo.syncare1.model.SynCareQuestionnaireAnswers;
+import com.syntrontech.pmo.syncare1.model.SystemUser;
 
 import java.util.Date;
 import java.util.List;
@@ -19,34 +21,36 @@ public class SyncAnswers {
 
         SynCareQuestionnaireAnswersJDBC answersJDBC = new SynCareQuestionnaireAnswersJDBC();
 
+        SystemUserJDBC systemUserJDBC = new SystemUserJDBC();
         List<SynCareQuestionnaireAnswers> answers = answersJDBC.getAll();
         answers.forEach(a-> {
 
-            syncToQuestionnairReply(a);
+            syncToQuestionnairReply(a, systemUserJDBC);
             answersJDBC.update(a.getId());
         });
 
     }
 
-    private void syncToQuestionnairReply(SynCareQuestionnaireAnswers answers) {
+    private void syncToQuestionnairReply(SynCareQuestionnaireAnswers answers, SystemUserJDBC systemUserJDBC) {
 
         QuestionnairReplyJDBC replyJDBC = new QuestionnairReplyJDBC();
 
-        QuestionnairReply reply = turnAnswerToReply(answers);
+        QuestionnairReply reply = turnAnswerToReply(answers, systemUserJDBC);
         System.out.println(reply);
         if(reply != null)
             replyJDBC.insert(reply);
 
     }
 
-    private QuestionnairReply turnAnswerToReply(SynCareQuestionnaireAnswers answers) {
+    private QuestionnairReply turnAnswerToReply(SynCareQuestionnaireAnswers answers, SystemUserJDBC systemUserJDBC) {
 
         QuestionnairReply questionnairReply = new QuestionnairReply();
 //        sequence, user_id, tenant_id, questionnaire_seq
 //        questionnaire_question_option_score, questionnaire_question_answer
 //        createtime, createby, updatetime, updateby, status
 
-        questionnairReply.setUserId(answers.getUser());
+        SystemUser su = systemUserJDBC.getSystemUserById(answers.getUser());
+        questionnairReply.setUserId(su.getUserAccount());
         questionnairReply.setTenantId("TTSHB");
         questionnairReply.setQuestionnairSeq(answers.getQuestionnaire());
 
