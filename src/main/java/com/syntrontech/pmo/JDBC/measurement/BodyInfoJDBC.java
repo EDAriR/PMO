@@ -60,8 +60,11 @@ public BodyInfo insert(BodyInfo bodyInfo){
         pstmt.setDouble(2, bodyInfo.getWeight());
         if(bodyInfo.getBmi() != null)
             pstmt.setDouble(3, bodyInfo.getBmi());
-        else
-            pstmt.setNull(3, Types.DECIMAL);
+        else{
+            Double height = bodyInfo.getHeight()/100;
+            Double bmi = bodyInfo.getWeight() / (height * height);
+            pstmt.setDouble(3, bmi);
+        }
 
         if (bodyInfo.getBfp() != null)
             pstmt.setDouble(4, bodyInfo.getBfp());
