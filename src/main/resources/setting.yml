@@ -12,7 +12,7 @@ syncare1:
   db: jdbc:mysql://localhost:3307/SynCare?user=root&password=1qaz2wsx&useUnicode=true&characterEncoding=UTF8
 
 auth:
-  url:
+  url: http://localhost:8080/
   db: jdbc:postgresql://127.0.0.1:5432/authdb
   protocol: http
   host: localhost
@@ -22,7 +22,7 @@ auth:
     - aaa/forSystem/sync/user
 
 measurement:
-  url: http://localhost:8084/measurement/sync/BloodPressureHeartBeat
+  url: http://localhost:8084/
   db: jdbc:postgresql://127.0.0.1:5432/measurementdb
   protocol: http
   host: localhost
@@ -37,7 +37,7 @@ measurement:
 
 # cip
 syncare-service:
-  url:
+  url: http://localhost:8083/
   db: jdbc:postgresql://127.0.0.1:5432/cipdb
   protocol: http
   host: localhost
@@ -49,7 +49,7 @@ syncare-service:
     - cip/sync/emergencyContact
 
 questionnaire:
-  url:
+  url: http://localhost:9003/
   db: jdbc:postgresql://127.0.0.1:5432/questionnairdb
   protocol: http
   host: localhost
@@ -59,7 +59,7 @@ questionnaire:
 
 #pmo
 pmo:
-  url: http://service.telecare.com.tw/MHWS_Test/
+  url: http://localhost:8087/
   db: jdbc:postgresql://127.0.0.1:5432/pmodb
   protocol: http
   host: localhost
