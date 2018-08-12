@@ -12,7 +12,7 @@ import static com.syntrontech.pmo.util.YAMLReader.getSetting;
 
 public class Auth_GET_CONNECTION {
 
-//    private static Logger logger = LoggerFactory.getLogger(Auth_GET_CONNECTION.class);
+    private static Logger logger = LoggerFactory.getLogger(Auth_GET_CONNECTION.class);
 
     private static final String DRIVER_PATH = getSetting("postgresql", "driver");
     private static final String DB_PATH = getSetting("auth", "db");
@@ -34,12 +34,12 @@ public class Auth_GET_CONNECTION {
             conn = DriverManager.getConnection(DB_PATH, DB_USER, DB_PASSWORD);
 
         }catch (ClassNotFoundException e) {
-//            logger.debug("JDBC ClassNotFoundException");
-            System.out.println(Calendar.getInstance().getTime() + "  UserJDBC:" +"JDBC ClassNotFoundException");
+            logger.debug("JDBC ClassNotFoundException");
+//            System.out.println(Calendar.getInstance().getTime() + "  UserJDBC:" +"JDBC ClassNotFoundException");
 
         } catch (SQLException e) {
-//            logger.debug("Auth_GET_CONNECTION Failed!");
-            System.out.println(Calendar.getInstance().getTime() + "  UserJDBC:" + "Auth_GET_CONNECTION Failed!");
+            logger.debug("Auth_GET_CONNECTION Failed!");
+//            System.out.println(Calendar.getInstance().getTime() + "  UserJDBC:" + "Auth_GET_CONNECTION Failed!");
         }
 
         if (conn != null)

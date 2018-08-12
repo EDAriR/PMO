@@ -8,15 +8,15 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.syntrontech.pmo.util.YAMLReader.getSetting;
+
 public class MysqlAlertTableAddCloumSyncStatus {
 
     private static Logger logger = LoggerFactory.getLogger(MysqlAlertTableAddCloumSyncStatus.class);
 
-    private static final String DB_PATH = "jdbc:mysql://localhost:3306/SynCare"
-            + "?user=root&password=1qaz2wsx" +
-            "&useUnicode=true&characterEncoding=UTF8";
+    private static final String DB_PATH = getSetting("syncare1", "db");
 
-    private static final String DRIVER_PATH = "com.mysql.cj.jdbc.Driver";
+    private static final String DRIVER_PATH = getSetting("mysql", "driver");
 
     public static void main(String[] args) throws SQLException {
 

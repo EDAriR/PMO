@@ -8,14 +8,16 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.Calendar;
 
+import static com.syntrontech.pmo.util.YAMLReader.getSetting;
+
 public class CIP_GET_CONNECTION {
 
     private static Logger logger = LoggerFactory.getLogger(CIP_GET_CONNECTION.class);
 
-    private static final String DRIVER_PATH = "org.postgresql.Driver";
-    private static final String DB_PATH = "jdbc:postgresql://127.0.0.1:5432/cipdb";
-    private static final String DB_USER = "postgres";
-    private static final String DB_PASSWORD = "1qaz2wsx";
+    private static final String DRIVER_PATH = getSetting("postgresql", "driver");
+    private static final String DB_PATH = getSetting("syncare-service", "db");
+    private static final String DB_USER = getSetting("postgresql", "user");
+    private static final String DB_PASSWORD = getSetting("postgresql", "password");
 
     public Connection getConn(){
 

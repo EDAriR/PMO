@@ -71,6 +71,8 @@ public class SyncAnswers {
         Long[] longArray = {(long)answers.getQuestionnaireAnswersItemId()};;
         questionnairReply.setQuestionnairQuestionOptionSeq(longArray);
 
+        String[] strArr = {answers.getQuestionnaireAnswersItemValue()};
+        questionnairReply.setQuestionnairQuestionAnswer(strArr);
 
         Date date = new Date();
         questionnairReply.setCreateTime(answers.getCreateDate()); // Date

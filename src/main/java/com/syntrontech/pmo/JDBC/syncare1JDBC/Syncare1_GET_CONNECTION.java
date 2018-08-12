@@ -7,16 +7,20 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
+import static com.syntrontech.pmo.util.YAMLReader.getSetting;
+
 public class Syncare1_GET_CONNECTION {
 
     private static Logger logger = LoggerFactory.getLogger(Syncare1_GET_CONNECTION.class);
 
 
-    private static final String DB_PATH = "jdbc:mysql://localhost:3306/SynCare"
-            + "?user=root&password=1qaz2wsx" +
-            "&useUnicode=true&characterEncoding=UTF8";
+    private static final String DB_PATH = getSetting("syncare1", "db");
 
-    private static final String DRIVER_PATH = "com.mysql.cj.jdbc.Driver";
+    private static final String DRIVER_PATH = getSetting("mysql", "driver");
+
+    public static void main(String[] args) {
+        new Syncare1_GET_CONNECTION().getConn();
+    }
 
     public Connection getConn(){
 
