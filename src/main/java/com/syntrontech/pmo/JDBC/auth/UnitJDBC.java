@@ -70,6 +70,48 @@ public class UnitJDBC {
             return null;
         id = id.trim();
 
+        switch (id){
+            // TODO
+            // 台東市衛生所 其他平板
+            case "100140102599":
+                id = "100140102501";
+                break;
+
+            // 關山鎮衛生所 江美枝
+            case "100140300399":
+                id = "100140300499001";
+                break;
+            // 關山鎮衛生所 江美枝
+            case "100140300499":
+                id = "100140300499001";
+                break;
+
+
+            // 成功鎮衛生所 王麗婷  博愛路山東麓32號
+            case "100140200199":
+                id = "100140200299001";
+                break;
+
+            // 成功鎮衛生所 王麗婷 成廣路8-1號
+            case "100140200299":
+                id = "100140200299002";
+                break;
+
+            // 關山鎮衛生所 劉荔妹   富源103號
+            case "100140300199":
+                id = "100140300499001";
+                break;
+
+            // 關山鎮衛生所 劉荔妹
+            case "100140300199":
+                id = "100140300499001";
+                break;
+
+
+            default:
+                id = id;
+        }
+
         Connection conn = new Auth_GET_CONNECTION().getConn();
 
         PreparedStatement pstmt = conn.prepareStatement(GET_ONE);
