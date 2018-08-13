@@ -16,7 +16,7 @@ public class SendPUTRequest {
     private static Logger logger = LoggerFactory.getLogger(SendPUTRequest.class);
 
 
-    public void sendPUTcRequest() {
+    public void sendPUTRequest() {
         for (ServiceName name : ServiceName.values()) {
 
             try {
@@ -28,7 +28,7 @@ public class SendPUTRequest {
         }
     }
 
-    public void sendPUTcRequest(ServiceName servicename) {
+    public void sendPUTRequest(ServiceName servicename) {
 
         try {
             doPut2(servicename.geturl());

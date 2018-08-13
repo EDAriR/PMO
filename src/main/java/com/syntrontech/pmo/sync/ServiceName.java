@@ -35,7 +35,7 @@ public enum ServiceName implements GetUrl{
     BloodPressureHeartBeat{
         @Override
         public String geturl() {
-            return "http://localhost:8000/measurement/sync/BloodPressureHeartBeat";
+            return "http://localhost:8000/measurement/sync/BloodPressureHeartBeat/NotDeleteSolr";
         }
     },
     BloodGlucose{

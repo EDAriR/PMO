@@ -23,6 +23,8 @@ import com.syntrontech.pmo.pmo.MeasurementPMOType;
 import com.syntrontech.pmo.pmo.PmoResult;
 import com.syntrontech.pmo.pmo.PmoUser;
 import com.syntrontech.pmo.pmo.PmoStatus;
+import com.syntrontech.pmo.sync.SendPUTRequest;
+import com.syntrontech.pmo.sync.ServiceName;
 import com.syntrontech.pmo.syncare1.model.*;
 import com.syntrontech.pmo.syncare1.model.common.Sex;
 import com.syntrontech.pmo.syncare1.model.common.YN;
@@ -120,7 +122,7 @@ public class Sync {
                 // Biochemistry
                 syncBiochemistry(su, subject, userValueRecordMap, userValueRecordJDBC);
 
-
+                syncMeasurement();
                 // PMO USER RESULT
                 pmoUserJDBC.insert(turnSystemUserToPmoUser(su));
                 // update systemUser sync status
@@ -136,6 +138,12 @@ public class Sync {
 
         }
         pwds.forEach(w -> System.out.println(w));
+    }
+
+    private void syncMeasurement() {
+        SendPUTRequest put = new SendPUTRequest();
+        Thread thread = new Thread(() -> put.sendPUTRequest(ServiceName.BloodPressureHeartBeat));
+        thread.start();
     }
 
     private void synBodyInfo(UserValueRecordJDBC userValueRecordJDBC, SystemUser su, Subject subject, Map<Integer, List<UserValueRecordMapping>> userValueRecordMap) {

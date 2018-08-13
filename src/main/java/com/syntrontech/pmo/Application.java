@@ -36,7 +36,7 @@ public class Application {
 
         new SyncUserCard().syncCard();
 
-        sendPUTRequestApp.sendPUTcRequest();
+        sendPUTRequestApp.sendPUTRequest();
 
     }
 
