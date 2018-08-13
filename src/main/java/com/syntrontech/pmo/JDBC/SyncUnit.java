@@ -31,7 +31,7 @@ public class SyncUnit {
 
         List<Location> locations = locationJDBC.getAllLocation();
 
-        logger.info(" locations " + locations.size() + " need sync");
+        logger.info("locations :[" + locations.size() + "] need sync");
 //        System.out.println(" locations need sync" + locations.size());
 
         List<String> errors = new ArrayList<>();
@@ -84,7 +84,6 @@ public class SyncUnit {
         UnitJDBC unitJDBC = new UnitJDBC();
         UnitMeta unitMeta = new UnitMeta();
 
-
         String unitId = location.getId();
         unitMeta.setUnitId(unitId);
         unitMeta.setUnitName(location.getName());
@@ -120,9 +119,7 @@ public class SyncUnit {
 
     private UnitMeta convertLocationToUnitMeta(Location location, Unit parent) {
 
-        UnitJDBC unitJDBC = new UnitJDBC();
         UnitMeta unitMeta = new UnitMeta();
-
 
         String unitId = location.getId();
         unitMeta.setUnitId(unitId);
@@ -220,7 +217,6 @@ public class SyncUnit {
 
     private Unit convertLocationToUnit(Location location, Unit parent) {
 
-        UnitJDBC unitJDBC = new UnitJDBC();
         Unit unit = new Unit();
 
         String unitId = location.getId();

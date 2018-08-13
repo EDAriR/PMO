@@ -74,7 +74,6 @@ public class SyncAnswers {
         String[] strArr = {answers.getQuestionnaireAnswersItemValue()};
         questionnairReply.setQuestionnairQuestionAnswer(strArr);
 
-        Date date = new Date();
         questionnairReply.setCreateTime(answers.getCreateDate()); // Date
         questionnairReply.setCreateBy(answers.getUser());
         questionnairReply.setUpdateTime(answers.getCreateDate()); // Date

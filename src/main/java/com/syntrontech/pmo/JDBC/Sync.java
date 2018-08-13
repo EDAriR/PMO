@@ -292,8 +292,8 @@ public class Sync {
         // private MeasurementStatusType status;
         biochemistry.setStatus(MeasurementStatusType.EXISTED);
         biochemistry.setCreateTime(record.getUpdateDate());
-        biochemistry.setCreateBy("TTSB");
-        biochemistry.setTenantId("TTSB");
+        biochemistry.setCreateBy("TTSHB");
+        biochemistry.setTenantId("TTSHB");
 
         // subject_seq, subject_id, subject_name, subject_gender, subject_age, subject_user_id, subject_user_name,
         biochemistry = setBiochemistrySubjectInfo(biochemistry, subject, record);
@@ -450,8 +450,8 @@ public class Sync {
         // private MeasurementStatusType status;
         testBloodGlucose.setStatus(MeasurementStatusType.EXISTED);
         testBloodGlucose.setCreateTime(bg.getUpdateDate());
-        testBloodGlucose.setCreateBy("TTSB");
-        testBloodGlucose.setTenantId("TTSB");
+        testBloodGlucose.setCreateBy("TTSHB");
+        testBloodGlucose.setTenantId("TTHSB");
 
         // subject_seq, subject_id, subject_name, subject_gender, subject_age, subject_user_id, subject_user_name,
         testBloodGlucose.setSubjectSeq(subject.getSequence());
@@ -606,7 +606,7 @@ public class Sync {
 
         // case_creator_user_id, case_creator_user_name, case_description, recordtime, tenant_id
         abnormalBloodPressureLog.setCaseCreatorUserId("TTSHB");
-        abnormalBloodPressureLog.setCaseCreatorUserName("TTSB");
+        abnormalBloodPressureLog.setCaseCreatorUserName("TTSHB");
         abnormalBloodPressureLog.setCaseDescription(su.getCaseNote());
         System.out.println(su);
 
