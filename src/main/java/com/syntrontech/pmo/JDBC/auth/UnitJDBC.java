@@ -6,10 +6,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.sql.*;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.List;
+import java.util.*;
 import java.util.Date;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class UnitJDBC {
 
@@ -26,6 +25,10 @@ public class UnitJDBC {
 
     private static final String GET_ONE_BY_NAME = "SELECT * FROM unit WHERE name=? and tenant_id='TTSHB'" +
             " AND status='ENABLED';";
+
+    private static final Map<String, String> UNIT_ID_MAP = createMap();
+
+
 // sequence,
 // id, name, parent_id,
 // parent_name, tenant_id,
@@ -70,53 +73,96 @@ public class UnitJDBC {
             return null;
         id = id.trim();
 
-        switch (id){
-            // TODO
-            // 台東市衛生所 其他平板
-            case "100140102599":
-                id = "100140102501";
-                break;
-
-            // 關山鎮衛生所 江美枝
-            case "100140300399":
-                id = "100140300499001";
-                break;
-            // 關山鎮衛生所 江美枝
-            case "100140300499":
-                id = "100140300499001";
-                break;
-
-
-            // 成功鎮衛生所 王麗婷  博愛路山東麓32號
-            case "100140200199":
-                id = "100140200299001";
-                break;
-
-            // 成功鎮衛生所 王麗婷 成廣路8-1號
-            case "100140200299":
-                id = "100140200299002";
-                break;
-
-            // 關山鎮衛生所 劉荔妹   富源103號
-            case "100140300199":
-                id = "100140300499001";
-                break;
-
-            // 關山鎮衛生所 劉荔妹
-            case "100140300199":
-                id = "100140300499001";
-                break;
-
-
-            default:
-                id = id;
-        }
+        id = getNewUnitId(id);
 
         Connection conn = new Auth_GET_CONNECTION().getConn();
 
         PreparedStatement pstmt = conn.prepareStatement(GET_ONE);
 
         return getOne(conn, pstmt, id);
+    }
+
+    private String getNewUnitId(String id){
+
+        String newId = UNIT_ID_MAP.get(id);
+
+        if(newId == null || newId.equals(""))
+            return id;
+        else
+            return newId;
+    }
+
+    private static Map<String, String> createMap() {
+
+        Map<String, String> idMap = new ConcurrentHashMap<>();
+
+        // 台東市衛生所 其他平板
+        idMap.put("100140102599", "100140102501");
+
+        // 關山鎮衛生所 江美枝
+        idMap.put("100140300399", "100140300499001");
+        // 關山鎮衛生所 江美枝
+        idMap.put("100140300499", "100140300499001");
+
+        // 成功鎮衛生所 王麗婷  博愛路山東麓32號
+        idMap.put("100140200199", "100140200299001");
+        // 成功鎮衛生所 王麗婷 成廣路8-1號
+        idMap.put("100140200299", "100140200299002");
+
+        // 100140401099	台東縣卑南鄉衛生所	卑南鄉	太平村和平路132號	陳美琴	089382030
+        idMap.put("100140401099", "100140401099001");
+        // 100140401299	台東縣卑南鄉衛生所	卑南鄉	東興村東園一街119號	陳四德	0928275059
+        idMap.put("100140401299", "100140401299001");
+        // 100140400499	台東縣卑南鄉衛生所	卑南鄉	富源103號	吳見鑑	0937731309
+        idMap.put("100140400499", "100140401099002");
+
+        // 100140500399	台東縣鹿野鄉衛生所	鹿野鄉	瑞源村8鄰瑞景路二段3號	張清榮	089581249
+        idMap.put("100140500399", "100140500399001");
+        // 100140500699	台東縣鹿野鄉衛生所	鹿野鄉	鹿野村中華路1段418號	許懷文	089551074
+        idMap.put("100140500699", "100140500699001");
+
+        // 100140600199	台東縣池上鄉衛生所	池上鄉	福文村中山路104號	詹筱凡	089862609
+        idMap.put("100140600199", "100140600199001");
+
+        // 100140700399	台東縣東河鄉衛生所	東河鄉	東河村10鄰300號	劉曉菁	089896289
+        idMap.put("100140700399", "100140700399001");
+
+        // 100140800499	台東縣長濱鄉衛生所	長濱鄉	長濱村中興路7鄰46號	郭馨月	089831022
+        idMap.put("100140800499", "100140800499005");
+
+        // 100140900599	台東縣太麻里鄉衛生所	太麻里鄉	泰和村2鄰民權路66號	胡惠雯	089781220
+        idMap.put("100140900599", "100140900599002");
+        // 100140900899	台東縣太麻里鄉衛生所	太麻里鄉	金崙村1鄰24號	葉薇臻	0912700058
+        idMap.put("100140900899", "100140900599003");
+
+        // 100141000399	台東縣大武鄉衛生所	大武鄉	大武村濱海路100號	林怡玲	089791325
+        idMap.put("100141000399", "100141000399004");
+
+        // 100141100299	台東縣綠島鄉衛生所	綠島鄉	中寮村61號	陳新傳	08967255
+        idMap.put("100141100299", "100141100299001");
+
+        // 100141200499	台東縣海端鄉衛生所	海端鄉	海端鄉加拿6-1之12號	胡寶貴	0925211028
+        idMap.put("100141200499", "100141200499001");
+
+        // 100141300599	台東縣延平鄉衛生所	延平鄉	桃源村1鄰11號	林芝心	089561040
+        idMap.put("100141300599", "100141300599001");
+
+        // 100141400499	台東縣金峰鄉衛生所	金峰鄉	賓茂村1鄰14號	高于琋	089771176
+        idMap.put("100141400499", "100141400499001");
+
+        // 100141400501	臺灣原住民族部落終身學習發展協會-金崙	太麻里鄉	太麻里街253號
+        idMap.put("100141400501", "100140900504");
+
+        // 100141500499	台東縣達仁鄉衛生所	達仁鄉	安朔村13鄰復興路122號	許燕雲	089702209
+        idMap.put("100141500499", "100141500499001");
+
+        // 100141600199	台東縣蘭嶼鄉衛生所	蘭嶼鄉	東清97號	蔡邑敏	0911357283
+        idMap.put("100141600199", "100141600399001");
+
+        // 100141600399	台東縣蘭嶼鄉衛生所	蘭嶼鄉	紅頭村36號	蔡邑敏	089732575
+        idMap.put("100141600399", "100141600399002");
+
+        return Collections.unmodifiableMap(idMap);
     }
 
     private Unit getOne(Connection conn, PreparedStatement pstmt, String id) throws SQLException {
