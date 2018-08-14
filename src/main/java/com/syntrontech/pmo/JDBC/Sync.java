@@ -122,7 +122,6 @@ public class Sync {
                 // Biochemistry
                 syncBiochemistry(su, subject, userValueRecordMap, userValueRecordJDBC);
 
-                syncMeasurement();
                 // PMO USER RESULT
                 pmoUserJDBC.insert(turnSystemUserToPmoUser(su));
                 // update systemUser sync status
@@ -140,11 +139,6 @@ public class Sync {
         pwds.forEach(w -> System.out.println(w));
     }
 
-    private void syncMeasurement() {
-        SendPUTRequest put = new SendPUTRequest();
-        Thread thread = new Thread(() -> put.sendPUTRequest(ServiceName.BloodPressureHeartBeat));
-        thread.start();
-    }
 
     private void synBodyInfo(UserValueRecordJDBC userValueRecordJDBC, SystemUser su, Subject subject, Map<Integer, List<UserValueRecordMapping>> userValueRecordMap) {
 
@@ -191,11 +185,9 @@ public class Sync {
     private Biochemistry setBiochemistryUnitInfo(Biochemistry biochemistry, Subject subject, UserValueRecord record) throws SQLException {
 
         UnitJDBC unitJDBC = new UnitJDBC();
-        Unit unit = unitJDBC.getUnitById(subject.getUnitId());
+        Unit unit = unitJDBC.getUnitById(record.getLocationId());
         if (unit == null || unit.getId() == null) {
             unit = getOtherUnit(unit);
-            biochemistry.setUnitId(record.getLocationId());
-            biochemistry.setUnitName(record.getLocationName());
         }
         biochemistry.setUnitId(unit.getId());
         biochemistry.setUnitName(unit.getName());
@@ -360,11 +352,9 @@ public class Sync {
 
         // rule_seq, rule_description, unit_id, unit_name, parent_unit_id, parent_unit_name, device_id
         UnitJDBC unitJDBC = new UnitJDBC();
-        Unit unit = unitJDBC.getUnitById(subject.getUnitId());
+        Unit unit = unitJDBC.getUnitById(record.getLocationId());
         if (unit == null || unit.getId() == null) {
             unit = getOtherUnit(unit);
-            bodyInfo.setUnitId(record.getLocationId());
-            bodyInfo.setUnitName(record.getLocationName());
         }
         bodyInfo.setUnitId(unit.getId());
         bodyInfo.setUnitName(unit.getName());
@@ -472,11 +462,9 @@ public class Sync {
 
         // rule_seq, rule_description, unit_id, unit_name, parent_unit_id, parent_unit_name, device_id
         UnitJDBC unitJDBC = new UnitJDBC();
-        Unit unit = unitJDBC.getUnitById(subject.getUnitId());
+        Unit unit = unitJDBC.getUnitById(bg.getLocationId());
         if (unit == null || unit.getId() == null) {
             unit = getOtherUnit(unit);
-            testBloodGlucose.setUnitId(bg.getLocationId());
-            testBloodGlucose.setUnitName(bg.getLocationName());
         }
         testBloodGlucose.setUnitId(unit.getId());
         testBloodGlucose.setUnitName(unit.getName());
@@ -818,11 +806,9 @@ public class Sync {
 
         // rule_seq, rule_description, unit_id, unit_name, parent_unit_id, parent_unit_name, device_id
         UnitJDBC unitJDBC = new UnitJDBC();
-        Unit unit = unitJDBC.getUnitById(subject.getUnitId());
+        Unit unit = unitJDBC.getUnitById(old.getLocationId());
         if (unit == null || unit.getId() == null) {
             unit = getOtherUnit(unit);
-            bloodPressureHeartBeat.setUnitId(old.getLocationId());
-            bloodPressureHeartBeat.setUnitName(old.getLocationName());
         }
         bloodPressureHeartBeat.setUnitId(unit.getId());
         bloodPressureHeartBeat.setUnitName(unit.getName());
