@@ -45,21 +45,17 @@ public class Sync {
         // TODO 台東 預設 系統管理員 TENANT ==> TTSHB
         // 測試流程 ==> 新建TTSHB  TENANT 給 default user 權限後測試
         Sync sync = new Sync();
-
-//        new SyncUnit().syncLocationToUnit();
-//        new SyncDevice().syncDevice();
         sync.syncSystemUserToUserAndSubject();
     }
 
     public void syncSystemUserToUserAndSubject() {
 
-    	Connection authconn = new Auth_GET_CONNECTION().getConn();
-    	Connection cipconn = new CIP_GET_CONNECTION().getConn();
-    	Connection measurementconn = new MEASUREMENT_GET_CONNECTION().getConn();
-    	Connection syncare1conn = new Syncare1_GET_CONNECTION().getConn();
-    	
-    	
-   
+        Connection authconn = new Auth_GET_CONNECTION().getConn();
+        Connection cipconn = new CIP_GET_CONNECTION().getConn();
+        Connection measurementconn = new MEASUREMENT_GET_CONNECTION().getConn();
+        Connection syncare1conn = new Syncare1_GET_CONNECTION().getConn();
+
+
         // 取出所有 未同步 且 角色為使用者的使用者
         List<String> userIds = new UserRoleJDBC().getAllUserRoles();
 
@@ -85,10 +81,10 @@ public class Sync {
         List<String> pwds = new ArrayList<>();
         try {
 
-        	int i = 0;
-        	authconn.setAutoCommit(false);
-         	measurementconn.setAutoCommit(false);
-        	for (String id : userIds) {
+            int i = 0;
+            authconn.setAutoCommit(false);
+            measurementconn.setAutoCommit(false);
+            for (String id : userIds) {
 
                 // 找出未同步systemuser 
                 SystemUser su = systemUserJDBC.getSystemUserById(syncare1conn, id);
@@ -99,73 +95,84 @@ public class Sync {
                     continue;
                 }
 
-                    // 新增 user 
-                    User user = userJDBC.insertUser(authconn, syncSystemUserToUser(su, newrole));
+                // 新增 user
+                User user = userJDBC.insertUser(authconn, syncSystemUserToUser(su, newrole));
 
-                    logger.info("user in new db : " + user);
-                    // 密碼
-                    String pwd = passwordListJDBC.insertPassword(authconn, user, su.getUserBirthday());
-                    // 新增 subject cipconn
-                    Subject subject = subjectJDBC.insertSubject(cipconn, syncSystemUserToSubject(su));
-                    
-                    System.out.println("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx");
-                    System.out.println("user account =" + user.getId());
-                    System.out.println("old user account =" + su.getUserAccount());
-                    System.out.println("user birthday =" + subject.getBirthday());
-                    System.out.println(pwd);
-                    pwds.add(pwd);
-                    System.out.println("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx");
-                   
-                    
-                    // 新增 緊急聯絡人 Alert = Y 為接受緊急通知
-                    if (su.getAlert() == YN.Y && su.getAlertNotifierName() != null)
-                        emergencyContactJDBC.insertEmergencyContact(cipconn, syncSystemUserToEmergencyContact(su));
+                logger.info("user in new db : " + user);
+                // 密碼
+                String pwd = passwordListJDBC.insertPassword(authconn, user, su.getUserBirthday());
+                // 新增 subject cipconn
+                Subject subject = subjectJDBC.insertSubject(cipconn, syncSystemUserToSubject(su));
 
-                    // 取出該使用者所有血壓 
-                    List<UserValueRecord> userValueRecords = userValueRecordJDBC.getOneBUserValueRecord(syncare1conn, su.getUserId());
+                System.out.println("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx");
+                System.out.println("user account =" + user.getId());
+                System.out.println("old user account =" + su.getUserAccount());
+                System.out.println("user birthday =" + subject.getBirthday());
+                System.out.println(pwd);
+                pwds.add(pwd);
+                System.out.println("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx");
 
-                    // 同步至 新的血壓心跳 異常追蹤 異常追蹤log  measurementconn
-                    syncMeasurementBloodPressureHeartBeat(authconn, syncare1conn, measurementconn, userValueRecords, userValueRecordMap, subject, su, userValueRecordJDBC);
 
-                    // 同步新的血糖
-                    syncBloodGlucose(authconn, syncare1conn, measurementconn, su, userValueRecordMap, subject, userValueRecordJDBC);
+                // 新增 緊急聯絡人 Alert = Y 為接受緊急通知
+                if (su.getAlert() == YN.Y && su.getAlertNotifierName() != null)
+                    emergencyContactJDBC.insertEmergencyContact(cipconn, syncSystemUserToEmergencyContact(su));
 
-                    // BodyInfo 更新至新的身高體重
-                    synBodyInfo(authconn, syncare1conn, measurementconn, userValueRecordJDBC, su, subject, userValueRecordMap);
+                // 取出該使用者所有血壓
+                List<UserValueRecord> userValueRecords = userValueRecordJDBC.getOneBUserValueRecord(syncare1conn, su.getUserId());
 
-                    // Biochemistry
-                    syncBiochemistry(authconn, syncare1conn, measurementconn, su, subject, userValueRecordMap, userValueRecordJDBC);
+                // 同步至 新的血壓心跳 異常追蹤 異常追蹤log  measurementconn
+                syncMeasurementBloodPressureHeartBeat(authconn, syncare1conn, measurementconn, userValueRecords, userValueRecordMap, subject, su, userValueRecordJDBC);
 
-                    // PMO USER RESULT
-                    pmoUserJDBC.insert(turnSystemUserToPmoUser(su));
-                    // update systemUser sync status
-                    systemUserJDBC.updateSystemUser(syncare1conn, su.getUserId());
-                    // ↓  不需要
-                    // ALBUM_NAME	varchar(45) NULL
-                    // ALBUM_TYPE	int(11) unsigned [0]	使用者mapping的相本為 -> 1;picasa, 2:無名 .....
-                    // ADVERTISMENT_STATUS 好康報報對於使用者的狀態_1: 此使用者尚未收到"新廣告通知了"(包含修改),2:此使用者已經收到"新廣告通知了
-                    new UserRoleJDBC().updateUserRoles(su.getUserId());
-                
-                    i = i ++;
-                    
-                    if(i%200 == 0 ) {
-                    	authconn.commit();
-                    	measurementconn.commit();
-                    }
+                // 同步新的血糖
+                syncBloodGlucose(authconn, syncare1conn, measurementconn, su, userValueRecordMap, subject, userValueRecordJDBC);
+
+                // BodyInfo 更新至新的身高體重
+                synBodyInfo(authconn, syncare1conn, measurementconn, userValueRecordJDBC, su, subject, userValueRecordMap);
+
+                // Biochemistry
+                syncBiochemistry(authconn, syncare1conn, measurementconn, su, subject, userValueRecordMap, userValueRecordJDBC);
+
+                // PMO USER RESULT
+                pmoUserJDBC.insert(turnSystemUserToPmoUser(su));
+                // update systemUser sync status
+                systemUserJDBC.updateSystemUser(syncare1conn, su.getUserId());
+
+                new UserRoleJDBC().updateUserRoles(su.getUserId());
+
+                i = i++;
+
+                if (i % 200 == 0) {
+                    authconn.commit();
+                    measurementconn.commit();
+                }
+                if (i % 3000 == 0) {
+
+                    authconn.commit();
+                    cipconn.commit();
+                    measurementconn.commit();
+                    syncare1conn.commit();
+
+                    authconn.close();
+                    cipconn.close();
+                    measurementconn.close();
+                    syncare1conn.close();
+
+                    break;
+                }
             }
         } catch (SQLException e) {
             e.printStackTrace();
-        }finally {
+        } finally {
             try {
-            	authconn.commit();
-            	cipconn.commit();
-            	measurementconn.commit();
-            	syncare1conn.commit();
-            	
-            	authconn.close();
-            	cipconn.close();
-            	measurementconn.close();
-            	syncare1conn.close();
+                authconn.commit();
+                cipconn.commit();
+                measurementconn.commit();
+                syncare1conn.commit();
+
+                authconn.close();
+                cipconn.close();
+                measurementconn.close();
+                syncare1conn.close();
             } catch (SQLException e) {
                 e.printStackTrace();
             }
@@ -175,8 +182,8 @@ public class Sync {
 
 
     private void synBodyInfo(
-    		Connection authconn, Connection syncare1conn, Connection measurementconn,
-    		UserValueRecordJDBC userValueRecordJDBC, SystemUser su, Subject subject, Map<Integer, List<UserValueRecordMapping>> userValueRecordMap) {
+            Connection authconn, Connection syncare1conn, Connection measurementconn,
+            UserValueRecordJDBC userValueRecordJDBC, SystemUser su, Subject subject, Map<Integer, List<UserValueRecordMapping>> userValueRecordMap) {
 
         BodyInfoJDBC bodyInfoJDBC = new BodyInfoJDBC();
         List<UserValueRecord> userBodyInfoValueRecords = userValueRecordJDBC.getOneUserAValueRecord(su.getUserId());
@@ -195,8 +202,8 @@ public class Sync {
     }
 
     private void syncBiochemistry(
-    		Connection authconn, Connection syncare1conn, Connection measurementconn,
-    		SystemUser su, Subject subject, Map<Integer, List<UserValueRecordMapping>> userValueRecordMap, UserValueRecordJDBC userValueRecordJDBC) {
+            Connection authconn, Connection syncare1conn, Connection measurementconn,
+            SystemUser su, Subject subject, Map<Integer, List<UserValueRecordMapping>> userValueRecordMap, UserValueRecordJDBC userValueRecordJDBC) {
 
         BiochemistryJDBC biochemistryJDBC = new BiochemistryJDBC();
         List<UserValueRecord> userBiochemistryJRecords = userValueRecordJDBC.getOneUserOtherValueRecord(su.getUserId());
@@ -340,8 +347,8 @@ public class Sync {
     }
 
     private BodyInfo turnValueRecordToBodyInfo(
-    		Connection authconn, 
-    		UserValueRecord record, Subject subject, Map<Integer, List<UserValueRecordMapping>> userValueRecordMap) throws SQLException {
+            Connection authconn,
+            UserValueRecord record, Subject subject, Map<Integer, List<UserValueRecordMapping>> userValueRecordMap) throws SQLException {
 
         List<UserValueRecordMapping> values = userValueRecordMap.get(record.getBodyValueRecordId());
         if (values.size() == 0)
@@ -423,8 +430,8 @@ public class Sync {
 
 
     private void syncBloodGlucose(
-    		Connection authconn, Connection syncare1conn, Connection measurementconn,
-    		SystemUser su, Map<Integer, List<UserValueRecordMapping>> userValueRecordMap, Subject subject, UserValueRecordJDBC userValueRecordJDBC) {
+            Connection authconn, Connection syncare1conn, Connection measurementconn,
+            SystemUser su, Map<Integer, List<UserValueRecordMapping>> userValueRecordMap, Subject subject, UserValueRecordJDBC userValueRecordJDBC) {
 
         // sync 136 BG 取出使用者所有血糖
         BloodGlucoseJDBC bloodGlucoseJDBC = new BloodGlucoseJDBC();
@@ -435,7 +442,7 @@ public class Sync {
             try {
                 System.out.println("subject " + subject);
                 BloodGlucose bloodGlucose = bloodGlucoseJDBC
-                		.insert(measurementconn, turnValueRecordToBloodGlucose(authconn, bg, subject, userValueRecordMap));
+                        .insert(measurementconn, turnValueRecordToBloodGlucose(authconn, bg, subject, userValueRecordMap));
                 userValueRecordJDBC.updateUserValueRecord(syncare1conn, bg.getBodyValueRecordId());
                 updateUserValueRecordMapping(syncare1conn, userValueRecordMap, bg.getBodyValueRecordId());
 
@@ -515,12 +522,12 @@ public class Sync {
 
 
     private void syncMeasurementBloodPressureHeartBeat(
-    		Connection authconn, 
-    		Connection syncare1conn,
-    		Connection conn, 
-    		List<UserValueRecord> userValueRecords,
-    		Map<Integer, List<UserValueRecordMapping>> userValueRecordMap,
-    		Subject subject, SystemUser su, UserValueRecordJDBC userValueRecordJDBC) {
+            Connection authconn,
+            Connection syncare1conn,
+            Connection conn,
+            List<UserValueRecord> userValueRecords,
+            Map<Integer, List<UserValueRecordMapping>> userValueRecordMap,
+            Subject subject, SystemUser su, UserValueRecordJDBC userValueRecordJDBC) {
 
 
         AbnormalBloodPressureJDBC abnormalBloodPressureJDBC = new AbnormalBloodPressureJDBC();
@@ -548,7 +555,7 @@ public class Sync {
                         if (isBloodPressureAbnormal(oldBloodPressureHeartBeat) && isBloodPressureAbnormal(bloodPressureHeartBeat)) {
                             AbnormalBloodPressure abnormalBloodPressure = abnormalBloodPressureJDBC
                                     .insertAbnormalBloodPressure(
-                                    		conn, turnNoarmalToAbnormal(bloodPressureHeartBeat, su));
+                                            conn, turnNoarmalToAbnormal(bloodPressureHeartBeat, su));
 
                             // 尚未處理不需存log
                             if (su.getCaseStatus() != 0 || su.getCaseNote() != null)
@@ -570,8 +577,8 @@ public class Sync {
     }
 
     private void updateUserValueRecordMapping(
-    		Connection syncare1conn, 
-    		Map<Integer, List<UserValueRecordMapping>> userValueRecordMap, int bodyValueRecordId) {
+            Connection syncare1conn,
+            Map<Integer, List<UserValueRecordMapping>> userValueRecordMap, int bodyValueRecordId) {
 
         List<UserValueRecordMapping> values = userValueRecordMap.get(bodyValueRecordId);
         values.forEach(v -> new UserValueRecordMappingJDBC().updateUserValueRecordMapping(syncare1conn, v.getUserValueRecordMappingId()));
@@ -754,9 +761,9 @@ public class Sync {
     }
 
     private BloodPressureHeartBeat syncBloodPressureHeartBeat(
-    		Connection authconn, Connection syncare1conn, Connection conn, 
-    		Map<Integer, List<UserValueRecordMapping>> userValueRecordMap, 
-    		UserValueRecord old, Subject subject) throws SQLException {
+            Connection authconn, Connection syncare1conn, Connection conn,
+            Map<Integer, List<UserValueRecordMapping>> userValueRecordMap,
+            UserValueRecord old, Subject subject) throws SQLException {
 
         // 取出該筆紀錄的值
         List<UserValueRecordMapping> recordValues = userValueRecordMap.get(old.getBodyValueRecordId());
@@ -782,7 +789,7 @@ public class Sync {
     }
 
     private BloodPressureHeartBeat turnOldRecordsToBloodPressureHeartBeat(
-    		Connection authconn, 
+            Connection authconn,
             UserValueRecord old, Map<Integer, List<UserValueRecordMapping>> values, Subject subject) throws SQLException {
 
         BloodPressureHeartBeat bloodPressureHeartBeat = new BloodPressureHeartBeat();

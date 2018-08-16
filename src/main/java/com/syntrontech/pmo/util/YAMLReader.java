@@ -15,23 +15,23 @@ public class YAMLReader {
 
         Yaml yaml = new Yaml();
 
-        try{
+        try {
 
             InputStream in = YAMLReader.class.getResourceAsStream("/setting.yml");
 
             Map<String, Map<String, String[]>> obj = (LinkedHashMap<String, Map<String, String[]>>) yaml.load(in);
             System.out.println("Loaded object type:" + obj.getClass());
 
-            for (String s:obj.keySet()){
+            for (String s : obj.keySet()) {
                 Map<String, String[]> ss = obj.get(s);
-                for(String k:ss.keySet()){
+                for (String k : ss.keySet()) {
                     System.out.println(ss.get(k));
                 }
                 System.out.println("xxxxxxxxxxxxxxxxxxxxx");
             }
 
 
-        }catch (YAMLException e){
+        } catch (YAMLException e) {
             System.out.println(e.getClass());
             e.printStackTrace();
         }
@@ -39,20 +39,27 @@ public class YAMLReader {
 
     }
 
-    public static String getSetting(String key1, String key2) throws YAMLException{
+    public static String getSetting(String key1, String key2) throws YAMLException {
         return getSetting(key1).get(key2);
     }
 
 
-    public static Map<String, String> getSetting(String key) throws YAMLException{
+    public static Map<String, String> getSetting(String key) throws YAMLException {
 
         Yaml yaml = new Yaml();
 
-        InputStream in = YAMLReader.class.getResourceAsStream("/setting.yml");
+        InputStream in = null;
+//        try {
+//
+//            in = YAMLReader.class.getResourceAsStream("/setting.yml");
+//        } catch (YAMLException e) {
+
+            in = YAMLReader.class.getResourceAsStream("/setting.yml");
+//        }
 
         Map<String, Map<String, String>> obj = (LinkedHashMap<String, Map<String, String>>) yaml.load(in);
 
-        for (String s:obj.keySet()){
+        for (String s : obj.keySet()) {
 //            System.out.println(obj.get(s));
         }
 
@@ -60,7 +67,7 @@ public class YAMLReader {
 
     }
 
-    public void getSetting() throws YAMLException{
+    public void getSetting() throws YAMLException {
 
         Yaml yaml = new Yaml();
 
@@ -68,7 +75,7 @@ public class YAMLReader {
 
         Map<String, Map<String, String>> obj = (LinkedHashMap<String, Map<String, String>>) yaml.load(in);
 
-        for (String s:obj.keySet()){
+        for (String s : obj.keySet()) {
 //            System.out.println(obj.get(s));
         }
 
