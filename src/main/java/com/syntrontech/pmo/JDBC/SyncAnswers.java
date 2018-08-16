@@ -63,7 +63,7 @@ public class SyncAnswers {
 
     }
 
-    private QuestionnairReply turnAnswerToReply(Connection conn, SynCareQuestionnaireAnswers answers, SystemUserJDBC systemUserJDBC) {
+    private QuestionnairReply turnAnswerToReply(Connection conn, SynCareQuestionnaireAnswers answers, SystemUserJDBC systemUserJDBC){
 
         QuestionnairReply questionnairReply = new QuestionnairReply();
 //        sequence, user_id, tenant_id, questionnaire_seq
@@ -96,10 +96,13 @@ public class SyncAnswers {
         String[] strArr = {answers.getQuestionnaireAnswersItemValue()};
         questionnairReply.setQuestionnairQuestionAnswer(strArr);
 
+        String[] scoreArr = {""};
+        questionnairReply.setQuestionnairQuestionOptionScore(scoreArr);
+
         questionnairReply.setCreateTime(answers.getCreateDate()); // Date
-        questionnairReply.setCreateBy(answers.getUser());
+        questionnairReply.setCreateBy(userId);
         questionnairReply.setUpdateTime(answers.getCreateDate()); // Date
-        questionnairReply.setUpdateBy(answers.getUser());
+        questionnairReply.setUpdateBy(userId);
         questionnairReply.setStatus(UnmodifiableDataStatus.EXISTED);
         
         return questionnairReply;
