@@ -12,7 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class QuestionnairReplyJDBC {
-	
+
 	private static Logger logger = LoggerFactory.getLogger(QuestionnairReplyJDBC.class);
 
     private static final String GET_ALL_STMT = "select * from questionnair_reply WHERE status='EXISTED' order by sequence;";
@@ -59,24 +59,29 @@ public class QuestionnairReplyJDBC {
             Long[] questionnairQuestionOptionSeq = {};
             questionnairQuestionOptionSeq = questionnairReply.getQuestionnairQuestionOptionSeq() != null ?
                     questionnairReply.getQuestionnairQuestionOptionSeq() : questionnairQuestionOptionSeq;
-            Array opSeq = conn.createArrayOf("BigInt", questionnairQuestionOptionSeq);
-            pstmt.setArray(7, opSeq);
+
+            if (questionnairQuestionOptionSeq != null) {
+                Array opSeq = conn.createArrayOf("BigInt", questionnairQuestionOptionSeq);
+                pstmt.setArray(7, opSeq);
+            } else {
+                pstmt.setNull(7,  Types.ARRAY);
+            }
 
 
             String[] questionnairQuestionOptionScore = {};
-            questionnairQuestionOptionScore = questionnairReply.getQuestionnairQuestionOptionScore() != null ?
-                    questionnairReply.getQuestionnairQuestionOptionScore() : questionnairQuestionOptionScore;
-            Array score = conn.createArrayOf("varchar", questionnairQuestionOptionScore);
+            questionnairQuestionOptionScore = questionnairReply.getQuestionnairQuestionOptionScore();
             //        questionnaire_question_option_score, questionnaire_question_answer
-            pstmt.setArray(8, score);
-
+            if (questionnairQuestionOptionScore != null) {
+                Array score = conn.createArrayOf("varchar", questionnairQuestionOptionScore);
+                pstmt.setArray(8, score);
+            } else {
+                pstmt.setNull(8,  Types.ARRAY);
+            }
 
             String[] questionnairQuestionAnswer = {};
-            questionnairQuestionAnswer = questionnairReply.getQuestionnairQuestionAnswer() != null ?
-                    questionnairReply.getQuestionnairQuestionAnswer() : questionnairQuestionAnswer;
+            questionnairQuestionAnswer = questionnairReply.getQuestionnairQuestionAnswer();
             Array answer = conn.createArrayOf("varchar", questionnairQuestionAnswer);
             pstmt.setArray(9, answer);
-
 
             pstmt.setTimestamp(10, new Timestamp(questionnairReply.getCreateTime().getTime()));
             pstmt.setString(11, questionnairReply.getCreateBy());
