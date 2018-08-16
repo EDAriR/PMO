@@ -57,8 +57,7 @@ public class QuestionnairReplyJDBC {
 
 
             Long[] questionnairQuestionOptionSeq = {};
-            questionnairQuestionOptionSeq = questionnairReply.getQuestionnairQuestionOptionSeq() != null ?
-                    questionnairReply.getQuestionnairQuestionOptionSeq() : questionnairQuestionOptionSeq;
+            questionnairQuestionOptionSeq = questionnairReply.getQuestionnairQuestionOptionSeq();
 
             if (questionnairQuestionOptionSeq != null) {
                 Array opSeq = conn.createArrayOf("BigInt", questionnairQuestionOptionSeq);
