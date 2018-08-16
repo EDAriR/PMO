@@ -35,9 +35,13 @@ public class SyncAnswers {
         try {
             List<SynCareQuestionnaireAnswers> answers = answersJDBC.getAll();
 
+
             answers.sort((o1, o2) -> o1.getId() > o2.getId() ? -1 : (o1.getId() < o2.getId()) ? 1 : 0);
+            Collections.reverse(answers);
 
             answers.forEach(a -> {
+
+                System.out.println("start sync answer => " + a);
 
                 syncToQuestionnairReply(syncare1conn, a, systemUserJDBC);
                 answersJDBC.update(a.getId());
@@ -58,14 +62,14 @@ public class SyncAnswers {
         QuestionnairReplyJDBC replyJDBC = new QuestionnairReplyJDBC();
 
         QuestionnairReply reply = turnAnswerToReply(conn, answers, systemUserJDBC);
+
+        if (reply != null)
+            reply = replyJDBC.insert(reply);
+
         System.out.println("old  ==>>>" + answers + "<<<");
         System.out.println("new  ==>>>" + reply + "<<<");
         System.out.println("old  ==>>>" + answers.getId() + "<<<");
         System.out.println("new  ==>>>" + reply.getSequence() + "<<<");
-
-
-        if (reply != null)
-            replyJDBC.insert(reply);
 
     }
 
