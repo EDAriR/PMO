@@ -2,15 +2,12 @@ package com.syntrontech.pmo.JDBC;
 
 import com.syntrontech.pmo.JDBC.auth.Auth_GET_CONNECTION;
 import com.syntrontech.pmo.JDBC.auth.UnitJDBC;
-<<<<<<< HEAD
 import com.syntrontech.pmo.JDBC.cip.SubjectJDBC;
 import com.syntrontech.pmo.JDBC.measurement.BloodPressureHeartBeatJDBC;
-=======
 import com.syntrontech.pmo.JDBC.cip.CIP_GET_CONNECTION;
 import com.syntrontech.pmo.JDBC.cip.SubjectJDBC;
 import com.syntrontech.pmo.JDBC.measurement.BloodPressureHeartBeatJDBC;
 import com.syntrontech.pmo.JDBC.syncare1JDBC.Syncare1_GET_CONNECTION;
->>>>>>> c4fc92545556794c9ac52f39e0b44a3327cb9786
 import com.syntrontech.pmo.JDBC.syncare1JDBC.SystemUserJDBC;
 import com.syntrontech.pmo.JDBC.syncare1JDBC.UserValueRecordJDBC;
 import com.syntrontech.pmo.JDBC.syncare1JDBC.UserValueRecordMappingJDBC;
