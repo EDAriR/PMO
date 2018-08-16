@@ -46,9 +46,7 @@ public class SyncAnswers {
             for(String id:replyMap.keySet()){
 
                 List<QuestionnairReply> replys = replyMap.get(id);
-                replys.sort((o1, o2) -> o1.getQuestionnairQuestionSeq() > o2.getQuestionnairQuestionSeq() ? -1 :
-                        (o1.getQuestionnairQuestionSeq() < o2.getQuestionnairQuestionSeq()) ? 1 : 0);
-
+               
                 replys.forEach(r -> replyJDBC.insert(r));
             }
 
