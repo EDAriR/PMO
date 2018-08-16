@@ -60,6 +60,10 @@ public class SyncAnswers {
         QuestionnairReply reply = turnAnswerToReply(conn, answers, systemUserJDBC);
         System.out.println("old  ==>>>" + answers + "<<<");
         System.out.println("new  ==>>>" + reply + "<<<");
+        System.out.println("old  ==>>>" + answers.getId() + "<<<");
+        System.out.println("new  ==>>>" + reply.getSequence() + "<<<");
+
+
         if (reply != null)
             replyJDBC.insert(reply);
 
