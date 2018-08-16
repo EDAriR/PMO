@@ -31,22 +31,30 @@ public class SyncAnswers {
 
         Connection syncare1conn = new Syncare1_GET_CONNECTION().getConn();
         SystemUserJDBC systemUserJDBC = new SystemUserJDBC();
+        QuestionnairReplyJDBC replyJDBC = new QuestionnairReplyJDBC();
 
         try {
+
             List<SynCareQuestionnaireAnswers> answers = answersJDBC.getAll();
 
+//            Collections.reverse(answers);
 
-            answers.sort((o1, o2) -> o1.getId() > o2.getId() ? -1 : (o1.getId() < o2.getId()) ? 1 : 0);
-            Collections.reverse(answers);
+            Map<String, List<QuestionnairReply>> replyMap = answers.stream()
+                    .map(a -> turnAnswerToReply(syncare1conn, a, systemUserJDBC))
+                    .collect(Collectors.groupingBy(QuestionnairReply::getUserId));
 
-            answers.forEach(a -> {
+            for(String id:replyMap.keySet()){
 
-                System.out.println("start sync answer => " + a);
+                List<QuestionnairReply> replys = replyMap.get(id);
+                replys.sort((o1, o2) -> o1.getQuestionnairQuestionSeq() > o2.getQuestionnairQuestionSeq() ? -1 :
+                        (o1.getQuestionnairQuestionSeq() < o2.getQuestionnairQuestionSeq()) ? 1 : 0);
 
-                syncToQuestionnairReply(syncare1conn, a, systemUserJDBC);
-                answersJDBC.update(a.getId());
-            });
-        } finally {
+                replys.forEach(r -> replyJDBC.insert(r));
+            }
+
+            answers.forEach(a -> answersJDBC.update(a.getId()));
+
+        }finally{
 
             try {
                 syncare1conn.close();
@@ -57,21 +65,21 @@ public class SyncAnswers {
         }
     }
 
-    private void syncToQuestionnairReply(Connection conn, SynCareQuestionnaireAnswers answers, SystemUserJDBC systemUserJDBC) {
-
-        QuestionnairReplyJDBC replyJDBC = new QuestionnairReplyJDBC();
-
-        QuestionnairReply reply = turnAnswerToReply(conn, answers, systemUserJDBC);
-
-        if (reply != null)
-            reply = replyJDBC.insert(reply);
-
-        System.out.println("old  ==>>>" + answers + "<<<");
-        System.out.println("new  ==>>>" + reply + "<<<");
-        System.out.println("old  ==>>>" + answers.getId() + "<<<");
-        System.out.println("new  ==>>>" + reply.getSequence() + "<<<");
-
-    }
+//    private void syncToQuestionnairReply(Connection conn, SynCareQuestionnaireAnswers answers, SystemUserJDBC systemUserJDBC) {
+//
+//
+//
+//
+//
+//        if (reply != null)
+//            reply = ;
+//
+//        System.out.println("old  ==>>>" + answers + "<<<");
+//        System.out.println("new  ==>>>" + reply + "<<<");
+//        System.out.println("old  ==>>>" + answers.getId() + "<<<");
+//        System.out.println("new  ==>>>" + reply.getSequence() + "<<<");
+//
+//    }
 
     private QuestionnairReply turnAnswerToReply(Connection conn, SynCareQuestionnaireAnswers answers, SystemUserJDBC systemUserJDBC) {
 
