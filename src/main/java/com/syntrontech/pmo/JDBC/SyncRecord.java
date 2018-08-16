@@ -7,6 +7,7 @@ import com.syntrontech.pmo.JDBC.measurement.BloodPressureHeartBeatJDBC;
 import com.syntrontech.pmo.JDBC.cip.CIP_GET_CONNECTION;
 import com.syntrontech.pmo.JDBC.cip.SubjectJDBC;
 import com.syntrontech.pmo.JDBC.measurement.BloodPressureHeartBeatJDBC;
+import com.syntrontech.pmo.JDBC.measurement.MEASUREMENT_GET_CONNECTION;
 import com.syntrontech.pmo.JDBC.syncare1JDBC.Syncare1_GET_CONNECTION;
 import com.syntrontech.pmo.JDBC.syncare1JDBC.SystemUserJDBC;
 import com.syntrontech.pmo.JDBC.syncare1JDBC.UserValueRecordJDBC;
@@ -48,7 +49,9 @@ public class SyncRecord {
         Connection syncare1conn = new Syncare1_GET_CONNECTION().getConn();
         Connection cipconn = new CIP_GET_CONNECTION().getConn();
         Connection authconn = new Auth_GET_CONNECTION().getConn();
-        
+        Connection measurementconn = new MEASUREMENT_GET_CONNECTION().getConn();
+
+
         try {
         	for (UserValueRecord record : allValueRecords) {
         		SystemUser systemUser = systemUserJDBC.getSystemUserById(syncare1conn, String.valueOf(record.getSystemUser().getUserId()));
@@ -58,7 +61,7 @@ public class SyncRecord {
         			case A:
         				break;
         			case B:
-        				insertBP(cipconn, authconn, syncare1conn, cipconn, record, systemUser, valueMappingJDBC);
+        				insertBP(cipconn, authconn, syncare1conn, measurementconn, record, systemUser, valueMappingJDBC);
         				break;
         			case BG:
         				break;

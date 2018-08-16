@@ -11,7 +11,9 @@ import com.syntrontech.pmo.syncare1.model.SystemUser;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -65,6 +67,7 @@ public class SyncAnswers {
 
     private QuestionnairReply turnAnswerToReply(Connection conn, SynCareQuestionnaireAnswers answers, SystemUserJDBC systemUserJDBC){
 
+        Map<Long, String> scopeMap = getScope();
         QuestionnairReply questionnairReply = new QuestionnairReply();
 //        sequence, user_id, tenant_id, questionnaire_seq
 //        questionnaire_question_option_score, questionnaire_question_answer
@@ -72,7 +75,7 @@ public class SyncAnswers {
 
         SystemUser su = systemUserJDBC.getSystemUserById(conn, answers.getUser());
         String userId = su.getUserAccount() == null? "":su.getUserAccount().toUpperCase();
-        questionnairReply.setUserId(userId);
+        questionnairReply.setUserId(userId.toUpperCase());
         questionnairReply.setTenantId("TTSHB");
         questionnairReply.setQuestionnairSeq(answers.getQuestionnaire());
 
@@ -90,13 +93,14 @@ public class SyncAnswers {
         questionnairReply.setQuestionnairQuestionSeq(seq);
         questionnairReply.setQuestionnairQuestionTitle(answers.getQuestionnaireQuestionsTitle());
 
-        Long[] longArray = {(long)answers.getQuestionnaireAnswersItemId()};;
+        long optionseq = (long) answers.getQuestionnaireAnswersItemId();
+        Long[] longArray = {optionseq};
         questionnairReply.setQuestionnairQuestionOptionSeq(longArray);
 
         String[] strArr = {answers.getQuestionnaireAnswersItemValue()};
         questionnairReply.setQuestionnairQuestionAnswer(strArr);
 
-        String[] scoreArr = {""};
+        String[] scoreArr = {scopeMap.get(optionseq)};
         questionnairReply.setQuestionnairQuestionOptionScore(scoreArr);
 
         questionnairReply.setCreateTime(answers.getCreateDate()); // Date
@@ -107,5 +111,47 @@ public class SyncAnswers {
         
         return questionnairReply;
 
+    }
+
+    public Map<Long,String> getScope() {
+
+        Map<Long, String> scope = new HashMap<>();
+        scope.put(1L,"5");
+        scope.put(2L,"4");
+        scope.put(3L,"3");
+        scope.put(4L,"2");
+        scope.put(5L,"1");
+
+        scope.put(6L,"5");
+        scope.put(7L,"4");
+        scope.put(8L,"3");
+        scope.put(9L,"2");
+        scope.put(10L,"1");
+
+        scope.put(11L,"5");
+        scope.put(12L,"4");
+        scope.put(13L,"3");
+        scope.put(14L,"2");
+        scope.put(15L,"1");
+
+        scope.put(16L,"5");
+        scope.put(17L,"4");
+        scope.put(18L,"3");
+        scope.put(19L,"2");
+        scope.put(20L,"1");
+
+        scope.put(21L,"5");
+        scope.put(22L,"4");
+        scope.put(23L,"3");
+        scope.put(24L,"2");
+        scope.put(25L,"1");
+
+        scope.put(26L,"5");
+        scope.put(27L,"4");
+        scope.put(28L,"3");
+        scope.put(29L,"2");
+        scope.put(30L,"1");
+
+        return scope;
     }
 }
