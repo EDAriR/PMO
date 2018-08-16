@@ -110,7 +110,7 @@ public class SyncAnswers {
         if (id == 7)
             seq = 6L;
 
-        questionnairReply.setQuestionnairQuestionSeq(seq);
+        questionnairReply.setQuestionnairQuestionSeq(1L);
         questionnairReply.setQuestionnairQuestionTitle(answers.getQuestionnaireQuestionsTitle());
 
         long optionseq = (long) answers.getQuestionnaireAnswersItemId();
