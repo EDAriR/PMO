@@ -1,7 +1,6 @@
 package com.syntrontech.pmo.JDBC.measurement;
 
 import com.syntrontech.pmo.measurement.Biochemistry;
-import com.syntrontech.pmo.measurement.common.GlucoseType;
 import com.syntrontech.pmo.measurement.common.MeasurementStatusType;
 import com.syntrontech.pmo.model.common.BiochemistryMappingsProject;
 import com.syntrontech.pmo.model.common.GenderType;
@@ -13,11 +12,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ConcurrentMap;
 
 public class BiochemistryJDBC {
 
-//    private static Logger logger = LoggerFactory.getLogger(BiochemistryJDBC.class);
+    private static Logger logger = LoggerFactory.getLogger(BiochemistryJDBC.class);
 
     private static final String FIND_MAX_GROUPID = "SELECT MAX(group_id) FROM biochemistry";
 
@@ -46,7 +44,6 @@ public class BiochemistryJDBC {
 
         System.out.println(biochemistrys.size());
 
-        biochemistryJDBC.insert(biochemistrys.size() > 0 ? biochemistrys.get(0) : null);
     }
 
     public Long getGroupId(){
@@ -93,9 +90,9 @@ public class BiochemistryJDBC {
     }
 
 
-    public Biochemistry insert(Biochemistry biochemistry){
+    public Biochemistry insert(Connection conn, Biochemistry biochemistry){
 
-        Connection conn = new MEASUREMENT_GET_CONNECTION().getConn();
+//        Connection conn = new MEASUREMENT_GET_CONNECTION().getConn();
         PreparedStatement pstmt = null;
 
         try {
@@ -151,18 +148,13 @@ public class BiochemistryJDBC {
             }
 
         } catch (SQLException e) {
-//            logger.debug("create biochemistry fail =>" + biochemistry);
-
             e.printStackTrace();
         } finally {
-
             try {
                 if(pstmt != null)
                     pstmt.close();
-                conn.close();
             } catch (SQLException e) {
-//                logger.debug("conn or pstmt close fail" + conn + " || " + pstmt);
-
+                logger.debug("pstmt close fail" + " || " + pstmt);
                 e.printStackTrace();
             }
 

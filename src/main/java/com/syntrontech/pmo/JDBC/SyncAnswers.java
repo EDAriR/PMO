@@ -2,16 +2,23 @@ package com.syntrontech.pmo.JDBC;
 
 import com.syntrontech.pmo.JDBC.questionnair.QuestionnairReplyJDBC;
 import com.syntrontech.pmo.JDBC.syncare1JDBC.SynCareQuestionnaireAnswersJDBC;
+import com.syntrontech.pmo.JDBC.syncare1JDBC.Syncare1_GET_CONNECTION;
 import com.syntrontech.pmo.JDBC.syncare1JDBC.SystemUserJDBC;
 import com.syntrontech.pmo.model.common.UnmodifiableDataStatus;
 import com.syntrontech.pmo.questionnair.QuestionnairReply;
 import com.syntrontech.pmo.syncare1.model.SynCareQuestionnaireAnswers;
 import com.syntrontech.pmo.syncare1.model.SystemUser;
 
-import java.util.Date;
+import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class SyncAnswers {
+
+	private static Logger logger = LoggerFactory.getLogger(SyncAnswers.class);
 
     public static void main(String[] args) {
         new SyncAnswers().syncAnswers();
@@ -20,37 +27,52 @@ public class SyncAnswers {
     public void syncAnswers(){
 
         SynCareQuestionnaireAnswersJDBC answersJDBC = new SynCareQuestionnaireAnswersJDBC();
-
+        
+        Connection syncare1conn = new Syncare1_GET_CONNECTION().getConn();
         SystemUserJDBC systemUserJDBC = new SystemUserJDBC();
-        List<SynCareQuestionnaireAnswers> answers = answersJDBC.getAll();
-        answers.forEach(a-> {
+        
+        try {
+        	List<SynCareQuestionnaireAnswers> answers = answersJDBC.getAll();
+            answers.forEach(a-> {
 
-            syncToQuestionnairReply(a, systemUserJDBC);
-            answersJDBC.update(a.getId());
-        });
+                syncToQuestionnairReply(syncare1conn, a, systemUserJDBC);
+                answersJDBC.update(a.getId());
+            });
+        }finally{
+        	
+        	try {
+        		syncare1conn.close();
+        	}catch(SQLException e){
+        		 logger.debug("Connection close fail :" + syncare1conn );
+                 e.printStackTrace();
+        	}
+        }
+        
 
     }
 
-    private void syncToQuestionnairReply(SynCareQuestionnaireAnswers answers, SystemUserJDBC systemUserJDBC) {
+    private void syncToQuestionnairReply(Connection conn, SynCareQuestionnaireAnswers answers, SystemUserJDBC systemUserJDBC) {
 
         QuestionnairReplyJDBC replyJDBC = new QuestionnairReplyJDBC();
 
-        QuestionnairReply reply = turnAnswerToReply(answers, systemUserJDBC);
-        System.out.println(reply);
+        QuestionnairReply reply = turnAnswerToReply(conn, answers, systemUserJDBC);
+        System.out.println("old  ==>>>" + answers  + "<<<");
+        System.out.println("new  ==>>>" + reply  + "<<<");
         if(reply != null)
             replyJDBC.insert(reply);
 
     }
 
-    private QuestionnairReply turnAnswerToReply(SynCareQuestionnaireAnswers answers, SystemUserJDBC systemUserJDBC) {
+    private QuestionnairReply turnAnswerToReply(Connection conn, SynCareQuestionnaireAnswers answers, SystemUserJDBC systemUserJDBC) {
 
         QuestionnairReply questionnairReply = new QuestionnairReply();
 //        sequence, user_id, tenant_id, questionnaire_seq
 //        questionnaire_question_option_score, questionnaire_question_answer
 //        createtime, createby, updatetime, updateby, status
 
-        SystemUser su = systemUserJDBC.getSystemUserById(answers.getUser());
-        questionnairReply.setUserId(su.getUserAccount());
+        SystemUser su = systemUserJDBC.getSystemUserById(conn, answers.getUser());
+        String userId = su.getUserAccount() == null? "":su.getUserAccount().toUpperCase();
+        questionnairReply.setUserId(userId);
         questionnairReply.setTenantId("TTSHB");
         questionnairReply.setQuestionnairSeq(answers.getQuestionnaire());
 
@@ -79,7 +101,7 @@ public class SyncAnswers {
         questionnairReply.setUpdateTime(answers.getCreateDate()); // Date
         questionnairReply.setUpdateBy(answers.getUser());
         questionnairReply.setStatus(UnmodifiableDataStatus.EXISTED);
-
+        
         return questionnairReply;
 
     }

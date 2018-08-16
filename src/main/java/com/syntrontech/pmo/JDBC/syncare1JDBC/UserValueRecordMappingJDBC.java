@@ -156,9 +156,9 @@ public class UserValueRecordMappingJDBC {
         return map;
     }
 
-    public void updateUserValueRecordMapping(int id) {
+    public void updateUserValueRecordMapping(Connection conn, int id) {
 
-        Connection conn = new Syncare1_GET_CONNECTION().getConn();
+//        Connection conn = new Syncare1_GET_CONNECTION().getConn();
         PreparedStatement pstmt = null;
 
         try {
@@ -172,9 +172,7 @@ public class UserValueRecordMappingJDBC {
 
 
         } catch (SQLException e) {
-            logger.debug("get Other type user value record fail " + pstmt);
-
-            System.out.println("MySQL操作错误");
+            logger.debug("update User ValueRecordMapping fail " + pstmt);
             e.printStackTrace();
         } catch (Exception e) {
             e.printStackTrace();
@@ -182,7 +180,6 @@ public class UserValueRecordMappingJDBC {
 
             try {
                 pstmt.close();
-                conn.close();
             } catch (SQLException e) {
                 System.out.println("conn or pstmt close fail" + conn + " || " + pstmt);
                 e.printStackTrace();

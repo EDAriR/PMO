@@ -93,7 +93,7 @@ public class PasswordListJDBC {
         return passwordList;
     }
 
-    public String insertPassword(User user, Date birthDay) throws SQLException {
+    public String insertPassword(Connection conn, User user, Date birthDay) throws SQLException {
 
         if(user == null || user.getId() == null || birthDay == null)
             return null;
@@ -120,7 +120,7 @@ public class PasswordListJDBC {
                 "Time=["+ update.getTime() +"], " +
                 "UpdateTime=["+ update +"]    ";
 
-        Connection conn = new Auth_GET_CONNECTION().getConn();
+//        Connection conn = new Auth_GET_CONNECTION().getConn();
         PreparedStatement pstmt = null;
 
         PasswordList passwordList;
@@ -147,20 +147,16 @@ public class PasswordListJDBC {
         } catch (SQLException e) {
             logger.debug("insert Password fail " + pstmt);
             throw e;
-        } finally {
-
+        }finally {
             try {
-                if(pstmt != null)
-                    pstmt.close();
-                conn.close();
+                pstmt.close();
             } catch (SQLException e) {
-                logger.debug("conn or pstmt close fail " + pstmt);
+                System.out.println("pstmt close fail" + conn);
+                e.printStackTrace();
             }
-
         }
+        
         logger.info("create Password successful ==> " + pstmt);
-
-        System.out.println(getPasswordListById(user.getId()));
 
         return pwd;
     }

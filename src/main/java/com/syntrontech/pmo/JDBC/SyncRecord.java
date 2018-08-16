@@ -1,8 +1,16 @@
 package com.syntrontech.pmo.JDBC;
 
+import com.syntrontech.pmo.JDBC.auth.Auth_GET_CONNECTION;
 import com.syntrontech.pmo.JDBC.auth.UnitJDBC;
+<<<<<<< HEAD
 import com.syntrontech.pmo.JDBC.cip.SubjectJDBC;
 import com.syntrontech.pmo.JDBC.measurement.BloodPressureHeartBeatJDBC;
+=======
+import com.syntrontech.pmo.JDBC.cip.CIP_GET_CONNECTION;
+import com.syntrontech.pmo.JDBC.cip.SubjectJDBC;
+import com.syntrontech.pmo.JDBC.measurement.BloodPressureHeartBeatJDBC;
+import com.syntrontech.pmo.JDBC.syncare1JDBC.Syncare1_GET_CONNECTION;
+>>>>>>> c4fc92545556794c9ac52f39e0b44a3327cb9786
 import com.syntrontech.pmo.JDBC.syncare1JDBC.SystemUserJDBC;
 import com.syntrontech.pmo.JDBC.syncare1JDBC.UserValueRecordJDBC;
 import com.syntrontech.pmo.JDBC.syncare1JDBC.UserValueRecordMappingJDBC;
@@ -20,6 +28,7 @@ import com.syntrontech.pmo.util.CalendarUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -39,65 +48,69 @@ public class SyncRecord {
 
         List<UserValueRecord> allValueRecords = valueRecordJDBC.getAllUserValueRecord();
         SystemUserJDBC systemUserJDBC = new SystemUserJDBC();
-
-
-        for (UserValueRecord record : allValueRecords) {
-
-            SystemUser systemUser = systemUserJDBC.getSystemUserById(String.valueOf(record.getSystemUser().getUserId()));
-            RecordType type = valueOf(record.getColumnType());
+        Connection syncare1conn = new Syncare1_GET_CONNECTION().getConn();
+        Connection cipconn = new CIP_GET_CONNECTION().getConn();
+        Connection authconn = new Auth_GET_CONNECTION().getConn();
+        
+        try {
+        	for (UserValueRecord record : allValueRecords) {
+        		SystemUser systemUser = systemUserJDBC.getSystemUserById(syncare1conn, String.valueOf(record.getSystemUser().getUserId()));
+        		RecordType type = valueOf(record.getColumnType());
+        		
+        		switch (type) {
+        			case A:
+        				break;
+        			case B:
+        				insertBP(cipconn, authconn, syncare1conn, cipconn, record, systemUser, valueMappingJDBC);
+        				break;
+        			case BG:
+        				break;
+                }
+            	valueRecordJDBC.updateUserValueRecord(syncare1conn, record.getBodyValueRecordId());
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }catch (NullPointerException e) {
+        	
+        } finally {
 
             try {
-                try {
-                    switch (type) {
-                        case A:
-                            break;
-                        case B:
-
-                            insertBP(record, systemUser, valueMappingJDBC);
-
-                            break;
-                        case BG:
-                            break;
-                    }
-
-                    valueRecordJDBC.updateUserValueRecord(record.getBodyValueRecordId());
-
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
-
-            }catch (NullPointerException e){
-
+            	cipconn.close();
+            	syncare1conn.close();
+            } catch (SQLException e) {
+                logger.debug("conn or pstmt close fail" + syncare1conn);
+                e.printStackTrace();
             }
 
         }
+
     }
 
-    private BloodPressureHeartBeat insertBP(UserValueRecord record, SystemUser systemUser, UserValueRecordMappingJDBC valueMappingJDBC) throws SQLException {
+    private BloodPressureHeartBeat insertBP(Connection cipconn, Connection authconn, Connection syncare1conn, Connection conn, UserValueRecord record, SystemUser systemUser, UserValueRecordMappingJDBC valueMappingJDBC) throws SQLException {
 
         BloodPressureHeartBeatJDBC jdbc = new BloodPressureHeartBeatJDBC();
 
         List<UserValueRecordMapping> values = valueMappingJDBC.getUserValueRecordMappingByRecordId(record.getBodyValueRecordId());
 
-        BloodPressureHeartBeat bloodPressureHeartBeat = getBloodPressureHeartBeat(record, systemUser, values);
+        BloodPressureHeartBeat bloodPressureHeartBeat = getBloodPressureHeartBeat(cipconn, authconn, conn, record, systemUser, values);
         if(bloodPressureHeartBeat == null )
             return null;
-        bloodPressureHeartBeat = jdbc.insertBloodPressureHeartBeat(bloodPressureHeartBeat);
+        bloodPressureHeartBeat = jdbc.insertBloodPressureHeartBeat(conn, bloodPressureHeartBeat);
 
-        values.forEach(v -> valueMappingJDBC.updateUserValueRecordMapping(v.getUserValueRecordMappingId()));
+        values.forEach(v -> valueMappingJDBC.updateUserValueRecordMapping(syncare1conn, v.getUserValueRecordMappingId()));
 
         return bloodPressureHeartBeat;
     }
 
-    private BloodPressureHeartBeat getBloodPressureHeartBeat(UserValueRecord record, SystemUser systemUser, List<UserValueRecordMapping> values) throws SQLException {
+    private BloodPressureHeartBeat getBloodPressureHeartBeat(Connection cipconn, Connection authconn, Connection conn, UserValueRecord record, SystemUser systemUser, List<UserValueRecordMapping> values) throws SQLException {
 
         String account = systemUser.getUserAccount();
         SubjectJDBC subjectJDBC = new SubjectJDBC();
-        Subject subject = subjectJDBC.getOneSubject(account, account);
+        Subject subject = subjectJDBC.getOneSubject(cipconn, account, account);
         if (subject == null || subject.getId() == null) {
             // TODO
             subject = getSubject(systemUser);
-            subjectJDBC.insertSubject(subject);
+            subjectJDBC.insertSubject(conn, subject);
         }
 
         if(subject.getSequence() == null){
@@ -160,7 +173,7 @@ public class SyncRecord {
 
         // rule_seq, rule_description, unit_id, unit_name, parent_unit_id, parent_unit_name, device_id
         UnitJDBC unitJDBC = new UnitJDBC();
-        Unit unit = unitJDBC.getUnitById(subject.getUnitId());
+        Unit unit = unitJDBC.getUnitById(authconn, subject.getUnitId());
         if (unit == null || unit.getId() == null) {
             unit = getOtherUnit(unit);
             bloodPressureHeartBeat.setUnitId(record.getLocationId());

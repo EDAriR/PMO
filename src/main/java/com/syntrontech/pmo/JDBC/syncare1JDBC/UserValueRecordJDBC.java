@@ -38,18 +38,11 @@ public class UserValueRecordJDBC {
 //        Connection conn = new Syncare1_GET_CONNECTION().getConn();
         UserValueRecordJDBC s = new UserValueRecordJDBC();
 
-        List<UserValueRecord> getByUserId = s.getOneBUserValueRecord(1);
-        System.out.println("get one by id : " + getByUserId.size());
-
-        getByUserId.forEach(b -> System.out.println(b));
-
         List<UserValueRecord> other = s.getOneUserOtherValueRecord(1);
         System.out.println(other);
         List<UserValueRecord> aType = s.getOneUserAValueRecord(1);
         System.out.println(aType);
 
-        List<UserValueRecord> btype = s.getOneBUserValueRecord(1);
-        System.out.println(btype);
     }
 
     public List<UserValueRecord> getOneUserOtherValueRecord(int id) {
@@ -247,9 +240,9 @@ public class UserValueRecordJDBC {
         return userValueRecord;
     }
 
-    public List<UserValueRecord> getOneBUserValueRecord(int id) {
+    public List<UserValueRecord> getOneBUserValueRecord(Connection conn, int id) {
 
-        Connection conn = new Syncare1_GET_CONNECTION().getConn();
+//        Connection conn = new Syncare1_GET_CONNECTION().getConn();
         PreparedStatement pstmt = null;
 
         List<UserValueRecord> userValueRecords = new ArrayList<>();
@@ -302,9 +295,8 @@ public class UserValueRecordJDBC {
 
             try {
                 pstmt.close();
-                conn.close();
             } catch (SQLException e) {
-                logger.debug("conn or pstmt close fail" + conn + " || " + pstmt);
+                logger.debug("pstmt close fail " + pstmt);
                 e.printStackTrace();
             }
 
@@ -379,9 +371,9 @@ public class UserValueRecordJDBC {
         return userValueRecords;
     }
 
-    public void updateUserValueRecord(int id) {
+    public void updateUserValueRecord(Connection conn, int id) {
 
-        Connection conn = new Syncare1_GET_CONNECTION().getConn();
+//        Connection conn = new Syncare1_GET_CONNECTION().getConn();
         PreparedStatement pstmt = null;
 
         try {
@@ -404,7 +396,6 @@ public class UserValueRecordJDBC {
 
             try {
                 pstmt.close();
-                conn.close();
             } catch (SQLException e) {
                 logger.debug("conn or pstmt close fail" + conn + " || " + pstmt);
                 e.printStackTrace();

@@ -8,7 +8,12 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class QuestionnairReplyJDBC {
+	
+	private static Logger logger = LoggerFactory.getLogger(QuestionnairReplyJDBC.class);
 
     private static final String GET_ALL_STMT = "select * from questionnair_reply WHERE status='EXISTED' order by sequence;";
     private static final String INSERT_STMT = "INSERT INTO questionnair_reply " +
@@ -26,29 +31,6 @@ public class QuestionnairReplyJDBC {
 //        createtime, createby, updatetime, updateby, status
 
     private static final String GET_ONE = "SELECT * FROM questionnair_reply WHERE questionnaire_seq=? AND questionnaire_question_seq=? AND tenant_id='TTSHB' ;";
-
-    public static void main(String[] args) {
-
-        QuestionnairReplyJDBC s = new QuestionnairReplyJDBC();
-
-        Date star_time = new Date(new java.util.Date().getTime());
-        List<QuestionnairReply> ss = s.getAllQuestionnairReplys();
-        Date end_time = new Date(new java.util.Date().getTime());
-
-
-        QuestionnairReply qq = s.getTestQuestionnairReply();
-        System.out.println("star_time:" + star_time.toInstant());
-        System.out.println("end_time:" + end_time.toInstant());
-        System.out.println("ss size:" + ss.size());
-
-        QuestionnairReply gg = s.insert(qq);
-        System.out.println("=====");
-        System.out.println(gg);
-//        s.insertUnitMeta(s.getTestQuestionnairReply());
-//
-//        UnitMeta unit = s.getUnitMetaById("1001401");
-
-    }
 
     public QuestionnairReply insert(QuestionnairReply questionnairReply){
 
@@ -103,9 +85,8 @@ public class QuestionnairReplyJDBC {
 
             pstmt.setString(14, questionnairReply.getStatus().toString());
 
-//            logger.info("sql => " + pstmt);
             pstmt.executeUpdate();
-//            logger.info("create questionnairReply successful => " + questionnairReply);
+            logger.info("create questionnairReply successful => " + pstmt);
 
 
             try (ResultSet rs = pstmt.getGeneratedKeys()) {
@@ -116,7 +97,7 @@ public class QuestionnairReplyJDBC {
             }
 
         } catch (SQLException e) {
-//            logger.debug("create questionnairReply fail =>" + questionnairReply);
+            logger.debug("create questionnairReply fail =>" + questionnairReply);
             e.printStackTrace();
         } finally {
 
@@ -196,7 +177,7 @@ public class QuestionnairReplyJDBC {
 //                    questionnaire_question_option_score, questionnaire_question_answer
                     System.out.println(rs.getArray("questionnaire_question_option_score"));
                     Array array = rs.getArray("questionnaire_question_answer");
-                    System.out.println(rs.getArray("questionnaire_question_answer"));
+                    System.out.println(array);
 
 
 //                    createtime, createby, updatetime, updateby, status

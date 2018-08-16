@@ -36,15 +36,9 @@ public class AbnormalBloodPressureJDBC {
 
     public static void main(String[] args) {
 
-        Connection conn = new MEASUREMENT_GET_CONNECTION().getConn();
-
         AbnormalBloodPressureJDBC abnormalBloodPressureJDBC = new AbnormalBloodPressureJDBC();
 
         List<AbnormalBloodPressure> ss = abnormalBloodPressureJDBC.getAllAbnormalBloodPressure();
-
-        System.out.println("ss size:" + ss.size());
-
-        System.out.println(abnormalBloodPressureJDBC.insertAbnormalBloodPressure(abnormalBloodPressureJDBC.getTestAbnormalBloodPressure()));
     }
 
     AbnormalBloodPressure getTestAbnormalBloodPressure(){
@@ -93,9 +87,9 @@ public class AbnormalBloodPressureJDBC {
     }
 
 
-    public AbnormalBloodPressure insertAbnormalBloodPressure(AbnormalBloodPressure abnormalBloodPressure){
+    public AbnormalBloodPressure insertAbnormalBloodPressure(Connection conn, AbnormalBloodPressure abnormalBloodPressure){
 
-        Connection conn = new MEASUREMENT_GET_CONNECTION().getConn();
+//        Connection conn = new MEASUREMENT_GET_CONNECTION().getConn();
         PreparedStatement pstmt = null;
 
         try {
@@ -155,8 +149,6 @@ public class AbnormalBloodPressureJDBC {
                 rs.close();
             }
 
-//            logger.info("create AbnormalBloodPressure successful => " + abnormalBloodPressure);
-
         } catch (SQLException e) {
             logger.debug("create AbnormalBloodPressure fail =>" + abnormalBloodPressure);
             e.printStackTrace();
@@ -165,12 +157,10 @@ public class AbnormalBloodPressureJDBC {
             try {
                 if(pstmt != null)
                     pstmt.close();
-                conn.close();
             } catch (SQLException e) {
                 logger.debug("conn or pstmt close fail" + conn + " || " + pstmt);
 //                e.printStackTrace();
             }
-
         }
 
         return abnormalBloodPressure;

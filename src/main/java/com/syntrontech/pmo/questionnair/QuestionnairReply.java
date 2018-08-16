@@ -1,5 +1,6 @@
 package com.syntrontech.pmo.questionnair;
 
+import java.util.Arrays;
 import java.util.Date;
 
 import javax.persistence.Column;
@@ -84,6 +85,7 @@ public class QuestionnairReply {
 				"questionnairTitle=" + questionnairTitle + ", " +
 				"createTime=" + createTime + ", " +
 				"updateBy=" + updateBy +
+				", questionnairQuestionAnswer=" + Arrays.toString(questionnairQuestionAnswer) + 
 				"]";
 	}
 

@@ -43,23 +43,20 @@ public class UnitJDBC {
 
         System.out.println("ss size:" + ss.size());
 
-        Unit insertTest = s.insertUnit(s.getTestUnit());
+//        Unit insertTest = s.insertUnit(s.getTestUnit());
 
-        System.out.println("insert");
-        System.out.println(insertTest);
-        Unit unit = s.getUnitById(insertTest.getId());
+//        Unit unit = s.getUnitById(insertTest.getId());
         System.out.println("get one");
-        System.out.println(unit);
 
     }
 
-    public Unit getUnitByName(String name) throws SQLException {
+    public Unit getUnitByName(Connection conn, String name) throws SQLException {
 
         if(name == null)
             return null;
         name = name.trim();
 
-        Connection conn = new Auth_GET_CONNECTION().getConn();
+//        Connection conn = new Auth_GET_CONNECTION().getConn();
 
         PreparedStatement pstmt = conn.prepareStatement(GET_ONE_BY_NAME);
 
@@ -67,7 +64,7 @@ public class UnitJDBC {
 
     }
 
-    public Unit getUnitById(String id) throws SQLException {
+    public Unit getUnitById(Connection conn, String id) throws SQLException {
 
         if(id == null)
             return null;
@@ -75,7 +72,7 @@ public class UnitJDBC {
 
         id = getNewUnitId(id);
 
-        Connection conn = new Auth_GET_CONNECTION().getConn();
+//        Connection conn = new Auth_GET_CONNECTION().getConn();
 
         PreparedStatement pstmt = conn.prepareStatement(GET_ONE);
 
@@ -233,12 +230,10 @@ public class UnitJDBC {
             try {
                 if (pstmt != null)
                     pstmt.close();
-                conn.close();
             } catch (SQLException e) {
                 logger.info("conn or pstmt close fail " + pstmt);
                 e.printStackTrace();
             }
-
         }
         logger.info("getUnitById successful => " + unit);
         return unit;
@@ -246,15 +241,15 @@ public class UnitJDBC {
 
 
 
-    public Unit insertUnit(Unit unit) throws SQLException {
+    public Unit insertUnit(Connection conn, Unit unit) throws SQLException {
 
         if(unit == null || unit.getId() == null)
             return null;
 
-        Connection conn = new Auth_GET_CONNECTION().getConn();
+//        Connection conn = new Auth_GET_CONNECTION().getConn();
         PreparedStatement pstmt =null;
 
-        Unit old = getUnitById(unit.getId());
+        Unit old = getUnitById(conn, unit.getId());
         if (old != null){
             if (old.getId() != null && !old.getId().equals(""))
                 return old;
@@ -293,7 +288,6 @@ public class UnitJDBC {
             try {
                 if(pstmt != null)
                     pstmt.close();
-                conn.close();
             } catch (SQLException e) {
                 logger.info("conn or pstmt close fail " + pstmt);
                 e.printStackTrace();
