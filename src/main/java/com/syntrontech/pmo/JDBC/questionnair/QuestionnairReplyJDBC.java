@@ -47,7 +47,7 @@ public class QuestionnairReplyJDBC {
             //  user_id, tenant_id, questionnaire_seq
             pstmt.setString(1, questionnairReply.getUserId());
             pstmt.setString(2, questionnairReply.getTenantId());
-            pstmt.setLong(3, questionnairReply.getQuestionnairQuestionSeq());
+            pstmt.setLong(3, questionnairReply.getQuestionnairSeq());
 
             // questionnaire_title, questionnaire_question_seq,
             // questionnaire_question_title, questionnaire_question_option_seq
