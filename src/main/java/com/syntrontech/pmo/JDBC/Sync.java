@@ -145,20 +145,20 @@ public class Sync {
                     authconn.commit();
                     measurementconn.commit();
                 }
-                if (i % 3000 == 0) {
-
-                    authconn.commit();
-                    cipconn.commit();
-                    measurementconn.commit();
-                    syncare1conn.commit();
-
-                    authconn.close();
-                    cipconn.close();
-                    measurementconn.close();
-                    syncare1conn.close();
-
-                    break;
-                }
+//                if (i % 3000 == 0) {
+//
+//                    authconn.commit();
+//                    cipconn.commit();
+//                    measurementconn.commit();
+//                    syncare1conn.commit();
+//
+//                    authconn.close();
+//                    cipconn.close();
+//                    measurementconn.close();
+//                    syncare1conn.close();
+//
+//                    break;
+//                }
             }
         } catch (SQLException e) {
             e.printStackTrace();

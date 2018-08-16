@@ -27,32 +27,32 @@ public class Application {
 
         new Sync().syncSystemUserToUserAndSubject();
 
-//        Thread t = new Thread(){
-//            @Override
-//            public void run() {
+        Thread t = new Thread(){
+            @Override
+            public void run() {
                 sendPUTRequestApp.sendPUTRequest(ServiceName.User);
                 sendPUTRequestApp.sendPUTRequest(ServiceName.Subject);
                 sendPUTRequestApp.sendPUTRequest(ServiceName.EmergencyContact);
-//                super.run();
-//            }
-//        };
-//
-//        t.start();
+                super.run();
+            }
+        };
+
+        t.start();
 
         new SyncAnswers().syncAnswers();
 
 
-//        Thread t2 = new Thread(){
-//            @Override
-//            public void run() {
+        Thread t2 = new Thread(){
+            @Override
+            public void run() {
                 sendPUTRequestApp.sendPUTRequest(ServiceName.Biochemistry);
                 sendPUTRequestApp.sendPUTRequest(ServiceName.BodyInfo);
                 sendPUTRequestApp.sendPUTRequest(ServiceName.Questionnaire);
-//                super.run();
-//            }
-//        };
-//
-//        t2.start();
+                super.run();
+            }
+        };
+
+        t2.start();
 
 
         sendPUTRequestApp.sendPUTRequest(ServiceName.BloodPressureHeartBeat);
