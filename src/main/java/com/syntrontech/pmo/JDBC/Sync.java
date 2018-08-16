@@ -358,7 +358,7 @@ public class Sync {
         Double bmi = null;
         try {
             bmi = getRecordValue(value, 5);
-        } catch (NumberFormatException e) {
+        } catch (Exception e) {
 
         }
         bodyInfo.setBmi(bmi);

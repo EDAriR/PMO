@@ -21,7 +21,10 @@ public class MysqlAlertTableAddCloumSyncStatus {
         MysqlAlertTableAddCloumSyncStatus msq = new MysqlAlertTableAddCloumSyncStatus();
 
         msq.alertTable();
+//        msq.setN();
     }
+
+
 
     public void alertTable() throws SQLException {
 
@@ -48,6 +51,56 @@ public class MysqlAlertTableAddCloumSyncStatus {
                         continue;
 
                     sql = "ALTER TABLE " + name + " ADD sync_status varchar(2) DEFAULT 'N'";
+//                    sql = "ALTER TABLE " + name +  " DROP sync_status";
+
+                    try {
+                        PreparedStatement stmt2 = conn.prepareStatement(sql);
+                        int rs = stmt2.executeUpdate(sql);
+                        System.out.println(rs);
+
+                    } catch (SQLException e) {
+                        System.out.println(">> fail table name: " + name);
+                        System.out.println(">>" + e.getMessage());
+                        continue;
+                    }
+                }
+            }
+        } catch (ClassNotFoundException e) {
+            logger.warn("com.mysql.cj.jdbc.Driver ClassNotFoundException ");
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            conn.close();
+        }
+    }
+
+    public void setN() throws SQLException {
+
+        Connection conn = null;
+
+        try {
+
+            Class.forName(DRIVER_PATH);
+            conn = DriverManager.getConnection(DB_PATH);
+
+            System.out.println("Connection MySQL ");
+
+            Statement stmt = conn.createStatement();
+            String sql = "show tables;";
+            ResultSet result = stmt.executeQuery(sql);
+
+            if (result != null) {
+                while (result.next()) {
+
+                    String name = result.getString(1);
+                    System.out.println("Table Name : " + name + "\t");
+
+                    if (name.equals("DATABASECHANGELOG") || name.equals("DATABASECHANGELOGLOCK"))
+                        continue;
+
+                    sql = "UPDATE " + name + " SET sync_status='N'";
 //                    sql = "ALTER TABLE " + name +  " DROP sync_status";
 
                     try {

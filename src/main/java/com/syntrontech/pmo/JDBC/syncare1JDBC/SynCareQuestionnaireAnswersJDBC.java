@@ -25,18 +25,10 @@ public class SynCareQuestionnaireAnswersJDBC {
     public static void main(String[] args) {
         SynCareQuestionnaireAnswersJDBC answersJDBC = new SynCareQuestionnaireAnswersJDBC();
 
-        Date start = java.util.Calendar.getInstance().getTime();
         List<SynCareQuestionnaireAnswers> answers = answersJDBC.getAll();
 
-        Date update = java.util.Calendar.getInstance().getTime();
+        answers.forEach(a-> System.out.println(a.getId()));
 
-        answers.forEach(a-> answersJDBC.update(a.getId()));
-
-        Date end = java.util.Calendar.getInstance().getTime();
-
-        System.out.println("start =>" + start);
-        System.out.println("update =>" + update);
-        System.out.println("start =>" + end);
     }
     public List<SynCareQuestionnaireAnswers> getAll() {
 

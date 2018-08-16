@@ -11,9 +11,8 @@ import com.syntrontech.pmo.syncare1.model.SystemUser;
 
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,6 +34,9 @@ public class SyncAnswers {
 
         try {
             List<SynCareQuestionnaireAnswers> answers = answersJDBC.getAll();
+
+            answers.sort((o1, o2) -> o1.getId() > o2.getId() ? -1 : (o1.getId() < o2.getId()) ? 1 : 0);
+
             answers.forEach(a -> {
 
                 syncToQuestionnairReply(syncare1conn, a, systemUserJDBC);
@@ -49,8 +51,6 @@ public class SyncAnswers {
                 e.printStackTrace();
             }
         }
-
-
     }
 
     private void syncToQuestionnairReply(Connection conn, SynCareQuestionnaireAnswers answers, SystemUserJDBC systemUserJDBC) {
