@@ -46,12 +46,30 @@ public class SyncAnswers {
             for(String id:replyMap.keySet()){
 
                 List<QuestionnairReply> replys = replyMap.get(id);
-                replys.sort((o1, o2) -> o1.getQuestionnairQuestionSeq() > o2.getQuestionnairQuestionSeq() ? -1 :
-                        (o1.getQuestionnairQuestionSeq() < o2.getQuestionnairQuestionSeq()) ? 1 : 0);
 
-                Collections.reverse(replys);
+                if(replys.size() > 8){
 
-                replys.forEach(r -> replyJDBC.insert(r));
+                    Map<Date, List<QuestionnairReply>> overOneReplys = replys.stream()
+                            .collect(Collectors.groupingBy(QuestionnairReply::getCreateTime));
+
+                    for (Date d:overOneReplys.keySet()){
+
+                        List<QuestionnairReply> rps = overOneReplys.get(d);
+
+                        rps = sortReplys(rps);
+
+                        rps.forEach(r -> replyJDBC.insert(r));
+
+
+                    }
+                }else {
+
+                    replys = sortReplys(replys);
+
+                    replys.forEach(r -> replyJDBC.insert(r));
+                }
+
+
             }
 
             answers.forEach(a -> answersJDBC.update(a.getId()));
@@ -67,21 +85,16 @@ public class SyncAnswers {
         }
     }
 
-//    private void syncToQuestionnairReply(Connection conn, SynCareQuestionnaireAnswers answers, SystemUserJDBC systemUserJDBC) {
-//
-//
-//
-//
-//
-//        if (reply != null)
-//            reply = ;
-//
-//        System.out.println("old  ==>>>" + answers + "<<<");
-//        System.out.println("new  ==>>>" + reply + "<<<");
-//        System.out.println("old  ==>>>" + answers.getId() + "<<<");
-//        System.out.println("new  ==>>>" + reply.getSequence() + "<<<");
-//
-//    }
+    private List<QuestionnairReply> sortReplys(List<QuestionnairReply> replys) {
+
+        replys.sort((o1, o2) -> o1.getQuestionnairQuestionSeq() > o2.getQuestionnairQuestionSeq() ? -1 :
+                (o1.getQuestionnairQuestionSeq() < o2.getQuestionnairQuestionSeq()) ? 1 : 0);
+
+        Collections.reverse(replys);
+
+        return replys;
+    }
+
 
     private QuestionnairReply turnAnswerToReply(Connection conn, SynCareQuestionnaireAnswers answers, SystemUserJDBC systemUserJDBC) {
 
