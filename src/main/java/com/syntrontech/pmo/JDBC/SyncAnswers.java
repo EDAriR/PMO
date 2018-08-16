@@ -100,7 +100,8 @@ public class SyncAnswers {
         String[] strArr = {answers.getQuestionnaireAnswersItemValue()};
         questionnairReply.setQuestionnairQuestionAnswer(strArr);
 
-        String[] scoreArr = {scopeMap.get(optionseq)};
+        String scope = scopeMap.get(optionseq) == null? "": scopeMap.get(optionseq);
+        String[] scoreArr = {scope};
         questionnairReply.setQuestionnairQuestionOptionScore(scoreArr);
 
         questionnairReply.setCreateTime(answers.getCreateDate()); // Date
