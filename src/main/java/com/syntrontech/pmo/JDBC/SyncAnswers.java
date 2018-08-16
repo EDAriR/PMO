@@ -110,12 +110,14 @@ public class SyncAnswers {
             questionnairReply.setQuestionnairQuestionOptionScore(null);
         }
 
-        Long answerseq = Long.valueOf(answers.getQuestionnaireAnswersItemValue());
-        if(answerseq != 0){
-            String[] strArr = {answers.getQuestionnaireAnswersItemValue()};
-            questionnairReply.setQuestionnairQuestionAnswer(strArr);
-        }else {
+        try{
+
+            Long answerseq = Long.valueOf(answers.getQuestionnaireAnswersItemValue());
             String[] strArr = {answerMap.get(answerseq)};
+            questionnairReply.setQuestionnairQuestionAnswer(strArr);
+
+        }catch (NumberFormatException e){
+            String[] strArr = {answers.getQuestionnaireAnswersItemValue()};
             questionnairReply.setQuestionnairQuestionAnswer(strArr);
         }
 
