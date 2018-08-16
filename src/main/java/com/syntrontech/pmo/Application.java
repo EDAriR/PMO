@@ -16,15 +16,15 @@ public class Application {
 
         SendPUTRequest sendPUTRequestApp = new SendPUTRequest();
 
-//        QuartzTest qt = new QuartzTest();
-//        qt.startScheduler();
+
 
         System.out.println("Start sync syncare1 data fireTime:" + Calendar.getInstance().getTime());
 
         // 確認PMO規格 量測資料同步
-        new SyncUnit().syncLocationToUnit();
+        // new SyncUnit().syncLocationToUnit();
 
-        new SyncDevice().syncDevice();
+        // 8/15 討論結果避免髒資料 不做同步
+//        new SyncDevice().syncDevice();
 
         new Sync().syncSystemUserToUserAndSubject();
 
@@ -37,6 +37,9 @@ public class Application {
         new SyncUserCard().syncCard();
 
         sendPUTRequestApp.sendPUTRequest();
+        
+//      QuartzTest qt = new QuartzTest();
+//      qt.startScheduler();
 
     }
 

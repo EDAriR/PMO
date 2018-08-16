@@ -42,9 +42,9 @@ public class SystemUserJDBC {
 //        System.out.println(sss);
     }
 
-    public void updateSystemUser(int id) {
+    public void updateSystemUser(Connection conn, int id) {
 
-        Connection conn = new Syncare1_GET_CONNECTION().getConn();
+//        Connection conn = new Syncare1_GET_CONNECTION().getConn();
         PreparedStatement pstmt = null;
 
         try {
@@ -64,15 +64,12 @@ public class SystemUserJDBC {
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
-
             try {
                 pstmt.close();
-                conn.close();
             } catch (SQLException e) {
-                System.out.println("conn or pstmt close fail" + conn + " || " + pstmt);
+                System.out.println("pstmt close fail" + conn);
                 e.printStackTrace();
             }
-
         }
     }
 
@@ -180,17 +177,15 @@ public class SystemUserJDBC {
 
     }
 
-    public SystemUser getSystemUserById(String id){
+    public SystemUser getSystemUserById(Connection conn, String id){
 
         SystemUser systemUser = new SystemUser();
 
-        Connection conn = new Syncare1_GET_CONNECTION().getConn();
+//        Connection conn = new Syncare1_GET_CONNECTION().getConn();
         PreparedStatement pstmt = null;
         ResultSet rs;
 
         try {
-
-
             pstmt = conn.prepareStatement(GET_ONE);
             pstmt.setString(1, id);
 
@@ -266,12 +261,11 @@ public class SystemUserJDBC {
             e.printStackTrace();
         } catch (Exception e) {
             e.printStackTrace();
-        } finally {
+        }finally {
             try {
                 pstmt.close();
-                conn.close();
             } catch (SQLException e) {
-                System.out.println("conn or pstmt close fail" + conn + " || "+ pstmt);
+                System.out.println("pstmt close fail" + conn);
                 e.printStackTrace();
             }
         }

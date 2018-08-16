@@ -2,7 +2,6 @@ package com.syntrontech.pmo.JDBC.auth;
 
 import com.syntrontech.pmo.auth.model.AccountList;
 import com.syntrontech.pmo.auth.model.User;
-import com.syntrontech.pmo.model.common.ModelStatus;
 import com.syntrontech.pmo.model.common.ModelUserStatus;
 import com.syntrontech.pmo.model.common.Source;
 import org.slf4j.Logger;
@@ -57,8 +56,8 @@ public class UserJDBC {
         System.out.println("ss size:" + ss.size());
 
         System.out.println(ss);
-        User user = s.insertUser(s.getTestUser());
-        System.out.println(user);
+//        User user = s.insertUser(s.getTestUser());
+//        System.out.println(user);
 //        User user = s.getUserById("xxx");
 //        logger.info(user.getId() == null);
     }
@@ -145,9 +144,9 @@ public class UserJDBC {
         return user;
     }
 
-    public User insertUser(User user) {
+    public User insertUser(Connection conn, User user) {
 
-        Connection conn = new Auth_GET_CONNECTION().getConn();
+//        Connection conn = new Auth_GET_CONNECTION().getConn();
         PreparedStatement pstmt = null;
 
         User old = getUserById(user.getId());
@@ -207,6 +206,7 @@ public class UserJDBC {
 //            logger.info(pstmt.toString());
             logger.info("  UserJDBC INSERT:" + pstmt.toString());
             pstmt.executeUpdate();
+            pstmt.close();
 
             pstmt = conn.prepareStatement(INSERT_ACCOUNT_USER);
             pstmt.setString(1, user.getId());
@@ -218,24 +218,18 @@ public class UserJDBC {
 
         } catch (SQLException e) {
             logger.warn("insert user fail =>" + pstmt + "\n" + user);
-//            System.out.println(Calendar.getInstance().getTime() + "  UserJDBC:" +"getUserById fail =>" + conn + " || " + pstmt + "||" + user);
 
             e.printStackTrace();
         } finally {
-
             try {
-                if (pstmt != null)
-                    pstmt.close();
-                conn.close();
+                pstmt.close();
             } catch (SQLException e) {
-//                logger.info("conn or pstmt close fail" + conn + " || " + pstmt);
-                System.out.println(Calendar.getInstance().getTime() + "  UserJDBC:" + "conn or pstmt close fail" + conn + " || " + pstmt);
+                System.out.println("pstmt close fail" + conn);
                 e.printStackTrace();
             }
-
         }
-//        logger.info("create user successful ==> " + user);
-        System.out.println(Calendar.getInstance().getTime() + "  UserJDBC:" + "create user successful ==> " + user);
+        
+        logger.info("create user successful ==> " + user);
         return user;
     }
 
@@ -352,7 +346,7 @@ public class UserJDBC {
         return users;
     }
 
-    public AccountList InsertAccountList(String userId, String account) throws SQLException {
+    public AccountList InsertAccountList(Connection conn, String userId, String account) throws SQLException {
 
         User user = getUserById(userId);
 
@@ -360,12 +354,12 @@ public class UserJDBC {
             return null;
         }
 
-        AccountList accountList = getAccountListByUserId(userId, account);
+        AccountList accountList = getAccountListByUserId(conn, userId, account);
 
         if (accountList != null && accountList.getUserId() != null && accountList.getAccount() != null)
             return accountList;
 
-        Connection conn = new Auth_GET_CONNECTION().getConn();
+//        Connection conn = new Auth_GET_CONNECTION().getConn();
 
         PreparedStatement pstmt = null;
 
@@ -376,6 +370,7 @@ public class UserJDBC {
 
             logger.info("INSERT ACCOUNT:" + pstmt.toString());
             pstmt.executeUpdate();
+            pstmt.close();
 
             pstmt = conn.prepareStatement(UPDATE_CARDS);
 
@@ -402,9 +397,8 @@ public class UserJDBC {
             try {
                 if (pstmt != null)
                     pstmt.close();
-                conn.close();
             } catch (SQLException e) {
-                logger.warn("Insert  AccountList conn or pstmt close fail" + conn + " || " + pstmt);
+                logger.warn("Insert  AccountList pstmt close fail " + pstmt);
                 throw e;
             }
 
@@ -421,8 +415,8 @@ public class UserJDBC {
     }
 
 
-    private AccountList getAccountListByUserId(String id, String account) throws SQLException {
-        Connection conn = new Auth_GET_CONNECTION().getConn();
+    private AccountList getAccountListByUserId(Connection conn, String id, String account) throws SQLException {
+//        Connection conn = new Auth_GET_CONNECTION().getConn();
         PreparedStatement pstmt = null;
 
         AccountList user = new AccountList();
@@ -450,10 +444,8 @@ public class UserJDBC {
             logger.warn("get AccountList fail ");
             throw e;
         } finally {
-
             if (pstmt != null)
                 pstmt.close();
-            conn.close();
         }
 
         return user;

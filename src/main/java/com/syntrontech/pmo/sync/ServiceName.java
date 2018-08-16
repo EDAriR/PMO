@@ -20,49 +20,6 @@ public enum ServiceName implements GetUrl{
 //            return "http://localhost:8080/aaa/forSystem/sync/user";
 //        }
     },
-
-
-    // Measurement
-    BodyInfo{
-        @Override
-        public String geturl() {
-            return "http://localhost:8000/measurement/sync/BodyInfo";
-        }
-//        public String geturl() {
-//            return "http://localhost:8084/measurement/sync/BodyInfo";
-//        }
-    },
-    BloodPressureHeartBeat{
-        @Override
-        public String geturl() {
-            return "http://localhost:8000/measurement/sync/BloodPressureHeartBeat/NotDeleteSolr";
-        }
-    },
-    BloodGlucose{
-        @Override
-        public String geturl() {
-            return "http://localhost:8000/measurement/sync/BloodGlucose";
-        }
-    },
-    Biochemistry{
-        @Override
-        public String geturl() {
-            return "http://localhost:8000/measurement/sync/Biochemistry";
-        }
-    },
-    AbnormalBloodPressure{
-        @Override
-        public String geturl() {
-            return "http://localhost:8000/measurement/sync/AbnormalBloodPressure";
-        }
-    },
-    AbnormalBloodPressureLog{
-        @Override
-        public String geturl() {
-            return "http://localhost:8000/measurement/sync/AbnormalBloodPressureLog";
-        }
-    },
-
     // cip
     Device{
         @Override
@@ -98,6 +55,47 @@ public enum ServiceName implements GetUrl{
             return "http://localhost:8000/questionnair/sync/questionnaireReply";
         }
 
+    },
+    
+ // Measurement
+    BodyInfo{
+        @Override
+        public String geturl() {
+            return "http://localhost:8000/measurement/sync/BodyInfo";
+        }
+//        public String geturl() {
+//            return "http://localhost:8084/measurement/sync/BodyInfo";
+//        }
+    },
+    BloodGlucose{
+        @Override
+        public String geturl() {
+            return "http://localhost:8000/measurement/sync/BloodGlucose";
+        }
+    },
+    Biochemistry{
+        @Override
+        public String geturl() {
+            return "http://localhost:8000/measurement/sync/Biochemistry";
+        }
+    },
+    AbnormalBloodPressure{
+        @Override
+        public String geturl() {
+            return "http://localhost:8000/measurement/sync/AbnormalBloodPressure";
+        }
+    },
+    AbnormalBloodPressureLog{
+        @Override
+        public String geturl() {
+            return "http://localhost:8000/measurement/sync/AbnormalBloodPressureLog";
+        }
+    },
+    BloodPressureHeartBeat{
+        @Override
+        public String geturl() {
+            return "http://localhost:8000/measurement/sync/BloodPressureHeartBeat/NotDeleteSolr";
+        }
     }
 
 }

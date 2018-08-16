@@ -1,8 +1,6 @@
 package com.syntrontech.pmo.JDBC.cip;
 
 import com.syntrontech.pmo.cip.model.EmergencyContact;
-import com.syntrontech.pmo.cip.model.UnitMeta;
-import com.syntrontech.pmo.model.common.ModelMgmtStatus;
 import com.syntrontech.pmo.model.common.ModelStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,23 +23,13 @@ public class EmergencyContactJDBC {
             + "VALUES (nextval('emergency_contacts_sequence_seq'), ?, ?, ?, ?, ?, ?, ?);";
     // sequence, subject_id, user_id, tenant_id, name, phone, email, status
 
-    private static final String GET_ONE = "SELECT * FROM emergency_contacts WHERE name=? and tenant_id='TTSHB' AND status='ENABLED';";
 
-    public static void main(String[] args) throws SQLException {
-
-        EmergencyContactJDBC s = new EmergencyContactJDBC();
-
-//        List<EmergencyContact> ss = s.getAllEmergencyContacts();
-        EmergencyContact emt = s.insertEmergencyContact(s.getTestEmergencyContact());
-        System.out.println(emt);
-    }
-
-    public EmergencyContact insertEmergencyContact(EmergencyContact emergencyContact) throws SQLException {
+    public EmergencyContact insertEmergencyContact(Connection conn, EmergencyContact emergencyContact) throws SQLException {
 
         if(emergencyContact.getUserId() == null || emergencyContact.getSubjectId() == null || emergencyContact.getName() == null)
             return null;
 
-        Connection conn = new CIP_GET_CONNECTION().getConn();
+//        Connection conn = new CIP_GET_CONNECTION().getConn();
         PreparedStatement pstmt =null;
 
 
@@ -63,18 +51,15 @@ public class EmergencyContactJDBC {
         } catch (SQLException e) {
             logger.error("insert EmergencyContact fail sql \n" +  pstmt);
             throw e;
-        } finally {
-
+        }finally {
             try {
-                if(pstmt != null)
-                    pstmt.close();
-                conn.close();
+                pstmt.close();
             } catch (SQLException e) {
-                logger.error("EmergencyContactJDBC conn or pstmt close fail " + pstmt);
+                System.out.println("pstmt close fail" + conn);
                 e.printStackTrace();
             }
-
         }
+        
         logger.info("EmergencyContactJDBC: create emergencyContact successful ==> " + emergencyContact);
 
         return emergencyContact;

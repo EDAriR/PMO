@@ -37,7 +37,6 @@ public class BloodGlucoseJDBC {
 
 //        System.out.println(bloodGlucoses.size());
 
-        bloodGlucoseJDBC.insert(bloodGlucoseJDBC.getTestBloodGlucose());
     }
 
     public BloodGlucose getTestBloodGlucose() {
@@ -78,9 +77,9 @@ public class BloodGlucoseJDBC {
         return testBloodGlucose;
     }
 
-    public BloodGlucose insert(BloodGlucose bloodGlucose){
+    public BloodGlucose insert(Connection conn, BloodGlucose bloodGlucose){
 
-        Connection conn = new MEASUREMENT_GET_CONNECTION().getConn();
+//        Connection conn = new MEASUREMENT_GET_CONNECTION().getConn();
         PreparedStatement pstmt = null;
 
         try {
@@ -160,10 +159,8 @@ public class BloodGlucoseJDBC {
             try {
                 if(pstmt != null)
                     pstmt.close();
-                conn.close();
             } catch (SQLException e) {
 //                logger.debug("conn or pstmt close fail" + conn + " || " + pstmt);
-
                 e.printStackTrace();
             }
 

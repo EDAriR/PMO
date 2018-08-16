@@ -1,8 +1,6 @@
 package com.syntrontech.pmo.JDBC.measurement;
 
-import com.syntrontech.pmo.measurement.AbnormalBloodPressure;
 import com.syntrontech.pmo.measurement.BloodPressureHeartBeat;
-import com.syntrontech.pmo.measurement.common.BloodPressureCaseStatus;
 import com.syntrontech.pmo.measurement.common.MeasurementStatusType;
 import com.syntrontech.pmo.model.common.GenderType;
 import org.slf4j.Logger;
@@ -34,10 +32,6 @@ public class BloodPressureHeartBeatJDBC {
     // status, createtime, createby, tenant_id, device_mac_address
     // subject_seq, subject_id, subject_name, subject_gender, subject_age, subject_user_id, subject_user_name,
     // rule_seq, rule_description, unit_id, unit_name, parent_unit_id, parent_unit_name, device_id
-
-    private static final String GET_ONE = "SELECT * FROM blood_pressure_heartbeat WHERE sequence=? and tenant_id='DEFAULT_TENANT'" +
-            " AND status='ENABLED';";
-
     private static final String GET_SEQUENCE = "SELECT MAX(sequence) FROM blood_pressure_heartbeat;";
 
 
@@ -49,13 +43,11 @@ public class BloodPressureHeartBeatJDBC {
 
         System.out.println("ss size:" + ss.size());
 
-        System.out.println(bloodPressureHeartBeatJDBC.insertBloodPressureHeartBeat(bloodPressureHeartBeatJDBC.getTestBloodPressureHeartBeat()));
-
     }
 
-    public BloodPressureHeartBeat insertBloodPressureHeartBeat(BloodPressureHeartBeat bloodPressureHeartBeat){
+    public BloodPressureHeartBeat insertBloodPressureHeartBeat(Connection conn, BloodPressureHeartBeat bloodPressureHeartBeat){
 
-        Connection conn = new MEASUREMENT_GET_CONNECTION().getConn();
+//        Connection conn = new MEASUREMENT_GET_CONNECTION().getConn();
         PreparedStatement pstmt = null;
 
         try {
@@ -108,7 +100,7 @@ public class BloodPressureHeartBeatJDBC {
             pstmt.executeUpdate();
 //            logger.info("create bloodPressureHeartBeat successful => " + bloodPressureHeartBeat);
 
-
+//            pstmt.close();
             try (ResultSet rs = pstmt.getGeneratedKeys()) {
                 if (rs.next()) {
                     bloodPressureHeartBeat.setSequence(rs.getLong(1));
@@ -135,7 +127,6 @@ public class BloodPressureHeartBeatJDBC {
             try {
                 if(pstmt != null)
                     pstmt.close();
-                conn.close();
             } catch (SQLException e) {
 //                logger.debug("conn or pstmt close fail" + conn + " || " + pstmt);
                 e.printStackTrace();

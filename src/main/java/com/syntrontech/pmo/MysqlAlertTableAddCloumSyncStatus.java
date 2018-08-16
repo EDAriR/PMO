@@ -1,12 +1,9 @@
 package com.syntrontech.pmo;
 
-import com.syntrontech.pmo.JDBC.syncare1JDBC.Syncare1_GET_CONNECTION;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.sql.*;
-import java.util.ArrayList;
-import java.util.List;
 
 import static com.syntrontech.pmo.util.YAMLReader.getSetting;
 

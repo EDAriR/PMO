@@ -5,9 +5,6 @@ import com.syntrontech.pmo.model.common.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.persistence.Column;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
 import java.sql.*;
 import java.util.*;
 import java.util.Date;
@@ -32,30 +29,8 @@ public class SubjectJDBC {
 
     private static final String GET_ONE = "SELECT * FROM subject WHERE id=? AND user_id=? AND tenant_id='TTSHB' AND status='ENABLED';";
 
-    public static void main(String[] args) throws SQLException {
 
-
-        SubjectJDBC s = new SubjectJDBC();
-//        Date star_time = new Date();
-//        List<Subject> ss = s.getAllSubjects();
-//        Date end_time = new Date();
-
-//        System.out.println("star_time:" + star_time.toInstant());
-//        System.out.println("end_time:" + end_time.toInstant());
-//        System.out.println("ss size:" + ss.size());
-
-        Subject subject = s.getSubject();
-        Subject sb = s.insertSubject(subject);
-
-        System.out.println(sb);
-
-        Subject ssb = s.getOneSubject(sb.getId(), sb.getUserId());
-
-        System.out.println(ssb);
-
-    }
-
-    public Subject getOneSubject(String id, String user_id) throws SQLException {
+    public Subject getOneSubject(Connection conn, String id, String user_id) throws SQLException {
 
         if(id == null || user_id == null)
             return null;
@@ -63,7 +38,7 @@ public class SubjectJDBC {
         id = id.toUpperCase().trim();
         user_id = user_id.toUpperCase().trim();
 
-        Connection conn = new CIP_GET_CONNECTION().getConn();
+//        Connection conn = new CIP_GET_CONNECTION().getConn();
 
         PreparedStatement pstmt = null;
         ResultSet rs;
@@ -144,11 +119,9 @@ public class SubjectJDBC {
 //            System.out.println(Calendar.getInstance().getTime() + "  SubjectJDBC:" + "getOneSubject fail " + conn + " || " + pstmt);
         }finally {
             try {
-                if (pstmt != null)
-                    pstmt.close();
-                conn.close();
+                pstmt.close();
             } catch (SQLException e) {
-                logger.error("conn or pstmt close fail" + pstmt);
+                System.out.println("pstmt close fail" + conn);
                 e.printStackTrace();
             }
         }
@@ -255,17 +228,17 @@ public class SubjectJDBC {
     }
 
 
-    public Subject insertSubject(Subject subject) throws SQLException {
+    public Subject insertSubject(Connection conn, Subject subject) throws SQLException {
 
         if(subject.getId() == null || subject.getUserId() == null)
             return null;
 
-        Subject old = getOneSubject(subject.getId(), subject.getUserId());
+        Subject old = getOneSubject(conn, subject.getId(), subject.getUserId());
 
         if(Objects.nonNull(old) && old.getId() != null && old.getSequence() != null)
             return old;
 
-        Connection conn = new CIP_GET_CONNECTION().getConn();
+//        Connection conn = new CIP_GET_CONNECTION().getConn();
 
         PreparedStatement pstmt = null;
 
@@ -318,10 +291,10 @@ public class SubjectJDBC {
                 long seq = rs.getLong(1);
                 subject.setSequence(seq );
             }else{
-                subject = getOneSubject(subject.getId(), subject.getUserId());
+                subject = getOneSubject(conn, subject.getId(), subject.getUserId());
             }
             if(subject.getSequence() == null)
-                subject = getOneSubject(subject.getId(), subject.getUserId());
+                subject = getOneSubject(conn, subject.getId(), subject.getUserId());
 
             rs.close();
 
@@ -332,16 +305,16 @@ public class SubjectJDBC {
 //            System.out.println(Calendar.getInstance().getTime() + "  SubjectJDBC:" + "create subject fail" + conn + " || " + pstmt);
             e.printStackTrace();
             throw e;
+        
         }finally {
             try {
-                if (pstmt != null)
-                    pstmt.close();
-                conn.close();
+                pstmt.close();
             } catch (SQLException e) {
-                logger.error("conn or pstmt close fail " + pstmt);
+                System.out.println("pstmt close fail" + conn);
                 e.printStackTrace();
             }
         }
+        
         logger.info("create successful ==> " + subject);
         return subject;
     }

@@ -1,6 +1,8 @@
 package com.syntrontech.pmo.JDBC;
 
+import com.syntrontech.pmo.JDBC.auth.Auth_GET_CONNECTION;
 import com.syntrontech.pmo.JDBC.auth.UserJDBC;
+import com.syntrontech.pmo.JDBC.syncare1JDBC.Syncare1_GET_CONNECTION;
 import com.syntrontech.pmo.JDBC.syncare1JDBC.SystemUserCardJDBC;
 import com.syntrontech.pmo.JDBC.syncare1JDBC.SystemUserJDBC;
 import com.syntrontech.pmo.auth.model.AccountList;
@@ -9,6 +11,7 @@ import com.syntrontech.pmo.syncare1.model.SystemUserCard;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -34,28 +37,41 @@ public class SyncUserCard {
             throw e;
         }
 
+        Connection syncare1conn = new Syncare1_GET_CONNECTION().getConn();
+        Connection authconn = new Auth_GET_CONNECTION().getConn();
+        try {
+        	
+        	for (SystemUserCard card : cards) {
 
-        for (SystemUserCard card : cards) {
+                SystemUser user = systemUserJDBC.getSystemUserById(syncare1conn, String.valueOf(card.getSystemUser()));
 
-            SystemUser user = systemUserJDBC.getSystemUserById(String.valueOf(card.getSystemUser()));
+                if(user == null || user.getUserAccount() == null)
+                    errors.add("sync card fail because not found system user card =>" + card);
 
-            if(user == null || user.getUserAccount() == null)
-                errors.add("sync card fail because not found system user card =>" + card);
-
-            UserJDBC userJDBC = new UserJDBC();
-            try {
-                AccountList newCard = userJDBC.InsertAccountList(user.getUserAccount(), card.getCardId());
+                UserJDBC userJDBC = new UserJDBC();
+                AccountList newCard = userJDBC.InsertAccountList(authconn, user.getUserAccount(), card.getCardId());
                 if(newCard != null)
-                    systemUserCardJDBC.updateById(card.getId());
+                	systemUserCardJDBC.updateById(card.getId());
 
+
+            }
+        	
+        }catch (SQLException e) {
+            logger.warn("InsertAccountList  fail");
+            exceptions.add(e);
+        } finally {
+
+            try {
+            	authconn.close();
+            	syncare1conn.close();
             } catch (SQLException e) {
-
-                logger.warn("InsertAccountList  fail");
-                exceptions.add( e);
-                errors.add("sync fail card: " + card + "" + e.getMessage());
+                logger.debug("conn or pstmt close fail" + syncare1conn + " || " + authconn);
+                e.printStackTrace();
             }
 
         }
+        if(exceptions.size() != 0)
+        	exceptions.forEach(e -> System.out.println(e));
 
         if(errors.size() != 0)
             errors.forEach(e -> System.out.println(e));

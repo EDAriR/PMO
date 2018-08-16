@@ -1,5 +1,6 @@
 package com.syntrontech.pmo.JDBC;
 
+import com.syntrontech.pmo.JDBC.auth.Auth_GET_CONNECTION;
 import com.syntrontech.pmo.JDBC.auth.UnitJDBC;
 import com.syntrontech.pmo.JDBC.cip.UnitMetaJDBC;
 import com.syntrontech.pmo.JDBC.syncare1JDBC.LocationJDBC;
@@ -12,6 +13,7 @@ import com.syntrontech.pmo.syncare1.model.Location;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.*;
 
@@ -33,44 +35,55 @@ public class SyncUnit {
 
         logger.info("locations :[" + locations.size() + "] need sync");
 //        System.out.println(" locations need sync" + locations.size());
-
+        Connection authconn = new Auth_GET_CONNECTION().getConn();
         List<String> errors = new ArrayList<>();
-        locations.forEach(l -> {
-            try {
-                logger.info(l.toString());
+        
+        try {
+        	for(Location l:locations) {
+        		logger.info(l.toString());
                 if (l.getId() == null || l.getId().equals("")) {
 
                 } else {
 
                     String locationId = l.getId();
 
-                    Unit unit = unitJDBC.getUnitById(locationId);
-                    Unit parent = unitJDBC.getUnitByName(l.getCity());
+                    Unit unit = unitJDBC.getUnitById(authconn, locationId);
+                    Unit parent = unitJDBC.getUnitByName(authconn, l.getCity());
 
                     if (unit == null && parent == null) {
 
-                        unit = convertLocationToUnit(l);
-                        unitJDBC.insertUnit(unit);
+                        unit = convertLocationToUnit(authconn, l);
+                        unitJDBC.insertUnit(authconn, unit);
 
                     } else if (unit == null) {
                         unit = convertLocationToUnit(l, parent);
-                        unitJDBC.insertUnit(unit);
+                        unitJDBC.insertUnit(authconn, unit);
                     }
 
                     UnitMeta unitMeta = unitMetaJDBC.getUnitMetaById(locationId);
 
                     if (unitMeta == null && parent == null)
-                        unitMetaJDBC.insertUnitMeta(convertLocationToUnitMeta(l));
+                        unitMetaJDBC.insertUnitMeta(convertLocationToUnitMeta(authconn, l));
                     else if (unitMeta == null)
                         unitMetaJDBC.insertUnitMeta(convertLocationToUnitMeta(l, parent));
 
                     locationJDBC.updateLocation(locationId);
                 }
+            }
+        } catch (SQLException e) {
+            errors.add("sync unit fail " + e.getMessage());
+            e.printStackTrace();
+        }finally {
+
+            try {
+            	authconn.close();
             } catch (SQLException e) {
-                errors.add("sync unit fail " + l + e.getMessage());
+                logger.debug("conn or pstmt close fail " + authconn);
                 e.printStackTrace();
             }
-        });
+
+        }
+        
 
         if (errors.size() > 0)
             errors.forEach(e -> System.out.println(e));
@@ -79,7 +92,7 @@ public class SyncUnit {
 
     }
 
-    private UnitMeta convertLocationToUnitMeta(Location location) throws SQLException {
+    private UnitMeta convertLocationToUnitMeta(Connection authconn, Location location) throws SQLException {
 
         UnitJDBC unitJDBC = new UnitJDBC();
         UnitMeta unitMeta = new UnitMeta();
@@ -93,7 +106,7 @@ public class SyncUnit {
 
         if (unitId.length() > 6) {
 
-            Unit parentUnit = unitJDBC.getUnitById(unitId.substring(0, 7));
+            Unit parentUnit = unitJDBC.getUnitById(authconn, unitId.substring(0, 7));
             if (parentUnit != null) {
                 unitMeta.setUnitParentId(parentUnit.getId());
                 unitMeta.setUnitParentName(parentUnit.getName());
@@ -185,7 +198,7 @@ public class SyncUnit {
 
     }
 
-    private Unit convertLocationToUnit(Location location) throws SQLException {
+    private Unit convertLocationToUnit(Connection authconn, Location location) throws SQLException {
 
         UnitJDBC unitJDBC = new UnitJDBC();
         Unit unit = new Unit();
@@ -196,7 +209,7 @@ public class SyncUnit {
 
         if (unitId.length() > 6) {
 
-            Unit parentUnit = unitJDBC.getUnitById(unitId.substring(0, 7));
+            Unit parentUnit = unitJDBC.getUnitById(authconn, unitId.substring(0, 7));
             if (parentUnit != null) {
                 unit.setParentId(parentUnit.getId());
                 unit.setParentName(parentUnit.getName());
