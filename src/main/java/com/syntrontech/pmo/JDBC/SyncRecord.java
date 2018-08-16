@@ -1,15 +1,12 @@
 package com.syntrontech.pmo.JDBC;
 
 import com.syntrontech.pmo.JDBC.auth.UnitJDBC;
-import com.syntrontech.pmo.JDBC.auth.UserJDBC;
 import com.syntrontech.pmo.JDBC.cip.SubjectJDBC;
 import com.syntrontech.pmo.JDBC.measurement.BloodPressureHeartBeatJDBC;
-import com.syntrontech.pmo.JDBC.pmo.PmoResultJDBC;
 import com.syntrontech.pmo.JDBC.syncare1JDBC.SystemUserJDBC;
 import com.syntrontech.pmo.JDBC.syncare1JDBC.UserValueRecordJDBC;
 import com.syntrontech.pmo.JDBC.syncare1JDBC.UserValueRecordMappingJDBC;
 import com.syntrontech.pmo.auth.model.Unit;
-import com.syntrontech.pmo.auth.model.User;
 import com.syntrontech.pmo.cip.model.Subject;
 import com.syntrontech.pmo.measurement.BloodPressureHeartBeat;
 import com.syntrontech.pmo.measurement.common.MeasurementStatusType;
@@ -17,7 +14,6 @@ import com.syntrontech.pmo.model.common.*;
 import com.syntrontech.pmo.syncare1.model.SystemUser;
 import com.syntrontech.pmo.syncare1.model.UserValueRecord;
 import com.syntrontech.pmo.syncare1.model.UserValueRecordMapping;
-import com.syntrontech.pmo.syncare1.model.common.Service;
 import com.syntrontech.pmo.syncare1.model.common.Sex;
 import com.syntrontech.pmo.syncare1.model.common.YN;
 import com.syntrontech.pmo.util.CalendarUtil;
@@ -26,14 +22,10 @@ import org.slf4j.LoggerFactory;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
-import java.util.Map;
 
 import static com.syntrontech.pmo.syncare1.model.common.Service.*;
 import static com.syntrontech.pmo.syncare1.model.common.Service.RecordType.*;
-import static com.syntrontech.pmo.syncare1.model.common.Service.RecordType.A;
-import static com.syntrontech.pmo.syncare1.model.common.Service.RecordType.B;
 
 public class SyncRecord {
 
