@@ -97,7 +97,7 @@ public class SyncAnswers {
         String userId = su.getUserAccount() == null ? "" : su.getUserAccount().toUpperCase();
         questionnairReply.setUserId(userId.toUpperCase());
         questionnairReply.setTenantId("TTSHB");
-        questionnairReply.setQuestionnairSeq(answers.getQuestionnaire());
+        questionnairReply.setQuestionnairSeq(1L);
 
         // questionnaire_title, questionnaire_question_seq, questionnaire_question_title, questionnaire_question_option_seq
         questionnairReply.setQuestionnairTitle(answers.getQuestionnaireTitle());
@@ -110,7 +110,7 @@ public class SyncAnswers {
         if (id == 7)
             seq = 6L;
 
-        questionnairReply.setQuestionnairQuestionSeq(1L);
+        questionnairReply.setQuestionnairQuestionSeq(seq);
         questionnairReply.setQuestionnairQuestionTitle(answers.getQuestionnaireQuestionsTitle());
 
         long optionseq = (long) answers.getQuestionnaireAnswersItemId();
