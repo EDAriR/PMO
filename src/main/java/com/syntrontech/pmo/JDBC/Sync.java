@@ -118,22 +118,22 @@ public class Sync {
                     emergencyContactJDBC.insertEmergencyContact(cipconn, syncSystemUserToEmergencyContact(su));
 
                 // 取出該使用者所有血壓
-                List<UserValueRecord> userValueRecords = userValueRecordJDBC.getOneBUserValueRecord(syncare1conn, su.getUserId());
+//                List<UserValueRecord> userValueRecords = userValueRecordJDBC.getOneBUserValueRecord(syncare1conn, su.getUserId());
 
                 // 同步至 新的血壓心跳 異常追蹤 異常追蹤log  measurementconn
-                syncMeasurementBloodPressureHeartBeat(authconn, syncare1conn, measurementconn, userValueRecords, userValueRecordMap, subject, su, userValueRecordJDBC);
+//                syncMeasurementBloodPressureHeartBeat(authconn, syncare1conn, measurementconn, userValueRecords, userValueRecordMap, subject, su, userValueRecordJDBC);
 
                 // 同步新的血糖
-                syncBloodGlucose(authconn, syncare1conn, measurementconn, su, userValueRecordMap, subject, userValueRecordJDBC);
+//                syncBloodGlucose(authconn, syncare1conn, measurementconn, su, userValueRecordMap, subject, userValueRecordJDBC);
 
                 // BodyInfo 更新至新的身高體重
-                synBodyInfo(authconn, syncare1conn, measurementconn, userValueRecordJDBC, su, subject, userValueRecordMap);
+//                synBodyInfo(authconn, syncare1conn, measurementconn, userValueRecordJDBC, su, subject, userValueRecordMap);
 
                 // Biochemistry
-                syncBiochemistry(authconn, syncare1conn, measurementconn, su, subject, userValueRecordMap, userValueRecordJDBC);
+//                syncBiochemistry(authconn, syncare1conn, measurementconn, su, subject, userValueRecordMap, userValueRecordJDBC);
 
                 // PMO USER RESULT
-                pmoUserJDBC.insert(turnSystemUserToPmoUser(su));
+//                pmoUserJDBC.insert(turnSystemUserToPmoUser(su));
                 // update systemUser sync status
                 systemUserJDBC.updateSystemUser(syncare1conn, su.getUserId());
 
@@ -143,7 +143,7 @@ public class Sync {
 
                 if (i % 200 == 0) {
                     authconn.commit();
-                    measurementconn.commit();
+//                    measurementconn.commit();
                 }
 //                if (i % 3000 == 0) {
 //
