@@ -118,10 +118,10 @@ public class Sync {
                     emergencyContactJDBC.insertEmergencyContact(cipconn, syncSystemUserToEmergencyContact(su));
 
                 // 取出該使用者所有血壓
-                List<UserValueRecord> userValueRecords = userValueRecordJDBC.getOneBUserValueRecord(syncare1conn, su.getUserId());
+//                List<UserValueRecord> userValueRecords = userValueRecordJDBC.getOneBUserValueRecord(syncare1conn, su.getUserId());
 
                 // 同步至 新的血壓心跳 異常追蹤 異常追蹤log  measurementconn
-                syncMeasurementBloodPressureHeartBeat(authconn, syncare1conn, measurementconn, userValueRecords, userValueRecordMap, subject, su, userValueRecordJDBC);
+//                syncMeasurementBloodPressureHeartBeat(authconn, syncare1conn, measurementconn, userValueRecords, userValueRecordMap, subject, su, userValueRecordJDBC);
 
                 // 同步新的血糖
                 syncBloodGlucose(authconn, syncare1conn, measurementconn, su, userValueRecordMap, subject, userValueRecordJDBC);

@@ -25,6 +25,8 @@ public class Application {
         // 8/15 討論結果避免髒資料 不做同步
 //        new SyncDevice().syncDevice();
 
+
+        // 測試密碼
         new Sync().syncSystemUserToUserAndSubject();
 
         Thread t = new Thread(){
@@ -62,9 +64,9 @@ public class Application {
 
 //        sendPUTRequestApp.sendPUTcRequest(ServiceName.User);
 
-//        new SyncRecord().sync();
+        new SyncRecord().sync();
 
-//        new SyncUserCard().syncCard();
+        new SyncUserCard().syncCard();
 
 //        sendPUTRequestApp.sendPUTRequest();
         
