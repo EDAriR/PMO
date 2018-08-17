@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 import java.sql.*;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.ZoneId;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -102,13 +103,16 @@ public class PasswordListJDBC {
         if(old != null && old.getUserId() != null)
             return old.toString();
 
-
         // 2018/08/07 密碼全改為預設 規則為 身分證第一個字大寫+西元年生日
         // ex A20180807
+        // 設為台灣時區
         String password;
         String userId = user.getId().toUpperCase().trim();
 
+        TimeZone zone = TimeZone.getTimeZone(ZoneId.of("Asia/Taipei"));
         SimpleDateFormat sdf = new SimpleDateFormat("YYYYMMdd");
+
+        sdf.setTimeZone(zone);
         String birthDayStr = sdf.format(birthDay);
         password = userId.charAt(0) + birthDayStr;
 
