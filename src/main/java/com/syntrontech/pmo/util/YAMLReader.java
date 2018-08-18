@@ -5,10 +5,7 @@ import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.error.YAMLException;
 
 import javax.imageio.IIOException;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -26,16 +23,13 @@ public class YAMLReader {
         InputStream in = null;
         try {
 
-            System.out.println("home :" + System.getProperty("user.home"));
             System.out.println("dir : " + System.getProperty("user.dir"));
-            System.out.println(". : " + System.getProperty("."));
-            System.out.println(System.getProperty("user.home"));
 
-            File f = new File("/opt/syncar_ttshb/setting.yml");
-            System.out.println(f.toPath());
-            System.out.println(f.getAbsolutePath());
+            String dir = System.getProperty("user.dir");
 
-            in = YAMLReader.class.getResourceAsStream("/opt/syncar_ttshb/setting.yml");
+            in = new FileInputStream(dir + "/setting.yml");
+
+//            in = YAMLReader.class.getResourceAsStream("/opt/syncar_ttshb/setting.yml");
         } catch (YAMLException e) {
 
             in = YAMLReader.class.getResourceAsStream("/setting.yml");
