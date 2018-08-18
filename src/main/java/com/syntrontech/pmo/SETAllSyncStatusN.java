@@ -48,7 +48,7 @@ public class SETAllSyncStatusN {
                     if (name.equals("DATABASECHANGELOG") || name.equals("DATABASECHANGELOGLOCK"))
                         continue;
 
-                    sql = "UPDATE " + name + " SET sync_status='N'";
+                    sql = "UPDATE " + name + " SET sync_status='N';";
 
                     try {
                         PreparedStatement stmt2 = conn.prepareStatement(sql);
