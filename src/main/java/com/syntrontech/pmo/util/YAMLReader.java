@@ -52,6 +52,11 @@ public class YAMLReader {
         InputStream in = null;
         try {
 
+            System.out.println("home :" + System.getProperty("user.home"));
+            System.out.println("dir : " + System.getProperty("user.dir"));
+            System.out.println(". : " + System.getProperty("."));
+            System.out.println(System.getProperty("user.home"));
+
             in = YAMLReader.class.getResourceAsStream("/opt/syncar_ttshb/setting.yml");
         } catch (YAMLException e) {
 
