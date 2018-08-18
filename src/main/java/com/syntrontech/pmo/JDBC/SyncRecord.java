@@ -110,7 +110,7 @@ public class SyncRecord {
         if (subject == null || subject.getId() == null) {
             // TODO
             subject = getSubject(systemUser);
-            subjectJDBC.insertSubject(conn, subject);
+            subjectJDBC.insertSubject(cipconn, subject);
         }
 
         if(subject.getSequence() == null){

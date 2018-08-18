@@ -18,11 +18,10 @@ public class SystemUserJDBC {
     private static Logger logger = LoggerFactory.getLogger(SystemUserJDBC.class);
 
 
-    private static final String GET_ALL_STMT = "SELECT * FROM system_user WHERE recluse='Y' AND sync_status = 'N' ORDER BY USER_ID;";
+    private static final String GET_ALL_STMT = "SELECT * FROM system_user WHERE ORDER BY USER_ID;";
 
     private static final String GET_ONE = "SELECT * FROM system_user WHERE USER_ID=?";
     private static final String UPDATE = "UPDATE system_user SET sync_status= 'Y' WHERE USER_ID=? ;";
-
 
 
     public static void main( String[] args ) throws SQLException
@@ -56,7 +55,6 @@ public class SystemUserJDBC {
 
             logger.info("update SystemUser :[" + id + "] successful ");
 
-
         } catch (SQLException e) {
             logger.warn("Syncare1_GET_CONNECTION SQLException ");
 
@@ -82,7 +80,6 @@ public class SystemUserJDBC {
         ResultSet rs;
 
         try {
-
 
             pstmt = conn.prepareStatement(GET_ALL_STMT);
             rs = pstmt.executeQuery();
@@ -172,9 +169,7 @@ public class SystemUserJDBC {
                 e.printStackTrace();
             }
         }
-
         return systemUserslist;
-
     }
 
     public SystemUser getSystemUserById(Connection conn, String id){
@@ -272,7 +267,6 @@ public class SystemUserJDBC {
 
         return systemUser;
     }
-
 
     private YN getYN(ResultSet rs, String columnLabel) throws SQLException {
         return rs.getString(columnLabel) != null?

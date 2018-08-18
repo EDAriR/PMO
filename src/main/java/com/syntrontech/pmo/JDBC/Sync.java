@@ -48,7 +48,7 @@ public class Sync {
         sync.syncSystemUserToUserAndSubject();
     }
 
-    public void syncSystemUserToUserAndSubject() {
+    public List<String> syncSystemUserToUserAndSubject() {
 
         Connection authconn = new Auth_GET_CONNECTION().getConn();
         Connection cipconn = new CIP_GET_CONNECTION().getConn();
@@ -177,7 +177,7 @@ public class Sync {
                 e.printStackTrace();
             }
         }
-        pwds.forEach(w -> System.out.println(w));
+        return pwds;
     }
 
 

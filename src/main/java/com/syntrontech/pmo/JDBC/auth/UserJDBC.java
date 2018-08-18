@@ -13,7 +13,7 @@ import java.util.Date;
 
 public class UserJDBC {
 
-    private static Logger logger = LoggerFactory.getLogger(Auth_GET_CONNECTION.class);
+    private static Logger logger = LoggerFactory.getLogger(UserJDBC.class);
 
     private static final String GET_ALL_STMT = "SELECT * FROM users WHERE tenant_id='TTSHB' ORDER BY sequence;";
     private static final String INSERT_STMT = "INSERT INTO users " +
@@ -154,7 +154,6 @@ public class UserJDBC {
             if (old.getId() != null && !old.getId().equals(""))
                 return old;
         }
-
 
         try {
             pstmt = conn.prepareStatement(INSERT_STMT);
