@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.error.YAMLException;
 
+import javax.imageio.IIOException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.LinkedHashMap;
@@ -55,6 +56,9 @@ public class YAMLReader {
         } catch (YAMLException e) {
 
             in = YAMLReader.class.getResourceAsStream("/setting.yml");
+        }catch (Exception ex){
+            System.out.println(ex);
+            ex.printStackTrace();
         }
 
         Map<String, Map<String, String>> obj = (LinkedHashMap<String, Map<String, String>>) yaml.load(in);
