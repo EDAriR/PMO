@@ -27,7 +27,7 @@ public class SubjectJDBC {
 //    personal_history, family_history, smoke, drink, chewing_areca, user_id, unit_id, unit_name
 //    tenant_id, createtime, createby, updatetime, updateby, status
 
-    private static final String GET_ONE = "SELECT * FROM subject WHERE id=? AND user_id=? AND tenant_id='TTSHB' AND status='ENABLED';";
+    private static final String GET_ONE = "SELECT * FROM Subject WHERE id=? AND user_id=? AND tenant_id='TTSHB' AND status='ENABLED';";
 
 
     public Subject getOneSubject(Connection conn, String id, String user_id) throws SQLException {
@@ -49,7 +49,6 @@ public class SubjectJDBC {
             pstmt.setString(1, id);
             pstmt.setString(2, user_id);
             rs = pstmt.executeQuery();
-
 
             if (rs != null) {
                 while (rs.next()) {
@@ -126,9 +125,7 @@ public class SubjectJDBC {
             }
         }
 
-//        logger.info("getOneSubject successful ==> " + subject);
         logger.info("SubjectJDBC get One Subject successful ==> " + subject);
-
         return subject;
     }
 

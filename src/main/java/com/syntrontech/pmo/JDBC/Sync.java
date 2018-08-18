@@ -48,7 +48,7 @@ public class Sync {
         sync.syncSystemUserToUserAndSubject();
     }
 
-    public void syncSystemUserToUserAndSubject() {
+    public List<String> syncSystemUserToUserAndSubject() {
 
         Connection authconn = new Auth_GET_CONNECTION().getConn();
         Connection cipconn = new CIP_GET_CONNECTION().getConn();
@@ -76,7 +76,6 @@ public class Sync {
         // 取出所有未同步量測紀錄數值 <body_value_record_id, UserValueRecordMappings>
         Map<Integer, List<UserValueRecordMapping>> userValueRecordMap = new UserValueRecordMappingJDBC()
                 .getAllUserValueRecordMapping();
-
 
         List<String> pwds = new ArrayList<>();
         try {
@@ -107,9 +106,9 @@ public class Sync {
                 System.out.println("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx");
                 System.out.println("user account =" + user.getId());
                 System.out.println("old user account =" + su.getUserAccount());
-                System.out.println("user birthday =" + subject.getBirthday());
+                System.out.println("user birthday =" + su.getUserBirthday());
                 System.out.println(pwd);
-                pwds.add(pwd);
+                pwds.add("user account =" + user.getId() + ", " + "user birthday =" + su.getUserBirthday() + ", " + pwd);
                 System.out.println("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx");
 
 
@@ -177,7 +176,7 @@ public class Sync {
                 e.printStackTrace();
             }
         }
-        pwds.forEach(w -> System.out.println(w));
+        return pwds;
     }
 
 

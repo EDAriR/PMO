@@ -4,6 +4,7 @@ package com.syntrontech.pmo;
 import java.sql.SQLException;
 import java.text.ParseException;
 import java.util.Calendar;
+import java.util.List;
 
 import com.syntrontech.pmo.JDBC.*;
 import com.syntrontech.pmo.scheduler.QuartzTest;
@@ -25,9 +26,12 @@ public class Application {
         // 8/15 討論結果避免髒資料 不做同步
 //        new SyncDevice().syncDevice();
 
+        // TODO
+        // 使用者帳號密碼 健保卡 bodyInfo bloodGlucose
+
 
         // 測試密碼
-        new Sync().syncSystemUserToUserAndSubject();
+        List<String> pwd = new Sync().syncSystemUserToUserAndSubject();
 
         Thread t = new Thread(){
             @Override
@@ -35,6 +39,11 @@ public class Application {
                 sendPUTRequestApp.sendPUTRequest(ServiceName.User);
                 sendPUTRequestApp.sendPUTRequest(ServiceName.Subject);
                 sendPUTRequestApp.sendPUTRequest(ServiceName.EmergencyContact);
+                try {
+                    new SyncUserCard().syncCard();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
                 super.run();
             }
         };
@@ -42,7 +51,6 @@ public class Application {
         t.start();
 
         new SyncAnswers().syncAnswers();
-
 
         Thread t2 = new Thread(){
             @Override
@@ -56,17 +64,17 @@ public class Application {
 
         t2.start();
 
-
-        sendPUTRequestApp.sendPUTRequest(ServiceName.BloodPressureHeartBeat);
-        sendPUTRequestApp.sendPUTRequest(ServiceName.AbnormalBloodPressure);
-        sendPUTRequestApp.sendPUTRequest(ServiceName.AbnormalBloodPressureLog);
+//        sendPUTRequestApp.sendPUTRequest(ServiceName.BloodPressureHeartBeat);
+//        sendPUTRequestApp.sendPUTRequest(ServiceName.AbnormalBloodPressure);
+//        sendPUTRequestApp.sendPUTRequest(ServiceName.AbnormalBloodPressureLog);
 
 
 //        sendPUTRequestApp.sendPUTcRequest(ServiceName.User);
 
-        new SyncRecord().sync();
+//        new SyncRecord().sync();
 
-        new SyncUserCard().syncCard();
+
+        pwd.forEach(p -> System.out.println(p));
 
 //        sendPUTRequestApp.sendPUTRequest();
         
