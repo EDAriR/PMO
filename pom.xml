@@ -184,6 +184,7 @@
                         <manifest>
                             <!--<mainClass>com.syntrontech.pmo.MysqlAlertTableAddCloumSyncStatus</mainClass>-->
                             <mainClass>com.syntrontech.pmo.SETAllSyncStatusN</mainClass>
+                            <!--<mainClass>com.syntrontech.pmo.Application</mainClass>-->
                         </manifest>
                         <manifestEntries>
                             <Class-Path>.</Class-Path>
@@ -206,6 +207,7 @@
         </plugins>
         <!--<finalName>MysqlAlertTableAddCloumSyncStatus</finalName>-->
         <finalName>SETAllSyncStatusN</finalName>
+        <!--<finalName>dbsync_syncare1</finalName>-->
     </build>
 
 </project>
