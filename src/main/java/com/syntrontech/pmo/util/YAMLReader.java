@@ -5,6 +5,8 @@ import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.error.YAMLException;
 
 import javax.imageio.IIOException;
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.LinkedHashMap;
@@ -56,6 +58,10 @@ public class YAMLReader {
             System.out.println("dir : " + System.getProperty("user.dir"));
             System.out.println(". : " + System.getProperty("."));
             System.out.println(System.getProperty("user.home"));
+
+            File f = new File("/opt/syncar_ttshb/setting.yml");
+            System.out.println(f.toPath());
+            System.out.println(f.getAbsolutePath());
 
             in = YAMLReader.class.getResourceAsStream("/opt/syncar_ttshb/setting.yml");
         } catch (YAMLException e) {
