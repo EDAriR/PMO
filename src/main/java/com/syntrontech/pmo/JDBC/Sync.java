@@ -77,7 +77,6 @@ public class Sync {
         Map<Integer, List<UserValueRecordMapping>> userValueRecordMap = new UserValueRecordMappingJDBC()
                 .getAllUserValueRecordMapping();
 
-
         List<String> pwds = new ArrayList<>();
         try {
 
@@ -107,9 +106,9 @@ public class Sync {
                 System.out.println("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx");
                 System.out.println("user account =" + user.getId());
                 System.out.println("old user account =" + su.getUserAccount());
-                System.out.println("user birthday =" + subject.getBirthday());
+                System.out.println("user birthday =" + su.getUserBirthday());
                 System.out.println(pwd);
-                pwds.add(pwd);
+                pwds.add("user account =" + user.getId() + ", " + "user birthday =" + su.getUserBirthday() + ", " + pwd);
                 System.out.println("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx");
 
 

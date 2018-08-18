@@ -26,6 +26,9 @@ public class Application {
         // 8/15 討論結果避免髒資料 不做同步
 //        new SyncDevice().syncDevice();
 
+        // TODO
+        // 使用者帳號密碼 健保卡 bodyInfo bloodGlucose
+
 
         // 測試密碼
         List<String> pwd = new Sync().syncSystemUserToUserAndSubject();
@@ -41,7 +44,6 @@ public class Application {
                 } catch (SQLException e) {
                     e.printStackTrace();
                 }
-
                 super.run();
             }
         };
@@ -49,7 +51,6 @@ public class Application {
         t.start();
 
         new SyncAnswers().syncAnswers();
-
 
         Thread t2 = new Thread(){
             @Override
@@ -63,10 +64,9 @@ public class Application {
 
         t2.start();
 
-
-        sendPUTRequestApp.sendPUTRequest(ServiceName.BloodPressureHeartBeat);
-        sendPUTRequestApp.sendPUTRequest(ServiceName.AbnormalBloodPressure);
-        sendPUTRequestApp.sendPUTRequest(ServiceName.AbnormalBloodPressureLog);
+//        sendPUTRequestApp.sendPUTRequest(ServiceName.BloodPressureHeartBeat);
+//        sendPUTRequestApp.sendPUTRequest(ServiceName.AbnormalBloodPressure);
+//        sendPUTRequestApp.sendPUTRequest(ServiceName.AbnormalBloodPressureLog);
 
 
 //        sendPUTRequestApp.sendPUTcRequest(ServiceName.User);
