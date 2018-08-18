@@ -14,34 +14,6 @@ import java.util.Map;
 
 public class YAMLReader {
 
-    public static void main(String[] args) throws IOException {
-
-        Yaml yaml = new Yaml();
-
-        try {
-
-            InputStream in = YAMLReader.class.getResourceAsStream("/setting.yml");
-
-            Map<String, Map<String, String[]>> obj = (LinkedHashMap<String, Map<String, String[]>>) yaml.load(in);
-            System.out.println("Loaded object type:" + obj.getClass());
-
-            for (String s : obj.keySet()) {
-                Map<String, String[]> ss = obj.get(s);
-                for (String k : ss.keySet()) {
-                    System.out.println(ss.get(k));
-                }
-                System.out.println("xxxxxxxxxxxxxxxxxxxxx");
-            }
-
-
-        } catch (YAMLException e) {
-            System.out.println(e.getClass());
-            e.printStackTrace();
-        }
-
-
-    }
-
     public static String getSetting(String key1, String key2) throws YAMLException {
         return getSetting(key1).get(key2);
     }
