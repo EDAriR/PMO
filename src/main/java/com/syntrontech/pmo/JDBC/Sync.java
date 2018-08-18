@@ -104,9 +104,9 @@ public class Sync {
                 Subject subject = subjectJDBC.insertSubject(cipconn, syncSystemUserToSubject(su));
 
                 System.out.println("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx");
-                System.out.println("user account =" + user.getId());
-                System.out.println("old user account =" + su.getUserAccount());
-                System.out.println("user birthday =" + su.getUserBirthday());
+                System.out.println("user account = " + user.getId());
+                System.out.println("old user account = " + su.getUserAccount());
+                System.out.println("user birthday = " + su.getUserBirthday());
                 System.out.println(pwd);
                 pwds.add("user account =" + user.getId() + ", " + "user birthday =" + su.getUserBirthday() + ", " + pwd);
                 System.out.println("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx");
@@ -129,7 +129,7 @@ public class Sync {
                 synBodyInfo(authconn, syncare1conn, measurementconn, userValueRecordJDBC, su, subject, userValueRecordMap);
 
                 // Biochemistry
-                syncBiochemistry(authconn, syncare1conn, measurementconn, su, subject, userValueRecordMap, userValueRecordJDBC);
+//                syncBiochemistry(authconn, syncare1conn, measurementconn, su, subject, userValueRecordMap, userValueRecordJDBC);
 
                 // PMO USER RESULT
                 pmoUserJDBC.insert(turnSystemUserToPmoUser(su));
@@ -144,20 +144,6 @@ public class Sync {
                     authconn.commit();
                     measurementconn.commit();
                 }
-//                if (i % 3000 == 0) {
-//
-//                    authconn.commit();
-//                    cipconn.commit();
-//                    measurementconn.commit();
-//                    syncare1conn.commit();
-//
-//                    authconn.close();
-//                    cipconn.close();
-//                    measurementconn.close();
-//                    syncare1conn.close();
-//
-//                    break;
-//                }
             }
         } catch (SQLException e) {
             e.printStackTrace();
