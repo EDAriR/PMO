@@ -49,13 +49,13 @@ public class YAMLReader {
         Yaml yaml = new Yaml();
 
         InputStream in = null;
-//        try {
-//
-//            in = YAMLReader.class.getResourceAsStream("/setting.yml");
-//        } catch (YAMLException e) {
+        try {
+
+            in = YAMLReader.class.getResourceAsStream("/opt/syncar_ttshb/setting.yml");
+        } catch (YAMLException e) {
 
             in = YAMLReader.class.getResourceAsStream("/setting.yml");
-//        }
+        }
 
         Map<String, Map<String, String>> obj = (LinkedHashMap<String, Map<String, String>>) yaml.load(in);
 
