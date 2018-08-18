@@ -70,6 +70,7 @@ public class SETAllSyncStatusN {
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
+            conn.commit();
             conn.close();
         }
     }
