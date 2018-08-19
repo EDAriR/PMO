@@ -15,8 +15,6 @@ public class SETAllSyncStatusN {
 
     private static final String DRIVER_PATH = getSetting("mysql", "driver");
 
-    private static final String UPDATE = "UPDATE ? SET sync_status='N';";
-
 
     public static void main(String[] args) throws SQLException {
 
@@ -52,6 +50,8 @@ public class SETAllSyncStatusN {
                         continue;
 
                     try {
+
+                        String UPDATE = "UPDATE " + name +" SET sync_status='N';";
 
                         PreparedStatement stmt2 = conn.prepareStatement(UPDATE);
                         stmt2.setString(1, name);
