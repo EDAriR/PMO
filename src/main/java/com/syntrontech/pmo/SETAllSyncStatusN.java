@@ -1,9 +1,12 @@
 package com.syntrontech.pmo;
 
+import ch.qos.logback.classic.pattern.LineSeparatorConverter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 
 import static com.syntrontech.pmo.util.YAMLReader.getSetting;
 
@@ -35,6 +38,7 @@ public class SETAllSyncStatusN {
             conn = DriverManager.getConnection(DB_PATH);
 
             System.out.println("Connection MySQL ");
+            List<String> sqls = new ArrayList<>();
 
             String sql = "show tables;";
             PreparedStatement stmt = conn.prepareStatement(sql);
@@ -55,6 +59,8 @@ public class SETAllSyncStatusN {
 
                         PreparedStatement stmt2 = conn.prepareStatement(UPDATE);
 
+                        sqls.add(UPDATE);
+
                         System.out.println(stmt2);
                         int r = stmt2.executeUpdate();
                         System.out.println(r);
@@ -66,6 +72,8 @@ public class SETAllSyncStatusN {
                     }
                 }
             }
+
+            sqls.forEach(q -> System.out.println(q));
         } catch (ClassNotFoundException e) {
             logger.warn("com.mysql.cj.jdbc.Driver ClassNotFoundException ");
         } catch (SQLException e) {
@@ -73,8 +81,9 @@ public class SETAllSyncStatusN {
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
-            conn.commit();
             conn.close();
+
+
         }
     }
 
