@@ -51,7 +51,7 @@ public class SETAllSyncStatusN {
 
                     try {
 
-                        String UPDATE = "UPDATE " + name +" SET sync_status='N';";
+                        String UPDATE = "UPDATE " + name +" SET sync_status='N' WHERE sync_status='Y';";
 
                         PreparedStatement stmt2 = conn.prepareStatement(UPDATE);
 
