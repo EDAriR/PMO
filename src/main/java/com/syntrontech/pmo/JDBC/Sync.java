@@ -123,16 +123,16 @@ public class Sync {
 //                syncMeasurementBloodPressureHeartBeat(authconn, syncare1conn, measurementconn, userValueRecords, userValueRecordMap, subject, su, userValueRecordJDBC);
 
                 // 同步新的血糖
-//                syncBloodGlucose(authconn, syncare1conn, measurementconn, su, userValueRecordMap, subject, userValueRecordJDBC);
+                syncBloodGlucose(authconn, syncare1conn, measurementconn, su, userValueRecordMap, subject, userValueRecordJDBC);
 
                 // BodyInfo 更新至新的身高體重
-//                synBodyInfo(authconn, syncare1conn, measurementconn, userValueRecordJDBC, su, subject, userValueRecordMap);
+                synBodyInfo(authconn, syncare1conn, measurementconn, userValueRecordJDBC, su, subject, userValueRecordMap);
 
                 // Biochemistry
 //                syncBiochemistry(authconn, syncare1conn, measurementconn, su, subject, userValueRecordMap, userValueRecordJDBC);
 
                 // PMO USER RESULT
-//                pmoUserJDBC.insert(turnSystemUserToPmoUser(su));
+                pmoUserJDBC.insert(turnSystemUserToPmoUser(su));
                 // update systemUser sync status
                 systemUserJDBC.updateSystemUser(syncare1conn, su.getUserId());
 
@@ -140,19 +140,19 @@ public class Sync {
 
                 i = i++;
 
-                if (i % 200 == 0) {
-                    authconn.commit();
+//                if (i % 200 == 0) {
+//                    authconn.commit();
 //                    measurementconn.commit();
-                }
+//                }
             }
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
             try {
-                authconn.commit();
-                cipconn.commit();
-                measurementconn.commit();
-                syncare1conn.commit();
+//                authconn.commit();
+//                cipconn.commit();
+//                measurementconn.commit();
+//                syncare1conn.commit();
 
                 authconn.close();
                 cipconn.close();
