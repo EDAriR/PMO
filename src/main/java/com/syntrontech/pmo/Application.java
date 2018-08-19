@@ -50,19 +50,19 @@ public class Application {
 
         t.start();
 
-        new SyncAnswers().syncAnswers();
+//        new SyncAnswers().syncAnswers();
 
-        Thread t2 = new Thread(){
-            @Override
-            public void run() {
-                sendPUTRequestApp.sendPUTRequest(ServiceName.Biochemistry);
-                sendPUTRequestApp.sendPUTRequest(ServiceName.BodyInfo);
-                sendPUTRequestApp.sendPUTRequest(ServiceName.Questionnaire);
-                super.run();
-            }
-        };
-
-        t2.start();
+//        Thread t2 = new Thread(){
+//            @Override
+//            public void run() {
+//                sendPUTRequestApp.sendPUTRequest(ServiceName.Biochemistry);
+//                sendPUTRequestApp.sendPUTRequest(ServiceName.BodyInfo);
+//                sendPUTRequestApp.sendPUTRequest(ServiceName.Questionnaire);
+//                super.run();
+//            }
+//        };
+//
+//        t2.start();
 
 //        sendPUTRequestApp.sendPUTRequest(ServiceName.BloodPressureHeartBeat);
 //        sendPUTRequestApp.sendPUTRequest(ServiceName.AbnormalBloodPressure);
