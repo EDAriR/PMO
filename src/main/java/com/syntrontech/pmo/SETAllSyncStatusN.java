@@ -38,16 +38,15 @@ public class SETAllSyncStatusN {
 
             System.out.println("Connection MySQL ");
 
-            Statement stmt = conn.createStatement();
             String sql = "show tables;";
-            ResultSet result = stmt.executeQuery(sql);
+            PreparedStatement stmt = conn.prepareStatement(sql);
+            ResultSet result = stmt.executeQuery();
 
             if (result != null) {
                 while (result.next()) {
 
                     String name = result.getString(1);
                     System.out.println("Table Name : " + name + "\t");
-                    stmt.close();
 
                     if (name.equals("DATABASECHANGELOG") || name.equals("DATABASECHANGELOGLOCK"))
                         continue;
