@@ -81,8 +81,8 @@ public class Sync {
         try {
 
             int i = 0;
-            authconn.setAutoCommit(false);
-            measurementconn.setAutoCommit(false);
+//            authconn.setAutoCommit(false);
+//            measurementconn.setAutoCommit(false);
             for (String id : userIds) {
 
                 // 找出未同步systemuser 
