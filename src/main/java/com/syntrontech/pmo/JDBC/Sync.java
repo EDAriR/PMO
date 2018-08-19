@@ -140,19 +140,19 @@ public class Sync {
 
                 i = i++;
 
-                if (i % 200 == 0) {
-                    authconn.commit();
-                    measurementconn.commit();
-                }
+//                if (i % 200 == 0) {
+//                    authconn.commit();
+//                    measurementconn.commit();
+//                }
             }
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
             try {
-                authconn.commit();
-                cipconn.commit();
-                measurementconn.commit();
-                syncare1conn.commit();
+//                authconn.commit();
+//                cipconn.commit();
+//                measurementconn.commit();
+//                syncare1conn.commit();
 
                 authconn.close();
                 cipconn.close();
