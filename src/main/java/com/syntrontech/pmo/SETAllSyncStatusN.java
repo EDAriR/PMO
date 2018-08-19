@@ -15,6 +15,9 @@ public class SETAllSyncStatusN {
 
     private static final String DRIVER_PATH = getSetting("mysql", "driver");
 
+    private static final String UPDATE = "UPDATE ? SET sync_status='N';";
+
+
     public static void main(String[] args) throws SQLException {
 
 
@@ -33,8 +36,6 @@ public class SETAllSyncStatusN {
             Class.forName(DRIVER_PATH);
             conn = DriverManager.getConnection(DB_PATH);
 
-            conn.setAutoCommit(false);
-
             System.out.println("Connection MySQL ");
 
             Statement stmt = conn.createStatement();
@@ -51,12 +52,11 @@ public class SETAllSyncStatusN {
                     if (name.equals("DATABASECHANGELOG") || name.equals("DATABASECHANGELOGLOCK"))
                         continue;
 
-                    sql = "UPDATE " + name + " SET sync_status='N';";
-
                     try {
 
-                        PreparedStatement stmt2 = conn.prepareStatement(sql);
-                        stmt2.executeUpdate(sql);
+                        PreparedStatement stmt2 = conn.prepareStatement(UPDATE);
+                        stmt2.setString(1, name);
+                        stmt2.executeUpdate();
 
                         System.out.println(stmt2);
                         stmt2.close();
