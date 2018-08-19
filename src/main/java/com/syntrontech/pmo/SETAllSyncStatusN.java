@@ -56,8 +56,8 @@ public class SETAllSyncStatusN {
                         PreparedStatement stmt2 = conn.prepareStatement(UPDATE);
 
                         System.out.println(stmt2);
-                        stmt2.executeUpdate();
-
+                        int r = stmt2.executeUpdate();
+                        System.out.println(r);
 
                     } catch (SQLException e) {
                         System.out.println(">> fail table name: " + name);
