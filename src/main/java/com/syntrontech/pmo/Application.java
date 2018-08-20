@@ -48,10 +48,10 @@ public class Application {
 
 //        new SyncUserCard().syncCard();
 
-        new SyncBloodPressureHeartBeat().sync();
+//        new SyncBloodPressureHeartBeat().sync();
 
 
-//        new SyncAnswers().syncAnswers();
+        new SyncAnswers().syncAnswers();
 
 //        Thread t2 = new Thread(){
 //            @Override
