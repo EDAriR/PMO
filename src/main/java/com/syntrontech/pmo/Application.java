@@ -46,12 +46,12 @@ public class Application {
 
         t.start();
 
-//        new SyncUserCard().syncCard();
+        new SyncUserCard().syncCard();
 
 //        new SyncBloodPressureHeartBeat().sync();
 
 
-        new SyncAnswers().syncAnswers();
+//        new SyncAnswers().syncAnswers();
 
 //        Thread t2 = new Thread(){
 //            @Override
