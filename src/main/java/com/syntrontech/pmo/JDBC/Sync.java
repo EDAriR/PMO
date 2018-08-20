@@ -16,7 +16,6 @@ import com.syntrontech.pmo.auth.model.User;
 import com.syntrontech.pmo.cip.model.EmergencyContact;
 import com.syntrontech.pmo.cip.model.Subject;
 import com.syntrontech.pmo.measurement.*;
-import com.syntrontech.pmo.measurement.common.BloodPressureCaseStatus;
 import com.syntrontech.pmo.measurement.common.GlucoseType;
 import com.syntrontech.pmo.measurement.common.MeasurementStatusType;
 import com.syntrontech.pmo.model.common.*;
@@ -80,9 +79,6 @@ public class Sync {
         List<String> pwds = new ArrayList<>();
         try {
 
-            int i = 0;
-//            authconn.setAutoCommit(false);
-//            measurementconn.setAutoCommit(false);
             for (String id : userIds) {
 
                 // 找出未同步systemuser 
@@ -116,19 +112,19 @@ public class Sync {
                 if (su.getAlert() == YN.Y && su.getAlertNotifierName() != null)
                     emergencyContactJDBC.insertEmergencyContact(cipconn, syncSystemUserToEmergencyContact(su));
 
-                // 取出該使用者所有血壓
+                // 取出該使用者所有血壓  拉出
 //                List<UserValueRecord> userValueRecords = userValueRecordJDBC.getOneBUserValueRecord(syncare1conn, su.getUserId());
 
-                // 同步至 新的血壓心跳 異常追蹤 異常追蹤log  measurementconn
+                // 同步至 新的血壓心跳 異常追蹤 異常追蹤log  拉出
 //                syncMeasurementBloodPressureHeartBeat(authconn, syncare1conn, measurementconn, userValueRecords, userValueRecordMap, subject, su, userValueRecordJDBC);
 
-                // 同步新的血糖
-                syncBloodGlucose(authconn, syncare1conn, measurementconn, su, userValueRecordMap, subject, userValueRecordJDBC);
+                // 同步新的血糖 拉出
+//                syncBloodGlucose(authconn, syncare1conn, measurementconn, su, userValueRecordMap, subject, userValueRecordJDBC);
 
                 // BodyInfo 更新至新的身高體重
                 synBodyInfo(authconn, syncare1conn, measurementconn, userValueRecordJDBC, su, subject, userValueRecordMap);
 
-                // Biochemistry
+                // Biochemistry 拉出
 //                syncBiochemistry(authconn, syncare1conn, measurementconn, su, subject, userValueRecordMap, userValueRecordJDBC);
 
                 // PMO USER RESULT
@@ -138,21 +134,12 @@ public class Sync {
 
                 new UserRoleJDBC().updateUserRoles(su.getUserId());
 
-                i = i++;
 
-//                if (i % 200 == 0) {
-//                    authconn.commit();
-//                    measurementconn.commit();
-//                }
             }
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
             try {
-//                authconn.commit();
-//                cipconn.commit();
-//                measurementconn.commit();
-//                syncare1conn.commit();
 
                 authconn.close();
                 cipconn.close();
