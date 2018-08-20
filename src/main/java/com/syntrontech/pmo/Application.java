@@ -27,7 +27,8 @@ public class Application {
 //        new SyncDevice().syncDevice();
 
         // TODO
-        // 使用者帳號密碼 健保卡 bodyInfo bloodGlucose
+        // 使用者帳號密碼 健保卡 bodyInfo
+        // bloodGlucose 沒過
 
 
         // 測試密碼
