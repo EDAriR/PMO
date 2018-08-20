@@ -39,16 +39,15 @@ public class Application {
                 sendPUTRequestApp.sendPUTRequest(ServiceName.User);
                 sendPUTRequestApp.sendPUTRequest(ServiceName.Subject);
                 sendPUTRequestApp.sendPUTRequest(ServiceName.EmergencyContact);
-                try {
-                    new SyncUserCard().syncCard();
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
+
                 super.run();
             }
         };
 
         t.start();
+
+        new SyncUserCard().syncCard();
+
 
 //        new SyncAnswers().syncAnswers();
 

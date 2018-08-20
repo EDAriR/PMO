@@ -109,6 +109,8 @@ public class PasswordListJDBC {
         String password;
         String userId = user.getId().toUpperCase().trim();
 
+//        int hour = birthDay.getHours();
+
         TimeZone zone = TimeZone.getTimeZone(ZoneId.of("Asia/Taipei"));
         SimpleDateFormat sdf = new SimpleDateFormat("YYYYMMdd");
 
@@ -121,7 +123,6 @@ public class PasswordListJDBC {
         String pwd = "userId=[" + user.getId() + "], " +
                 "password=["+ password +"], " +
                 "birthDay=["+ birthDay +"], " +
-                "Time=["+ update.getTime() +"], " +
                 "UpdateTime=["+ update +"]    ";
 
 //        Connection conn = new Auth_GET_CONNECTION().getConn();

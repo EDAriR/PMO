@@ -108,7 +108,7 @@ public class Sync {
                 System.out.println("old user account = " + su.getUserAccount());
                 System.out.println("user birthday = " + su.getUserBirthday());
                 System.out.println(pwd);
-                pwds.add("user account =" + user.getId() + ", " + "user birthday =" + su.getUserBirthday() + ", " + pwd);
+                pwds.add("user birthday =" + su.getUserBirthday() + ", " + pwd);
                 System.out.println("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx");
 
 
