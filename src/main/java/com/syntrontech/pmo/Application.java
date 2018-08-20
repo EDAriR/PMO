@@ -46,7 +46,9 @@ public class Application {
 
         t.start();
 
-        new SyncUserCard().syncCard();
+//        new SyncUserCard().syncCard();
+
+        new SyncBloodPressureHeartBeat().sync();
 
 
 //        new SyncAnswers().syncAnswers();

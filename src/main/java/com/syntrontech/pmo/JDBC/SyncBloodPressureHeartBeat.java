@@ -44,7 +44,7 @@ public class SyncBloodPressureHeartBeat {
 
 
     // 同步至 新的血壓心跳 異常追蹤 異常追蹤log
-    void sync() {
+    public void sync() {
         Connection authconn = new Auth_GET_CONNECTION().getConn();
         Connection cipconn = new CIP_GET_CONNECTION().getConn();
         Connection measurementconn = new MEASUREMENT_GET_CONNECTION().getConn();
