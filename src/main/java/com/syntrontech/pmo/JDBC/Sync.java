@@ -400,34 +400,6 @@ public class Sync {
         return null;
     }
 
-
-    private void syncBloodGlucose(
-            Connection authconn, Connection syncare1conn, Connection measurementconn,
-            SystemUser su, Map<Integer, List<UserValueRecordMapping>> userValueRecordMap, Subject subject, UserValueRecordJDBC userValueRecordJDBC) {
-
-        // sync 136 BG 取出使用者所有血糖
-        BloodGlucoseJDBC bloodGlucoseJDBC = new BloodGlucoseJDBC();
-        PmoResultJDBC pmoResultJDBC = new PmoResultJDBC();
-
-        List<UserValueRecord> userBGValueRecords = userValueRecordJDBC.getOneBGUserValueRecord(su.getUserId());
-        userBGValueRecords.forEach(bg -> {
-            try {
-                System.out.println("subject " + subject);
-                BloodGlucose bloodGlucose = bloodGlucoseJDBC
-                        .insert(measurementconn, turnValueRecordToBloodGlucose(authconn, bg, subject, userValueRecordMap));
-                userValueRecordJDBC.updateUserValueRecord(syncare1conn, bg.getBodyValueRecordId());
-                updateUserValueRecordMapping(syncare1conn, userValueRecordMap, bg.getBodyValueRecordId());
-
-                // PMO_result
-                System.out.println(bloodGlucose);
-                pmoResultJDBC.insert(turnOldRecordsToPmoResult(bg, bloodGlucose.getSubjectId(), bloodGlucose.getSequence(), MeasurementPMOType.BloodGlucose));
-
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-        });
-    }
-
     private BloodGlucose turnValueRecordToBloodGlucose(Connection authconn, UserValueRecord bg, Subject subject, Map<Integer, List<UserValueRecordMapping>> userValueRecordMap) throws SQLException {
 
         List<UserValueRecordMapping> values = userValueRecordMap.get(bg.getBodyValueRecordId());
@@ -526,35 +498,6 @@ public class Sync {
         return pmoUser;
 
     }
-
-    private PmoResult turnOldRecordsToPmoResult(UserValueRecord old, String userId, long sequence, MeasurementPMOType type) {
-
-        PmoResult pmoResult = new PmoResult();
-
-        pmoResult.setUserId(userId);
-        // measurement_type
-        pmoResult.setMeasurementType(type);
-        // record_id
-        pmoResult.setRecordId(sequence);
-        // result
-        pmoResult.setResult(old.getPmoResult());
-        // status
-        PmoStatus pmoStatus = PmoStatus.NotSync;
-        UserValueRecord.RecordPmoStatus ss = old.getPmoStatus();
-        if (ss == UserValueRecord.RecordPmoStatus.Sync)
-            pmoStatus = PmoStatus.Sync;
-        if (ss == UserValueRecord.RecordPmoStatus.NotSync)
-            pmoStatus = PmoStatus.NotSync;
-        if (ss == UserValueRecord.RecordPmoStatus.Error)
-            pmoStatus = PmoStatus.Error;
-        pmoResult.setPmoStatus(pmoStatus);
-        // synctime
-        pmoResult.setSynctime(old.getUpdateDate());
-
-        return pmoResult;
-
-    }
-
 
     private EmergencyContact syncSystemUserToEmergencyContact(SystemUser su) {
 

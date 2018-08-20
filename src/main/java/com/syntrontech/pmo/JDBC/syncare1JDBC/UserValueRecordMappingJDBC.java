@@ -41,6 +41,15 @@ public class UserValueRecordMappingJDBC {
 
     }
 
+    public void updateUserValueRecordMapping(
+            Connection syncare1conn,
+            Map<Integer, List<UserValueRecordMapping>> userValueRecordMap, int bodyValueRecordId) {
+
+        List<UserValueRecordMapping> values = userValueRecordMap.get(bodyValueRecordId);
+        values.forEach(v -> updateUserValueRecordMapping(syncare1conn, v.getUserValueRecordMappingId()));
+
+    }
+
     public List<UserValueRecordMapping> getUserValueRecordMappingByRecordId(int id) throws SQLException {
 
         Connection conn = new Syncare1_GET_CONNECTION().getConn();

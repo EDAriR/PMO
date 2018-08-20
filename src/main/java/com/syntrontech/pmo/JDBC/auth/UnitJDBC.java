@@ -50,6 +50,16 @@ public class UnitJDBC {
 
     }
 
+    public Unit getOtherUnit(Unit unit) {
+
+        unit.setId("100140102310");
+        unit.setName("其他");
+        unit.setTenantId("TTSHB");
+        unit.setParentId("1001401");
+        unit.setParentName("台東市");
+        return unit;
+    }
+
     public Unit getUnitByName(Connection conn, String name) throws SQLException {
 
         if(name == null)
