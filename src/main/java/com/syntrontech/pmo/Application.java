@@ -32,7 +32,7 @@ public class Application {
 
 
         // 測試密碼
-//        List<String> pwd = new Sync().syncSystemUserToUserAndSubject();
+        List<String> pwd = new Sync().syncSystemUserToUserAndSubject();
 
 //        Thread t = new Thread(){
 //            @Override
@@ -47,7 +47,7 @@ public class Application {
 //
 //        t.start();
 
-//        new SyncUserCard().syncCard();
+        new SyncUserCard().syncCard();
 
 //        new SyncBloodPressureHeartBeat().sync();
 
@@ -59,7 +59,7 @@ public class Application {
 //            @Override
 //            public void run() {
 //                sendPUTRequestApp.sendPUTRequest(ServiceName.Biochemistry);
-//                sendPUTRequestApp.sendPUTRequest(ServiceName.BodyInfo);
+//                sendPUTRequestApp.sendPUTRequest(ServiceName.BloodGlucose);
 //                sendPUTRequestApp.sendPUTRequest(ServiceName.Questionnaire);
 //                super.run();
 //            }
@@ -77,7 +77,7 @@ public class Application {
 //        new SyncRecord().sync();
 
 
-//        pwd.forEach(p -> System.out.println(p));
+        pwd.forEach(p -> System.out.println(p));
 
 //        sendPUTRequestApp.sendPUTRequest();
         
