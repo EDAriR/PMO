@@ -120,7 +120,7 @@ public class SyncBloodGlucose {
         // private MeasurementStatusType status;
         bloodGlucose.setStatus(MeasurementStatusType.EXISTED);
         bloodGlucose.setCreateTime(bg.getUpdateDate());
-        bloodGlucose.setCreateBy("TTSHB");
+        bloodGlucose.setCreateBy(subject.getId());
         bloodGlucose.setTenantId("TTSHB");
 
         // subject_seq, subject_id, subject_name, subject_gender, subject_age, subject_user_id, subject_user_name,

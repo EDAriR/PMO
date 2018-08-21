@@ -124,7 +124,7 @@ public class Sync {
                 // BodyInfo 更新至新的身高體重
                 synBodyInfo(authconn, syncare1conn, measurementconn, userValueRecordJDBC, su, subject, userValueRecordMap);
 
-                // Biochemistry 拉出
+                // Biochemistry 先不同步
 //                syncBiochemistry(authconn, syncare1conn, measurementconn, su, subject, userValueRecordMap, userValueRecordJDBC);
 
                 // PMO USER RESULT

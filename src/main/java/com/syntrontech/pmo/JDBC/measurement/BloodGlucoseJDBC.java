@@ -22,7 +22,7 @@ public class BloodGlucoseJDBC {
             " status, createtime, createby, tenant_id, device_mac_address, " +
             "subject_seq, subject_id, subject_name, subject_gender, subject_age, subject_user_id, subject_user_name," +
             "rule_seq, rule_description, unit_id, unit_name, parent_unit_id, parent_unit_name, device_id)"
-            + "VALUES (nextval('blood_pressure_heartbeat_sequence_seq'), ?, ?, ?, ?, ?," +
+            + "VALUES (nextval('blood_glucose_sequence_seq'), ?, ?, ?, ?, ?," +
             "?, ?, ?, ?, ?," +
             "?, ?, ?, ?, ?, ?, ?," +
             "?, ?, ?, ?, ?, ?, ?);";
