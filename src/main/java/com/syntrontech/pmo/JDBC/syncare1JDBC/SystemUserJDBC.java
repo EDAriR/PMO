@@ -18,7 +18,7 @@ public class SystemUserJDBC {
     private static Logger logger = LoggerFactory.getLogger(SystemUserJDBC.class);
 
 
-    private static final String GET_ALL_STMT = "SELECT * FROM system_user WHERE ORDER BY USER_ID;";
+    private static final String GET_ALL_STMT = "SELECT * FROM system_user ORDER BY USER_ID;";
 
     private static final String GET_ONE = "SELECT * FROM system_user WHERE USER_ID=?";
     private static final String UPDATE = "UPDATE system_user SET sync_status= 'Y' WHERE USER_ID=? ;";

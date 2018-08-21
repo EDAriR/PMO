@@ -35,13 +35,11 @@ public class UserValueRecordJDBC {
 
     public static void main(String[] args) throws SQLException {
 
-//        Connection conn = new Syncare1_GET_CONNECTION().getConn();
+        Connection conn = new Syncare1_GET_CONNECTION().getConn();
         UserValueRecordJDBC s = new UserValueRecordJDBC();
 
-        List<UserValueRecord> other = s.getOneUserOtherValueRecord(1);
-        System.out.println(other);
-        List<UserValueRecord> aType = s.getOneUserAValueRecord(1);
-        System.out.println(aType);
+        List<UserValueRecord> bgs = s.getAllBGUserValueRecord();
+        System.out.println(bgs.size());
 
     }
 
@@ -306,9 +304,8 @@ public class UserValueRecordJDBC {
         return userValueRecords;
     }
 
-    public List<UserValueRecord> getOneBGUserValueRecord(int id) {
+    public List<UserValueRecord> getOneBGUserValueRecord(Connection conn, int id) {
 
-        Connection conn = new Syncare1_GET_CONNECTION().getConn();
         PreparedStatement pstmt = null;
 
         List<UserValueRecord> userValueRecords = new ArrayList<>();
@@ -553,7 +550,8 @@ public class UserValueRecordJDBC {
                     userValueRecord.setRecordDate(rs.getTimestamp("RECORD_DATE"));
                     userValueRecord.setUpdateDate(rs.getTimestamp("UPDATE_DATE"));
 
-                    System.out.println("Device >>" + rs.getString("serial_no") + "<<");
+                    Device d = new Device();
+                    d.setSerialNo(rs.getString("serial_no"));
 
                     String pmo_status = rs.getString("pmo_status");
                     UserValueRecord.RecordPmoStatus recordPmoStatus = pmo_status != null ? UserValueRecord.RecordPmoStatus.valueOf(pmo_status) : null;
@@ -567,9 +565,9 @@ public class UserValueRecordJDBC {
 
                     userValueRecord.setUserAccountSerial(rs.getLong("user_account_serial"));
 
-                    System.out.println("USER_ID :" + rs.getString("USER_ID"));
-
-                    System.out.println(userValueRecord);
+                    SystemUser su = new SystemUser();
+                    su.setUserId(rs.getInt("USER_ID"));
+                    userValueRecord.setSystemUser(su);
 
                     userValueRecordlist.add(userValueRecord);
                 }

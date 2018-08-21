@@ -32,26 +32,27 @@ public class Application {
 
 
         // 測試密碼
-        List<String> pwd = new Sync().syncSystemUserToUserAndSubject();
+//        List<String> pwd = new Sync().syncSystemUserToUserAndSubject();
 
-        Thread t = new Thread(){
-            @Override
-            public void run() {
-                sendPUTRequestApp.sendPUTRequest(ServiceName.User);
-                sendPUTRequestApp.sendPUTRequest(ServiceName.Subject);
-                sendPUTRequestApp.sendPUTRequest(ServiceName.EmergencyContact);
+//        Thread t = new Thread(){
+//            @Override
+//            public void run() {
+//                sendPUTRequestApp.sendPUTRequest(ServiceName.User);
+//                sendPUTRequestApp.sendPUTRequest(ServiceName.Subject);
+//                sendPUTRequestApp.sendPUTRequest(ServiceName.EmergencyContact);
+//
+//                super.run();
+//            }
+//        };
+//
+//        t.start();
 
-                super.run();
-            }
-        };
-
-        t.start();
-
-        new SyncUserCard().syncCard();
+//        new SyncUserCard().syncCard();
 
 //        new SyncBloodPressureHeartBeat().sync();
 
 
+        new SyncBloodGlucose().sync();
 //        new SyncAnswers().syncAnswers();
 
 //        Thread t2 = new Thread(){
@@ -76,7 +77,7 @@ public class Application {
 //        new SyncRecord().sync();
 
 
-        pwd.forEach(p -> System.out.println(p));
+//        pwd.forEach(p -> System.out.println(p));
 
 //        sendPUTRequestApp.sendPUTRequest();
         

@@ -20,6 +20,7 @@ public class UserValueRecordMappingJDBC {
     private static final String GET_ALL_STMT = "SELECT * FROM user_value_record_mapping WHERE sync_status = 'N' ORDER BY USER_VALUE_RECORD_ID;";
     private static final String UPDATE = "UPDATE user_value_record_mapping SET sync_status= 'Y' WHERE USER_VALUE_RECORD_MAPPING_ID=? ;";
     private static final String GET_BY_RECORD_ID_STMT = "SELECT * FROM user_value_record_mapping WHERE USER_VALUE_RECORD_ID = ? AND sync_status = 'N';";
+    private static final String GET_BG_RECORD_ID_STMT = "SELECT * FROM user_value_record_mapping WHERE USER_VALUE_RECORD_ID = ? AND TYPE_ID=136;";
 
     public static void main(String[] args) throws SQLException {
 
@@ -48,6 +49,57 @@ public class UserValueRecordMappingJDBC {
         List<UserValueRecordMapping> values = userValueRecordMap.get(bodyValueRecordId);
         values.forEach(v -> updateUserValueRecordMapping(syncare1conn, v.getUserValueRecordMappingId()));
 
+    }
+
+    public UserValueRecordMapping getBGUserValueRecordMappingByRecordId(Connection conn, int id) throws SQLException {
+
+//        Connection conn = new Syncare1_GET_CONNECTION().getConn();
+
+        PreparedStatement pstmt = null;
+        ResultSet rs;
+        UserValueRecordMapping userValueRecordMapping = new UserValueRecordMapping();
+
+
+        try {
+
+            pstmt = conn.prepareStatement(GET_BG_RECORD_ID_STMT);
+            pstmt.setInt(1, id);
+            rs = pstmt.executeQuery();
+
+
+            if (rs != null) {
+                while (rs.next()) {
+
+//                    USER_VALUE_RECORD_MAPPING_ID	TYPE_ID	RECORD_VALUE	USER_VALUE_RECORD_ID
+                    userValueRecordMapping.setUserValueRecordMappingId(rs.getInt("USER_VALUE_RECORD_MAPPING_ID"));
+
+                    Mapping m = new Mapping();
+                    m.setTypeId(rs.getInt("TYPE_ID"));
+                    userValueRecordMapping.setMapping(m);
+                    userValueRecordMapping.setRecordValue(rs.getString("RECORD_VALUE"));
+
+                    UserValueRecord userValueRecord = new UserValueRecord();
+                    userValueRecord.setBodyValueRecordId(rs.getInt("USER_VALUE_RECORD_ID"));
+                    userValueRecordMapping.setUserValueRecord(userValueRecord);
+
+                }
+            }
+
+        } catch (SQLException e) {
+            logger.debug("get getUserValueRecordMappingByRecordId fail " + pstmt);
+            e.printStackTrace();
+            throw e;
+        } finally {
+
+            try {
+                pstmt.close();
+            } catch (SQLException e) {
+                System.out.println("conn or pstmt close fail" + conn + " || "+ pstmt);
+                e.printStackTrace();
+            }
+
+        }
+        return userValueRecordMapping;
     }
 
     public List<UserValueRecordMapping> getUserValueRecordMappingByRecordId(int id) throws SQLException {
