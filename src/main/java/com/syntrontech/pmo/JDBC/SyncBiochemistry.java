@@ -20,6 +20,7 @@ import java.util.Map;
 
 public class SyncBiochemistry {
 
+    // 暫時不轉
     private void syncBiochemistry(
             Connection authconn, Connection syncare1conn, Connection measurementconn,
             SystemUser su, Subject subject, Map<Integer, List<UserValueRecordMapping>> userValueRecordMap, UserValueRecordJDBC userValueRecordJDBC) {
