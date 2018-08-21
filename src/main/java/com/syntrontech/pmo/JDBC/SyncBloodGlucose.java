@@ -6,7 +6,6 @@ import com.syntrontech.pmo.JDBC.cip.CIP_GET_CONNECTION;
 import com.syntrontech.pmo.JDBC.cip.SubjectJDBC;
 import com.syntrontech.pmo.JDBC.measurement.BloodGlucoseJDBC;
 import com.syntrontech.pmo.JDBC.measurement.MEASUREMENT_GET_CONNECTION;
-import com.syntrontech.pmo.JDBC.pmo.PmoResultJDBC;
 import com.syntrontech.pmo.JDBC.syncare1JDBC.Syncare1_GET_CONNECTION;
 import com.syntrontech.pmo.JDBC.syncare1JDBC.SystemUserJDBC;
 import com.syntrontech.pmo.JDBC.syncare1JDBC.UserValueRecordJDBC;
@@ -16,9 +15,6 @@ import com.syntrontech.pmo.cip.model.Subject;
 import com.syntrontech.pmo.measurement.BloodGlucose;
 import com.syntrontech.pmo.measurement.common.GlucoseType;
 import com.syntrontech.pmo.measurement.common.MeasurementStatusType;
-import com.syntrontech.pmo.pmo.MeasurementPMOType;
-import com.syntrontech.pmo.pmo.PmoResult;
-import com.syntrontech.pmo.pmo.PmoStatus;
 import com.syntrontech.pmo.syncare1.model.SystemUser;
 import com.syntrontech.pmo.syncare1.model.UserValueRecord;
 import com.syntrontech.pmo.syncare1.model.UserValueRecordMapping;
@@ -30,7 +26,6 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 public class SyncBloodGlucose {
 
