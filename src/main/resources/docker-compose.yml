@@ -1,0 +1,17 @@
+version: '3.2'
+services:
+
+  dbsync:
+    image: openjdk:8u141-jdk
+    volumes:
+      - /opt/dbsync/setting.yml:/setting.yml
+      - /opt/dbsync/dbsync.log:/dbsync.log
+      - /opt/dbsync/dbsync_syncare1-jar-with-dependencies.jar:/dbsync_syncare1-jar-with-dependencies.jar
+    command: java -jar -Duser.timezone=UTC dbsync_syncare1-jar-with-dependencies.jar
+
+networks:
+  default:
+    external:
+      name: syncare_ttshb_default
+      # name: syncare_default
+

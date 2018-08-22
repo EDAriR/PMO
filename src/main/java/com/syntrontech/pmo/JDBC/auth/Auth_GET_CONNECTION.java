@@ -27,6 +27,7 @@ public class Auth_GET_CONNECTION {
     public Connection getConn(){
 
         Connection conn = null;
+        System.out.println("connection path " + DB_PATH);
 
         try {
 

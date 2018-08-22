@@ -49,10 +49,10 @@ public class Application {
 
         new SyncUserCard().syncCard();
 
-//        new SyncBloodPressureHeartBeat().sync();
-
-
         new SyncBloodGlucose().sync();
+
+        new SyncBloodPressureHeartBeat().sync();
+
 //        new SyncAnswers().syncAnswers();
 
 //        Thread t2 = new Thread(){

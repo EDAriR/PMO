@@ -42,7 +42,6 @@ public class SyncBloodPressureHeartBeat {
 
     private static Logger logger = LoggerFactory.getLogger(SyncBloodPressureHeartBeat.class);
 
-
     // 同步至 新的血壓心跳 異常追蹤 異常追蹤log
     public void sync() {
         Connection authconn = new Auth_GET_CONNECTION().getConn();
@@ -82,6 +81,9 @@ public class SyncBloodPressureHeartBeat {
                 e.printStackTrace();
             }
         }
+
+        logger.info("Sync BloodPressureHeartBeat ok");
+        unFindSubjects.forEach(s -> System.out.println(s));
     }
 
     private void syncMeasurementBloodPressureHeartBeat(
@@ -136,6 +138,7 @@ public class SyncBloodPressureHeartBeat {
             }
 
         });
+
     }
 
 

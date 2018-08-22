@@ -27,9 +27,12 @@ public class YAMLReader {
 
             in = new FileInputStream(dir + "/setting.yml");
 
+            System.out.println("get setting successful");
+
 //            in = YAMLReader.class.getResourceAsStream("/opt/syncar_ttshb/setting.yml");
         } catch (FileNotFoundException e) {
             in = YAMLReader.class.getResourceAsStream("/setting.yml");
+            System.out.println("get defautl setting successful");
 
         } catch (YAMLException e) {
             in = YAMLReader.class.getResourceAsStream("/setting.yml");

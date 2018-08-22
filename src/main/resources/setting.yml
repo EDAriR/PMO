@@ -9,11 +9,11 @@ mysql:
   password: 1qaz2wsx
 
 syncare1:
-  db: jdbc:mysql://localhost:3306/SynCare?user=root&password=1qaz2wsx&useUnicode=true&characterEncoding=UTF8
+  db: jdbc:mysql://172.19.0.1:3306/SynCare?user=root&password=1qaz2wsx&useUnicode=true&characterEncoding=UTF8
 
 auth:
   url: http://localhost:8080/
-  db: jdbc:postgresql://127.0.0.1:5432/authdb
+  db: jdbc:postgresql://172.19.0.3:5432/authdb
   protocol: http
   host: localhost
   port: 8080
@@ -23,7 +23,7 @@ auth:
 
 measurement:
   url: http://localhost:8084/
-  db: jdbc:postgresql://127.0.0.1:5432/measurementdb
+  db: jdbc:postgresql://172.19.0.3:5432/measurementdb
   protocol: http
   host: localhost
   port: 8084
@@ -38,7 +38,7 @@ measurement:
 # cip
 syncare-service:
   url: http://localhost:8083/
-  db: jdbc:postgresql://127.0.0.1:5432/cipdb
+  db: jdbc:postgresql://172.19.0.3:5432/cipdb
   protocol: http
   host: localhost
   port: 8083
@@ -50,7 +50,7 @@ syncare-service:
 
 questionnaire:
   url: http://localhost:9003/
-  db: jdbc:postgresql://127.0.0.1:5432/questionnairdb
+  db: jdbc:postgresql://172.19.0.3:5432/questionnairdb
   protocol: http
   host: localhost
   port: 9003
@@ -60,7 +60,7 @@ questionnaire:
 #pmo
 pmo:
   url: http://localhost:8087/
-  db: jdbc:postgresql://127.0.0.1:5432/pmodb
+  db: jdbc:postgresql://172.19.0.3:5432/pmodb
   protocol: http
   host: localhost
   port: 8087

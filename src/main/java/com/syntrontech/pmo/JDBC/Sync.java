@@ -7,7 +7,6 @@ import com.syntrontech.pmo.JDBC.auth.UnitJDBC;
 import com.syntrontech.pmo.JDBC.auth.UserJDBC;
 import com.syntrontech.pmo.JDBC.cip.*;
 import com.syntrontech.pmo.JDBC.measurement.*;
-import com.syntrontech.pmo.JDBC.pmo.PmoResultJDBC;
 import com.syntrontech.pmo.JDBC.pmo.PmoUserJDBC;
 import com.syntrontech.pmo.JDBC.syncare1JDBC.*;
 import com.syntrontech.pmo.auth.model.Role;
@@ -16,13 +15,8 @@ import com.syntrontech.pmo.auth.model.User;
 import com.syntrontech.pmo.cip.model.EmergencyContact;
 import com.syntrontech.pmo.cip.model.Subject;
 import com.syntrontech.pmo.measurement.*;
-import com.syntrontech.pmo.measurement.common.GlucoseType;
 import com.syntrontech.pmo.measurement.common.MeasurementStatusType;
 import com.syntrontech.pmo.model.common.*;
-import com.syntrontech.pmo.pmo.MeasurementPMOType;
-import com.syntrontech.pmo.pmo.PmoResult;
-import com.syntrontech.pmo.pmo.PmoUser;
-import com.syntrontech.pmo.pmo.PmoStatus;
 import com.syntrontech.pmo.syncare1.model.*;
 import com.syntrontech.pmo.syncare1.model.common.Sex;
 import com.syntrontech.pmo.syncare1.model.common.YN;
@@ -65,7 +59,7 @@ public class Sync {
 
         UserValueRecordJDBC userValueRecordJDBC = new UserValueRecordJDBC();
 
-        PmoUserJDBC pmoUserJDBC = new PmoUserJDBC();
+//        PmoUserJDBC pmoUserJDBC = new PmoUserJDBC();
 
         PasswordListJDBC passwordListJDBC = new PasswordListJDBC();
 
@@ -128,7 +122,7 @@ public class Sync {
 //                syncBiochemistry(authconn, syncare1conn, measurementconn, su, subject, userValueRecordMap, userValueRecordJDBC);
 
                 // PMO USER RESULT
-                pmoUserJDBC.insert(turnSystemUserToPmoUser(su));
+//                pmoUserJDBC.insert(turnSystemUserToPmoUser(su));
                 // update systemUser sync status
                 systemUserJDBC.updateSystemUser(syncare1conn, su.getUserId());
 
@@ -266,30 +260,30 @@ public class Sync {
     }
 
 
-    private PmoUser turnSystemUserToPmoUser(SystemUser su) {
-        PmoUser pmoUser = new PmoUser();
-
-        // user_id
-        pmoUser.setUserId(su.getUserAccount());
-        // pmo_password
-        pmoUser.setPmoPassword(su.getPmoPassword());
-        // status
-
-        PmoStatus pmoStatus = PmoStatus.NotSync;
-        SystemUser.SystemUserPmoStatus status = su.getPmoStatus();
-        if (status == SystemUser.SystemUserPmoStatus.Sync)
-            pmoStatus = PmoStatus.Sync;
-        if (status == SystemUser.SystemUserPmoStatus.NotSync)
-            pmoStatus = PmoStatus.NotSync;
-        if (status == SystemUser.SystemUserPmoStatus.Error)
-            pmoStatus = PmoStatus.Error;
-        pmoUser.setPmoStatus(pmoStatus);
-
-        pmoUser.setTenantId("TTSHB");
-
-        return pmoUser;
-
-    }
+//    private PmoUser turnSystemUserToPmoUser(SystemUser su) {
+//        PmoUser pmoUser = new PmoUser();
+//
+//        // user_id
+//        pmoUser.setUserId(su.getUserAccount());
+//        // pmo_password
+//        pmoUser.setPmoPassword(su.getPmoPassword());
+//        // status
+//
+//        PmoStatus pmoStatus = PmoStatus.NotSync;
+//        SystemUser.SystemUserPmoStatus status = su.getPmoStatus();
+//        if (status == SystemUser.SystemUserPmoStatus.Sync)
+//            pmoStatus = PmoStatus.Sync;
+//        if (status == SystemUser.SystemUserPmoStatus.NotSync)
+//            pmoStatus = PmoStatus.NotSync;
+//        if (status == SystemUser.SystemUserPmoStatus.Error)
+//            pmoStatus = PmoStatus.Error;
+//        pmoUser.setPmoStatus(pmoStatus);
+//
+//        pmoUser.setTenantId("TTSHB");
+//
+//        return pmoUser;
+//
+//    }
 
     private EmergencyContact syncSystemUserToEmergencyContact(SystemUser su) {
 
