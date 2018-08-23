@@ -143,8 +143,8 @@ public class SyncAnswers {
 
         try{
 
-            Long answerseq = Long.valueOf(answers.getQuestionnaireAnswersItemValue());
-            String[] strArr = {answerMap.get(answerseq)};
+//            Long answerseq = Long.valueOf(answers.getQuestionnaireAnswersItemValue());
+            String[] strArr = {answerMap.get(optionseq)};
             questionnairReply.setQuestionnairQuestionAnswer(strArr);
 
         }catch (NumberFormatException e){
