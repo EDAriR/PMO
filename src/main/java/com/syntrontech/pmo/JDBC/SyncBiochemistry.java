@@ -1,8 +1,15 @@
 package com.syntrontech.pmo.JDBC;
 
+import com.syntrontech.pmo.JDBC.auth.Auth_GET_CONNECTION;
 import com.syntrontech.pmo.JDBC.auth.UnitJDBC;
+import com.syntrontech.pmo.JDBC.cip.CIP_GET_CONNECTION;
+import com.syntrontech.pmo.JDBC.cip.SubjectJDBC;
 import com.syntrontech.pmo.JDBC.measurement.BiochemistryJDBC;
+import com.syntrontech.pmo.JDBC.measurement.MEASUREMENT_GET_CONNECTION;
+import com.syntrontech.pmo.JDBC.syncare1JDBC.Syncare1_GET_CONNECTION;
+import com.syntrontech.pmo.JDBC.syncare1JDBC.SystemUserJDBC;
 import com.syntrontech.pmo.JDBC.syncare1JDBC.UserValueRecordJDBC;
+import com.syntrontech.pmo.JDBC.syncare1JDBC.UserValueRecordMappingJDBC;
 import com.syntrontech.pmo.auth.model.Unit;
 import com.syntrontech.pmo.cip.model.Subject;
 import com.syntrontech.pmo.measurement.Biochemistry;
@@ -15,13 +22,50 @@ import com.syntrontech.pmo.util.CalendarUtil;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 public class SyncBiochemistry {
 
+    public void sync(){
+
+        Connection authconn = new Auth_GET_CONNECTION().getConn();
+        Connection cipconn = new CIP_GET_CONNECTION().getConn();
+        Connection measurementconn = new MEASUREMENT_GET_CONNECTION().getConn();
+        Connection syncare1conn = new Syncare1_GET_CONNECTION().getConn();
+
+        UserValueRecordJDBC userValueRecordJDBC = new UserValueRecordJDBC();
+        SubjectJDBC subjectJDBC = new SubjectJDBC();
+        SystemUserJDBC systemUserJDBC = new SystemUserJDBC();
+
+        // 取出所有未同步量測紀錄數值 <body_value_record_id, UserValueRecordMappings>
+        Map<Integer, List<UserValueRecordMapping>> userValueRecordMap = new UserValueRecordMappingJDBC()
+                .getAllUserValueRecordMapping();
+
+        List<SystemUser> systemUsers = systemUserJDBC.getAllSystemUser();
+
+        List<String> unFindSubjects = new ArrayList<>();
+
+        for (SystemUser su : systemUsers) {
+            try {
+                String userId = su.getUserAccount().toUpperCase().trim();
+                Subject  subject = subjectJDBC.getOneSubject(cipconn, userId, userId);
+
+                if (subject == null) {
+                    unFindSubjects.add("cannt find subject :" + userId + ", " + su.getUserId());
+                    continue;
+                }
+                syncBiochemistry(authconn, syncare1conn, measurementconn, su, subject, userValueRecordMap, userValueRecordJDBC);
+            } catch (SQLException e) {
+
+                e.printStackTrace();
+            }
+        }
+    }
+
     // 暫時不轉
-    private void syncBiochemistry(
+    public void syncBiochemistry(
             Connection authconn, Connection syncare1conn, Connection measurementconn,
             SystemUser su, Subject subject, Map<Integer, List<UserValueRecordMapping>> userValueRecordMap, UserValueRecordJDBC userValueRecordJDBC) {
 

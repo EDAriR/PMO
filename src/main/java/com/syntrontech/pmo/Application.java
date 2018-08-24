@@ -71,6 +71,7 @@ public class Application {
 //        sendPUTRequestApp.sendPUTRequest(ServiceName.AbnormalBloodPressure);
 //        sendPUTRequestApp.sendPUTRequest(ServiceName.AbnormalBloodPressureLog);
 
+        new SyncBiochemistry().sync();
 
 //        sendPUTRequestApp.sendPUTcRequest(ServiceName.User);
 
