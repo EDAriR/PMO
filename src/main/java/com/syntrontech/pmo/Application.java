@@ -53,7 +53,7 @@ public class Application {
 
         new SyncBloodPressureHeartBeat().sync();
 
-//        new SyncAnswers().syncAnswers();
+        new SyncAnswers().syncAnswers();
 
 //        Thread t2 = new Thread(){
 //            @Override

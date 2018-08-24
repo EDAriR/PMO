@@ -273,7 +273,7 @@ public class SyncBloodPressureHeartBeat {
 //        private BloodPressureCaseStatus caseStatus;
         // 0尚未處理  1就醫確診正常  2就醫確診異常  3拒絕就醫及複查  4無法聯繫
         BloodPressureCaseStatus casetStatus = null;
-        switch (systemUser.getCaseStatus()) {
+        switch (systemUser.getCaseStatusDisplay()) {
             case 0:
                 casetStatus = BloodPressureCaseStatus.NOT_YET;
                 break;
